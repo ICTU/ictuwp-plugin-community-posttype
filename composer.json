@@ -1,0 +1,14 @@
+{
+  "name": "ictu/ictuwp-plugin-community-posttype",
+  "type": "wordpress-plugin",
+  "license": "GPL-3.0",
+  "description": "Voegt custom post type toe: 'community'",
+  "homepage": "https://www.digitaleoverheid.nl",
+  "authors": [
+    {
+      "name": "Paul van Buuren",
+      "email": "paul@wbvb.nl",
+      "homepage": "https://github.com/ICTU/ictuwp-plugin-community-posttype"
+    }
+  ]
+}
