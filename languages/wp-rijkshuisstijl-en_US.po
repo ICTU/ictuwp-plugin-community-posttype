@@ -1,0 +1,239 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: ICTU / Digitale Overheid / Community\n"
+"POT-Creation-Date: 2023-05-17 15:32+0200\n"
+"PO-Revision-Date: 2023-05-17 15:32+0200\n"
+"Last-Translator: Paul van Buuren <poedit@wbvb.nl>\n"
+"Language-Team: Paul van Buuren <poedit@wbvb.nl>\n"
+"Language: en_US\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Poedit 3.3.1\n"
+"X-Poedit-Basepath: ..\n"
+"X-Poedit-Flags-xgettext: --add-comments=translators:\n"
+"X-Poedit-WPHeader: ictuwp-plugin-community-posttype.php\n"
+"X-Poedit-SourceCharset: UTF-8\n"
+"X-Poedit-KeywordsList: __;_e;_n:1,2;_x:1,2c;_ex:1,2c;_nx:4c,1,2;esc_attr__;"
+"esc_attr_e;esc_attr_x:1,2c;esc_html__;esc_html_e;esc_html_x:1,2c;"
+"_n_noop:1,2;_nx_noop:3c,1,2;__ngettext_noop:1,2\n"
+"X-Poedit-SearchPath-0: .\n"
+"X-Poedit-SearchPathExcluded-0: *.min.js\n"
+
+#: ictuwp-plugin-community-posttype.php:243
+msgctxt "label page template"
+msgid "[Community] alle community's"
+msgstr ""
+
+#: ictuwp-plugin-community-posttype.php:244
+msgctxt "label page template"
+msgid "[Community] community-detail"
+msgstr ""
+
+#: includes/register-community-posttype.php:20
+#: includes/register-community-posttype.php:22
+msgctxt "post type"
+msgid "Community's"
+msgstr ""
+
+#: includes/register-community-posttype.php:21
+#: includes/register-community-posttype.php:23
+msgctxt "post type"
+msgid "Community"
+msgstr ""
+
+#: includes/register-community-posttype.php:24
+msgctxt "post type"
+msgid "Overzicht community's"
+msgstr ""
+
+#: includes/register-community-posttype.php:25
+msgctxt "post type"
+msgid "Eigenschappen community"
+msgstr ""
+
+#: includes/register-community-posttype.php:26
+msgctxt "post type"
+msgid "Parent Map:"
+msgstr ""
+
+#: includes/register-community-posttype.php:27
+msgctxt "post type"
+msgid "Alle community's"
+msgstr ""
+
+#: includes/register-community-posttype.php:28
+msgctxt "post type"
+msgid "Community toevoegen"
+msgstr ""
+
+#: includes/register-community-posttype.php:29
+msgctxt "post type"
+msgid "Toevoegen"
+msgstr ""
+
+#: includes/register-community-posttype.php:30
+msgctxt "post type"
+msgid "Nieuw community"
+msgstr ""
+
+#: includes/register-community-posttype.php:31
+msgctxt "post type"
+msgid "Bewerk community"
+msgstr ""
+
+#: includes/register-community-posttype.php:32
+msgctxt "post type"
+msgid "Update community"
+msgstr ""
+
+#: includes/register-community-posttype.php:33
+msgctxt "post type"
+msgid "Bekijk community"
+msgstr ""
+
+#: includes/register-community-posttype.php:34
+msgctxt "post type"
+msgid "Bekijk community's"
+msgstr ""
+
+#: includes/register-community-posttype.php:35
+msgctxt "post type"
+msgid "Zoek community"
+msgstr ""
+
+#: includes/register-community-posttype.php:36
+msgctxt "post type"
+msgid "Not found"
+msgstr ""
+
+#: includes/register-community-posttype.php:37
+msgctxt "post type"
+msgid "Not found in Trash"
+msgstr ""
+
+#: includes/register-community-posttype.php:38
+msgctxt "post type"
+msgid "Featured Image"
+msgstr ""
+
+#: includes/register-community-posttype.php:39
+msgctxt "post type"
+msgid "Set featured image"
+msgstr ""
+
+#: includes/register-community-posttype.php:40
+msgctxt "post type"
+msgid "Remove featured image"
+msgstr ""
+
+#: includes/register-community-posttype.php:41
+msgctxt "post type"
+msgid "Use as featured image"
+msgstr ""
+
+#: includes/register-community-posttype.php:42
+msgctxt "post type"
+msgid "Insert into Map"
+msgstr ""
+
+#: includes/register-community-posttype.php:43
+msgctxt "post type"
+msgid "Uploaded to this community"
+msgstr ""
+
+#: includes/register-community-posttype.php:44
+msgctxt "post type"
+msgid "Map list"
+msgstr ""
+
+#: includes/register-community-posttype.php:45
+msgctxt "post type"
+msgid "Maps list navigation"
+msgstr ""
+
+#: includes/register-community-posttype.php:46
+msgctxt "post type"
+msgid "Filter community list"
+msgstr ""
+
+#: includes/register-community-posttype.php:67
+msgctxt "taxonomy"
+msgid "Type community"
+msgstr ""
+
+#: includes/register-community-posttype.php:68
+msgctxt "taxonomy singular name"
+msgid "Communitytype"
+msgstr ""
+
+#: includes/register-community-posttype.php:69
+msgctxt "taxonomy"
+msgid "Search communitytype"
+msgstr ""
+
+#: includes/register-community-posttype.php:70
+msgctxt "taxonomy"
+msgid "All communitytypes"
+msgstr ""
+
+#: includes/register-community-posttype.php:71
+msgctxt "taxonomy"
+msgid "Parent communitytype"
+msgstr ""
+
+#: includes/register-community-posttype.php:72
+msgctxt "taxonomy"
+msgid "Parent communitytype:"
+msgstr ""
+
+#: includes/register-community-posttype.php:73
+msgctxt "taxonomy"
+msgid "Edit communitytype"
+msgstr ""
+
+#: includes/register-community-posttype.php:74
+msgctxt "taxonomy"
+msgid "Update communitytype"
+msgstr ""
+
+#: includes/register-community-posttype.php:75
+msgctxt "taxonomy"
+msgid "Add new communitytype"
+msgstr ""
+
+#: includes/register-community-posttype.php:76
+msgctxt "taxonomy"
+msgid "New communitytype name"
+msgstr ""
+
+#: includes/register-community-posttype.php:77
+msgctxt "taxonomy"
+msgid "Communitytype"
+msgstr ""
+
+#. Plugin Name of the plugin/theme
+msgid "ICTU / Digitale Overheid / Community"
+msgstr ""
+
+#. Plugin URI of the plugin/theme
+msgid "https://github.com/ICTU/ictuwp-plugin-community-posttype"
+msgstr ""
+
+#. Description of the plugin/theme
+msgid ""
+"Plugin voor het aanmaken van posttype 'community' en bijbehorende "
+"taxonomieen."
+msgstr ""
+
+#. Author of the plugin/theme
+msgid "Paul van Buuren"
+msgstr ""
+
+#. Author URI of the plugin/theme
+msgid "https://github.com/ICTU/ictuwp-plugin-community-posttype/"
+msgstr ""
+
+#. Template Name of the plugin/theme
+msgid "Template Thema's"
+msgstr ""
