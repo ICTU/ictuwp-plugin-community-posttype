@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: ICTU / Digitale Overheid / Community\n"
-"POT-Creation-Date: 2023-05-17 15:31+0200\n"
-"PO-Revision-Date: 2023-05-17 15:31+0200\n"
+"POT-Creation-Date: 2023-05-17 17:51+0200\n"
+"PO-Revision-Date: 2023-05-17 17:51+0200\n"
 "Last-Translator: Paul van Buuren <poedit@wbvb.nl>\n"
 "Language-Team: Paul van Buuren <poedit@wbvb.nl>\n"
 "Language: nl_NL\n"
@@ -20,12 +20,12 @@ msgstr ""
 "X-Poedit-SearchPath-0: .\n"
 "X-Poedit-SearchPathExcluded-0: *.min.js\n"
 
-#: ictuwp-plugin-community-posttype.php:243
+#: ictuwp-plugin-community-posttype.php:247
 msgctxt "label page template"
 msgid "[Community] alle community's"
 msgstr ""
 
-#: ictuwp-plugin-community-posttype.php:244
+#: ictuwp-plugin-community-posttype.php:248
 msgctxt "label page template"
 msgid "[Community] community-detail"
 msgstr ""
@@ -210,6 +210,61 @@ msgstr ""
 #: includes/register-community-posttype.php:77
 msgctxt "taxonomy"
 msgid "Communitytype"
+msgstr ""
+
+#: includes/register-community-posttype.php:94
+msgctxt "taxonomy"
+msgid "Grootte community"
+msgstr ""
+
+#: includes/register-community-posttype.php:95
+msgctxt "taxonomy singular name"
+msgid "Communitygrootte"
+msgstr ""
+
+#: includes/register-community-posttype.php:96
+msgctxt "taxonomy"
+msgid "Search communitygrootte"
+msgstr ""
+
+#: includes/register-community-posttype.php:97
+msgctxt "taxonomy"
+msgid "All communitygroottes"
+msgstr ""
+
+#: includes/register-community-posttype.php:98
+msgctxt "taxonomy"
+msgid "Parent communitygrootte"
+msgstr ""
+
+#: includes/register-community-posttype.php:99
+msgctxt "taxonomy"
+msgid "Parent communitygrootte:"
+msgstr ""
+
+#: includes/register-community-posttype.php:100
+msgctxt "taxonomy"
+msgid "Edit communitygrootte"
+msgstr ""
+
+#: includes/register-community-posttype.php:101
+msgctxt "taxonomy"
+msgid "Update communitygrootte"
+msgstr ""
+
+#: includes/register-community-posttype.php:102
+msgctxt "taxonomy"
+msgid "Add new communitygrootte"
+msgstr ""
+
+#: includes/register-community-posttype.php:103
+msgctxt "taxonomy"
+msgid "New communitygrootte name"
+msgstr ""
+
+#: includes/register-community-posttype.php:104
+msgctxt "taxonomy"
+msgid "Communitygrootte"
 msgstr ""
 
 #. Plugin Name of the plugin/theme
