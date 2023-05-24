@@ -147,8 +147,8 @@ if ( ! class_exists( 'DO_COMMUNITY_CPT' ) ) :
 
 			$page_template = get_post_meta( get_the_id(), '_wp_page_template', true );
 
-			if ( is_singular( CPT_INITIATIEF ) ) {
-//				// het is een single voor CPT = CPT_INITIATIEF
+			if ( is_singular( DO_COMMUNITY_CPT ) ) {
+//				// het is een single voor CPT = DO_COMMUNITY_CPT
 //				$archive_template = dirname( __FILE__ ) . '/templates/single-initiatief.php';
 
 			} elseif ( 'template_overview_communities.php' == $page_template ) {
@@ -302,5 +302,208 @@ function fn_ictu_community_add_templates() {
 	return $return_array;
 
 }
+
+//========================================================================================================
+
+
+/**
+ * Voeg een paginaselector toe aan de customizer
+ * zie [admin] > Weergave > Customizer > Initiatievenkaart
+ */
+function community_append_customizer_field( $wp_customize ) {
+
+	//	eigen sectie voor Theme Customizer
+	$wp_customize->add_section( 'customizer_communities', array(
+		'title'       => _x( 'Community\'s', 'customizer menu', 'wp-rijkshuisstijl' ),
+		'capability'  => 'edit_theme_options',
+		'description' => _x( 'Instellingen voor community\'s.', 'customizer menu', 'wp-rijkshuisstijl' ),
+	) );
+
+	// add dropdown with pages to appoint the new slug for the CPT
+	$wp_customize->add_setting( 'customizer_community_pageid_overview', array(
+		'capability'        => 'edit_theme_options',
+		'sanitize_callback' => 'community_sanitize_initiatief_pagina',
+	) );
+	$wp_customize->add_control( 'customizer_community_pageid_overview', array(
+		'type'        => 'dropdown-pages',
+		'section'     => 'customizer_communities', // Add a default or your own section
+		'label'       => _x( 'Pagina met alle community\'s', 'customizer menu', 'wp-rijkshuisstijl' ),
+		'description' => _x( 'In het kruimelpad en in de URL voor een initiatief zal deze pagina terugkomen.', 'customizer menu', 'wp-rijkshuisstijl' ),
+	) );
+
+}
+
+add_action( 'customize_register', 'community_append_customizer_field' );
+
+
+//========================================================================================================
+
+// zorg dat een geldige pagina wordt teruggegeven
+function community_sanitize_initiatief_pagina( $page_id, $setting ) {
+
+	$value = $setting->default;
+
+	// Alleen een geldige ID accepteren
+	$page_id = absint( $page_id );
+
+	if ( $page_id ) {
+
+		if ( 'publish' != get_post_status( $page_id ) ) {
+			// alleen geubliceerde pagina's accepteren
+			return $value;
+		} else {
+// TODO zorg ervoor dat de slug van de pagina gebruikt wordt in de slug van de commmunity CPT
+//			$page_initatieven = get_theme_mod( 'customizer_community_pageid_overview' );
+//			if ( $page_id === $page_initatieven ) {
+//				// no change
+//			} else {
+//				$theline = 'Community page is changed';
+//				error_log( $theline );
+//				flush_rewrite_rules();
+//
+//			}
+
+		}
+
+		$value = $page_id;
+
+	}
+
+	return $value;
+
+}
+
+//========================================================================================================
+
+function communitys_filter_breadcrumb( $crumb = '', $args = '' ) {
+
+	global $post;
+
+//	$object = get_post_type_object( CPT_PROJECT );
+
+	if ( ! (
+		is_singular( DO_COMMUNITY_CPT ) ||
+//		is_post_type_archive( DO_COMMUNITY_CPT ) ||
+		is_tax( DO_COMMUNITYTYPE_CT ) ||
+		is_tax( DO_COMMUNITYTOPICS_CT ) ) ) {
+		// niks doen we niet met een initiatief bezig zijn
+		return $crumb;
+	}
+
+
+	// uit siteopties de pagina ophalen die het overzicht is van alle links
+	if ( is_singular( DO_COMMUNITY_CPT ) ||
+	     is_post_type_archive( DO_COMMUNITY_CPT )
+	) {
+		$page_initatieven = get_theme_mod( 'customizer_community_pageid_overview' );
+	}
+
+	$currentitem = explode( '</span>', $crumb );
+	$parents     = array();
+	$return      = '';
+
+	if ( $page_initatieven ) {
+
+		// haal de ancestors op voor deze pagina
+		$ancestors = get_post_ancestors( $page_initatieven );
+		if ( is_post_type_archive( DO_COMMUNITY_CPT ) ) {
+			$parents[] = array(
+				'text' => get_the_title( $page_initatieven ),
+			);
+		} else {
+			$parents[] = array(
+				'url'  => get_page_link( $page_initatieven ),
+				'text' => get_the_title( $page_initatieven ),
+			);
+		}
+
+		if ( $ancestors ) {
+
+			// haal de hele keten aan ancestors op en zet ze in de returnstring
+			foreach ( $ancestors as $ancestorid ) {
+				// Prepend one or more elements to the beginning of an array
+				array_unshift( $parents, [
+					'url'  => get_page_link( $ancestorid ),
+					'text' => get_the_title( $ancestorid ),
+				] );
+			}
+		}
+
+//	} else {
+//
+//		// er is geen pagina bekend waaronder de items getoond worden
+//		if ( is_singular( DO_COMMUNITY_CPT ) || is_singular( CPT_PROJECT ) ) {
+//			return $crumb;
+//		}
+//
+//		if ( is_post_type_archive( DO_COMMUNITY_CPT ) ||
+//		     is_tax( CT_INITIATIEFTYPE ) ||
+//		     is_tax( CT_PROVINCIE ) ) {
+//			$obj = get_post_type_object( DO_COMMUNITY_CPT );
+//
+//			if ( is_post_type_archive( DO_COMMUNITY_CPT ) ) {
+//
+//			} elseif ( is_post_type_archive( DO_COMMUNITY_CPT ) ) {
+//
+//				$parents[] = array(
+//					'text' => $obj->label,
+//				);
+//
+//			} elseif ( is_tax( CT_INITIATIEFTYPE ) || is_tax( CT_PROVINCIE ) ) {
+//				$parents[] = array(
+//					'url'  => get_post_type_archive_link( DO_COMMUNITY_CPT ),
+//					'text' => $obj->label,
+//				);
+//
+//			}
+//		} else {
+//			// geen archief voor DO_COMMUNITY_CPT of is_tax( CT_INITIATIEFTYPE / CT_PROVINCIE )
+//			$obj = get_post_type_object( CPT_PROJECT );
+//
+//			if ( is_post_type_archive( CPT_PROJECT ) ) {
+//
+//				$parents[] = array(
+//					'text' => $obj->label,
+//				);
+//
+//			} elseif ( is_tax( CT_PROJECTORGANISATIE ) ) {
+//				$parents[] = array(
+//					'url'  => get_post_type_archive_link( CPT_PROJECT ),
+//					'text' => $obj->label,
+//				);
+//
+//			}
+//
+//		}
+
+	}
+
+	foreach ( $parents as $link ) {
+		if ( isset( $link['url'] ) && isset( $link['text'] ) ) {
+			$return .= '<a href="' . $link['url'] . '">' . $link['text'] . '</a> ';
+		} else {
+			$return .= $link['text'] . '  ';
+		}
+	}
+
+	if ( isset( $post->ID ) && $post->ID === $page_initatieven ) {
+		//
+	} elseif ( is_post_type_archive( DO_COMMUNITY_CPT ) ) {
+		//
+	} else {
+		if ( $termid ) {
+			$term   = get_term( $termid );
+			$return .= $term->name;
+		} elseif ( is_singular( CPT_PROJECT ) || is_singular( DO_COMMUNITY_CPT ) ) {
+			$return .= get_the_title( $post->ID );
+		} else {
+			//
+		}
+	}
+
+	return $return;
+
+}
+
 
 //========================================================================================================

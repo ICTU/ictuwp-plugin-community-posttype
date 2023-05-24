@@ -2,7 +2,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: ICTU / Digitale Overheid / Community\n"
-"POT-Creation-Date: 2023-05-17 17:51+0200\n"
+"POT-Creation-Date: 2023-05-24 22:41+0200\n"
 "PO-Revision-Date: 2023-05-17 15:30+0200\n"
 "Last-Translator: Paul van Buuren <poedit@wbvb.nl>\n"
 "Language-Team: Paul van Buuren <poedit@wbvb.nl>\n"
@@ -21,251 +21,283 @@ msgstr ""
 "X-Poedit-SearchPath-0: .\n"
 "X-Poedit-SearchPathExcluded-0: *.min.js\n"
 
-#: ictuwp-plugin-community-posttype.php:247
+#: ictuwp-plugin-community-posttype.php:133
+msgctxt "naam template"
+msgid "Overview communities"
+msgstr ""
+
+#: ictuwp-plugin-community-posttype.php:298
 msgctxt "label page template"
 msgid "[Community] alle community's"
 msgstr ""
 
-#: ictuwp-plugin-community-posttype.php:248
+#: ictuwp-plugin-community-posttype.php:299
 msgctxt "label page template"
 msgid "[Community] community-detail"
 msgstr ""
 
-#: includes/register-community-posttype.php:20
-#: includes/register-community-posttype.php:22
+#: ictuwp-plugin-community-posttype.php:317
+msgctxt "customizer menu"
+msgid "Community's"
+msgstr ""
+
+#: ictuwp-plugin-community-posttype.php:319
+msgctxt "customizer menu"
+msgid "Instellingen voor community's."
+msgstr ""
+
+#: ictuwp-plugin-community-posttype.php:330
+msgctxt "customizer menu"
+msgid "Pagina met alle community's"
+msgstr ""
+
+#: ictuwp-plugin-community-posttype.php:331
+msgctxt "customizer menu"
+msgid ""
+"In het kruimelpad en in de URL voor een initiatief zal deze pagina "
+"terugkomen."
+msgstr ""
+
+#: includes/register-community-posttype.php:29
+#: includes/register-community-posttype.php:31
 msgctxt "post type"
 msgid "Community's"
 msgstr ""
 
-#: includes/register-community-posttype.php:21
-#: includes/register-community-posttype.php:23
+#: includes/register-community-posttype.php:30
+#: includes/register-community-posttype.php:32
 msgctxt "post type"
 msgid "Community"
 msgstr ""
 
-#: includes/register-community-posttype.php:24
+#: includes/register-community-posttype.php:33
 msgctxt "post type"
 msgid "Overzicht community's"
 msgstr ""
 
-#: includes/register-community-posttype.php:25
+#: includes/register-community-posttype.php:34
 msgctxt "post type"
 msgid "Eigenschappen community"
 msgstr ""
 
-#: includes/register-community-posttype.php:26
+#: includes/register-community-posttype.php:35
 msgctxt "post type"
 msgid "Parent Map:"
 msgstr ""
 
-#: includes/register-community-posttype.php:27
+#: includes/register-community-posttype.php:36
 msgctxt "post type"
 msgid "Alle community's"
 msgstr ""
 
-#: includes/register-community-posttype.php:28
+#: includes/register-community-posttype.php:37
 msgctxt "post type"
 msgid "Community toevoegen"
 msgstr ""
 
-#: includes/register-community-posttype.php:29
+#: includes/register-community-posttype.php:38
 msgctxt "post type"
 msgid "Toevoegen"
 msgstr ""
 
-#: includes/register-community-posttype.php:30
+#: includes/register-community-posttype.php:39
 msgctxt "post type"
 msgid "Nieuw community"
 msgstr ""
 
-#: includes/register-community-posttype.php:31
+#: includes/register-community-posttype.php:40
 msgctxt "post type"
 msgid "Bewerk community"
 msgstr ""
 
-#: includes/register-community-posttype.php:32
+#: includes/register-community-posttype.php:41
 msgctxt "post type"
 msgid "Update community"
 msgstr ""
 
-#: includes/register-community-posttype.php:33
+#: includes/register-community-posttype.php:42
 msgctxt "post type"
 msgid "Bekijk community"
 msgstr ""
 
-#: includes/register-community-posttype.php:34
+#: includes/register-community-posttype.php:43
 msgctxt "post type"
 msgid "Bekijk community's"
 msgstr ""
 
-#: includes/register-community-posttype.php:35
+#: includes/register-community-posttype.php:44
 msgctxt "post type"
 msgid "Zoek community"
 msgstr ""
 
-#: includes/register-community-posttype.php:36
+#: includes/register-community-posttype.php:45
 msgctxt "post type"
 msgid "Not found"
 msgstr ""
 
-#: includes/register-community-posttype.php:37
+#: includes/register-community-posttype.php:46
 msgctxt "post type"
 msgid "Not found in Trash"
 msgstr ""
 
-#: includes/register-community-posttype.php:38
+#: includes/register-community-posttype.php:47
 msgctxt "post type"
 msgid "Featured Image"
 msgstr ""
 
-#: includes/register-community-posttype.php:39
+#: includes/register-community-posttype.php:48
 msgctxt "post type"
 msgid "Set featured image"
 msgstr ""
 
-#: includes/register-community-posttype.php:40
+#: includes/register-community-posttype.php:49
 msgctxt "post type"
 msgid "Remove featured image"
 msgstr ""
 
-#: includes/register-community-posttype.php:41
+#: includes/register-community-posttype.php:50
 msgctxt "post type"
 msgid "Use as featured image"
 msgstr ""
 
-#: includes/register-community-posttype.php:42
+#: includes/register-community-posttype.php:51
 msgctxt "post type"
 msgid "Insert into Map"
 msgstr ""
 
-#: includes/register-community-posttype.php:43
+#: includes/register-community-posttype.php:52
 msgctxt "post type"
 msgid "Uploaded to this community"
 msgstr ""
 
-#: includes/register-community-posttype.php:44
+#: includes/register-community-posttype.php:53
 msgctxt "post type"
 msgid "Map list"
 msgstr ""
 
-#: includes/register-community-posttype.php:45
+#: includes/register-community-posttype.php:54
 msgctxt "post type"
 msgid "Maps list navigation"
 msgstr ""
 
-#: includes/register-community-posttype.php:46
+#: includes/register-community-posttype.php:55
 msgctxt "post type"
 msgid "Filter community list"
 msgstr ""
 
-#: includes/register-community-posttype.php:67
+#: includes/register-community-posttype.php:76
 msgctxt "taxonomy"
 msgid "Type community"
 msgstr ""
 
-#: includes/register-community-posttype.php:68
+#: includes/register-community-posttype.php:77
 msgctxt "taxonomy singular name"
 msgid "Communitytype"
 msgstr ""
 
-#: includes/register-community-posttype.php:69
+#: includes/register-community-posttype.php:78
 msgctxt "taxonomy"
 msgid "Search communitytype"
 msgstr ""
 
-#: includes/register-community-posttype.php:70
+#: includes/register-community-posttype.php:79
 msgctxt "taxonomy"
 msgid "All communitytypes"
 msgstr ""
 
-#: includes/register-community-posttype.php:71
+#: includes/register-community-posttype.php:80
 msgctxt "taxonomy"
 msgid "Parent communitytype"
 msgstr ""
 
-#: includes/register-community-posttype.php:72
+#: includes/register-community-posttype.php:81
 msgctxt "taxonomy"
 msgid "Parent communitytype:"
 msgstr ""
 
-#: includes/register-community-posttype.php:73
+#: includes/register-community-posttype.php:82
 msgctxt "taxonomy"
 msgid "Edit communitytype"
 msgstr ""
 
-#: includes/register-community-posttype.php:74
+#: includes/register-community-posttype.php:83
 msgctxt "taxonomy"
 msgid "Update communitytype"
 msgstr ""
 
-#: includes/register-community-posttype.php:75
+#: includes/register-community-posttype.php:84
 msgctxt "taxonomy"
 msgid "Add new communitytype"
 msgstr ""
 
-#: includes/register-community-posttype.php:76
+#: includes/register-community-posttype.php:85
 msgctxt "taxonomy"
 msgid "New communitytype name"
 msgstr ""
 
-#: includes/register-community-posttype.php:77
+#: includes/register-community-posttype.php:86
 msgctxt "taxonomy"
 msgid "Communitytype"
 msgstr ""
 
-#: includes/register-community-posttype.php:94
-msgctxt "taxonomy"
-msgid "Grootte community"
-msgstr ""
-
-#: includes/register-community-posttype.php:95
-msgctxt "taxonomy singular name"
-msgid "Communitygrootte"
-msgstr ""
-
-#: includes/register-community-posttype.php:96
-msgctxt "taxonomy"
-msgid "Search communitygrootte"
-msgstr ""
-
-#: includes/register-community-posttype.php:97
-msgctxt "taxonomy"
-msgid "All communitygroottes"
-msgstr ""
-
-#: includes/register-community-posttype.php:98
-msgctxt "taxonomy"
-msgid "Parent communitygrootte"
-msgstr ""
-
-#: includes/register-community-posttype.php:99
-msgctxt "taxonomy"
-msgid "Parent communitygrootte:"
-msgstr ""
-
-#: includes/register-community-posttype.php:100
-msgctxt "taxonomy"
-msgid "Edit communitygrootte"
-msgstr ""
-
-#: includes/register-community-posttype.php:101
-msgctxt "taxonomy"
-msgid "Update communitygrootte"
-msgstr ""
-
-#: includes/register-community-posttype.php:102
-msgctxt "taxonomy"
-msgid "Add new communitygrootte"
-msgstr ""
-
 #: includes/register-community-posttype.php:103
 msgctxt "taxonomy"
-msgid "New communitygrootte name"
+msgid "Community-onderwerpen"
 msgstr ""
 
 #: includes/register-community-posttype.php:104
+msgctxt "taxonomy singular name"
+msgid "Community onderwerp"
+msgstr ""
+
+#: includes/register-community-posttype.php:105
+msgctxt "taxonomy"
+msgid "Search onderwerpen"
+msgstr ""
+
+#: includes/register-community-posttype.php:106
+msgctxt "taxonomy"
+msgid "Alle onderwerpen"
+msgstr ""
+
+#: includes/register-community-posttype.php:107
+msgctxt "taxonomy"
+msgid "Parent onderwerp"
+msgstr ""
+
+#: includes/register-community-posttype.php:108
+msgctxt "taxonomy"
+msgid "Parent onderwerp:"
+msgstr ""
+
+#: includes/register-community-posttype.php:109
+msgctxt "taxonomy"
+msgid "Edit onderwerp"
+msgstr ""
+
+#: includes/register-community-posttype.php:110
+msgctxt "taxonomy"
+msgid "Update onderwerp"
+msgstr ""
+
+#: includes/register-community-posttype.php:111
+msgctxt "taxonomy"
+msgid "Add new onderwerp"
+msgstr ""
+
+#: includes/register-community-posttype.php:112
+msgctxt "taxonomy"
+msgid "New onderwerp name"
+msgstr ""
+
+#: includes/register-community-posttype.php:113
 msgctxt "taxonomy"
 msgid "Communitygrootte"
+msgstr ""
+
+#: templates/template-overview-communities.php:66
+msgctxt "header overview"
+msgid "Alle community's"
 msgstr ""
 
 #. Plugin Name of the plugin/theme
@@ -288,8 +320,4 @@ msgstr ""
 
 #. Author URI of the plugin/theme
 msgid "https://github.com/ICTU/ictuwp-plugin-community-posttype/"
-msgstr ""
-
-#. Template Name of the plugin/theme
-msgid "Template Thema's"
 msgstr ""

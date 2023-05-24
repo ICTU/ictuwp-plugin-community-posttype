@@ -11,7 +11,16 @@
 
 
 // ---------------------------------------------------------------------------------------------------
-$slug_of_posttype = DO_COMMUNITY_CPT;
+
+//$page_initatieven = get_theme_mod( 'customizer_community_pageid_overview' );
+// if ( $page_initatieven ) {
+// TODO zorg ervoor dat de slug van de pagina gebruikt wordt in de slug van de commmunity CPT
+//	$slug_of_posttype = get_permalink( $page_initatieven );
+//	$crumb            = str_replace( get_bloginfo( 'url' ) . '/', '', $slug_of_posttype );
+//	$slug_of_posttype = $crumb;
+// } else {
+	$slug_of_posttype = DO_COMMUNITY_CPT;
+// }
 
 $args = array(
 	'label'               => esc_html__( DO_COMMUNITY_CPT, 'wp-rijkshuisstijl' ),
@@ -53,7 +62,7 @@ $args = array(
 	'show_in_admin_bar'   => true,
 	'show_in_nav_menus'   => true,
 	'can_export'          => true,
-	'has_archive'         => true,
+	'has_archive'         => false,
 	'exclude_from_search' => false,
 	'publicly_queryable'  => true,
 	'rewrite'             => array( 'slug' => $slug_of_posttype ),
