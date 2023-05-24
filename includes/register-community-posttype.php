@@ -89,18 +89,18 @@ $args = array(
 register_taxonomy( DO_COMMUNITYTYPE_CT, array( DO_COMMUNITY_CPT ), $args );
 
 
-// Communitytype
+// Community-onderwerpen
 $labels = array(
-	'name'              => esc_html_x( 'Grootte community', 'taxonomy', 'wp-rijkshuisstijl' ),
-	'singular_name'     => esc_html_x( 'Communitygrootte', 'taxonomy singular name', 'wp-rijkshuisstijl' ),
-	'search_items'      => esc_html_x( 'Search communitygrootte', 'taxonomy', 'wp-rijkshuisstijl' ),
-	'all_items'         => esc_html_x( 'All communitygroottes', 'taxonomy', 'wp-rijkshuisstijl' ),
-	'parent_item'       => esc_html_x( 'Parent communitygrootte', 'taxonomy', 'wp-rijkshuisstijl' ),
-	'parent_item_colon' => esc_html_x( 'Parent communitygrootte:', 'taxonomy', 'wp-rijkshuisstijl' ),
-	'edit_item'         => esc_html_x( 'Edit communitygrootte', 'taxonomy', 'wp-rijkshuisstijl' ),
-	'update_item'       => esc_html_x( 'Update communitygrootte', 'taxonomy', 'wp-rijkshuisstijl' ),
-	'add_new_item'      => esc_html_x( 'Add new communitygrootte', 'taxonomy', 'wp-rijkshuisstijl' ),
-	'new_item_name'     => esc_html_x( 'New communitygrootte name', 'taxonomy', 'wp-rijkshuisstijl' ),
+	'name'              => esc_html_x( 'Community-onderwerpen', 'taxonomy', 'wp-rijkshuisstijl' ),
+	'singular_name'     => esc_html_x( 'Community onderwerp', 'taxonomy singular name', 'wp-rijkshuisstijl' ),
+	'search_items'      => esc_html_x( 'Search onderwerpen', 'taxonomy', 'wp-rijkshuisstijl' ),
+	'all_items'         => esc_html_x( 'Alle onderwerpen', 'taxonomy', 'wp-rijkshuisstijl' ),
+	'parent_item'       => esc_html_x( 'Parent onderwerp', 'taxonomy', 'wp-rijkshuisstijl' ),
+	'parent_item_colon' => esc_html_x( 'Parent onderwerp:', 'taxonomy', 'wp-rijkshuisstijl' ),
+	'edit_item'         => esc_html_x( 'Edit onderwerp', 'taxonomy', 'wp-rijkshuisstijl' ),
+	'update_item'       => esc_html_x( 'Update onderwerp', 'taxonomy', 'wp-rijkshuisstijl' ),
+	'add_new_item'      => esc_html_x( 'Add new onderwerp', 'taxonomy', 'wp-rijkshuisstijl' ),
+	'new_item_name'     => esc_html_x( 'New onderwerp name', 'taxonomy', 'wp-rijkshuisstijl' ),
 	'menu_name'         => esc_html_x( 'Communitygrootte', 'taxonomy', 'wp-rijkshuisstijl' ),
 );
 
@@ -114,22 +114,8 @@ $args = array(
 	'rewrite'           => array( 'slug' => DO_COMMUNITYTYPE_CT ),
 );
 
-register_taxonomy( DO_COMMUNITYSIZE_CT, array( DO_COMMUNITY_CPT ), $args );
+register_taxonomy( DO_COMMUNITYTOPICS_CT, array( DO_COMMUNITY_CPT ), $args );
 
 
 //========================================================================================================
-// Include to alter the dossier taxonomy on pages: use radiobuttons instead of checkboxes.
-if ( class_exists( 'Taxonomy_Single_Term' ) ) {
-
-	$custom_tax_mb = new Taxonomy_Single_Term( DO_COMMUNITYSIZE_CT, array( DO_COMMUNITY_CPT ) );
-	// Custom title for this metabox
-	$custom_tax_mb->set( 'metabox_title', esc_html_x( 'Grootte community', 'taxonomy', 'wp-rijkshuisstijl' ) );
-	// Will keep radio elements from indenting for child-terms.
-	$custom_tax_mb->set( 'indented', false );
-	// Allows adding of new terms from the metabox
-	$custom_tax_mb->set( 'allow_new_terms', true );
-	// Priority of the metabox placement.
-	$custom_tax_mb->set( 'priority', 'low' );
-
-}
 

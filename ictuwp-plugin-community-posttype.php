@@ -26,20 +26,20 @@ if ( ! defined( 'WPINC' ) ) {
 //========================================================================================================
 
 // Dutch slug for taxonomy
-$slug     = 'community';
-$slugtype = 'community-type';
-$slugsize = 'grootte-community';
+$slug       = 'community';
+$slugtype   = 'community-type';
+$slugtopics = 'onderwerpen-community';
 
 if ( get_bloginfo( 'language' ) !== 'nl-NL' ) {
 	// non Dutch slugs
-	$slug     = 'community';
-	$slugsize = 'community-size';
+	$slug       = 'community';
+	$slugtopics = 'topics-community';
 }
 
 
 define( 'DO_COMMUNITY_CPT', $slug );
 define( 'DO_COMMUNITYTYPE_CT', $slugtype );
-define( 'DO_COMMUNITYSIZE_CT', $slugsize );
+define( 'DO_COMMUNITYTOPICS_CT', $slugtopics );
 
 defined( 'DO_COMMUNITY_OVERVIEW_TEMPLATE' ) or define( 'DO_COMMUNITY_OVERVIEW_TEMPLATE', 'template-overview-communities.php' );
 defined( 'DO_COMMUNITY_DETAIL_TEMPLATE' ) or define( 'DO_COMMUNITY_DETAIL_TEMPLATE', 'template-community-detail.php' );
