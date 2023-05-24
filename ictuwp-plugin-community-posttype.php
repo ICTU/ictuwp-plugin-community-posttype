@@ -65,6 +65,8 @@ if ( ! class_exists( 'DO_COMMUNITY_CPT' ) ) :
 
 	class DO_COMMUNITY_CPT {
 
+		protected $template_overview_communities;
+
 		/** ----------------------------------------------------------------------------------------------------
 		 * Init
 		 */
@@ -78,6 +80,8 @@ if ( ! class_exists( 'DO_COMMUNITY_CPT' ) ) :
 		 * Constructor
 		 */
 		public function __construct() {
+
+			$this->template_overview_communities = 'template_overview_communities.php';
 
 			$this->fn_ictu_community_setup_actions();
 
@@ -98,6 +102,13 @@ if ( ! class_exists( 'DO_COMMUNITY_CPT' ) ) :
 			// filter the breadcrumbs
 //			add_filter( 'wpseo_breadcrumb_links', array( $this, 'fn_ictu_community_yoast_filter_breadcrumb' ) );
 
+			// add the page template to the templates list
+			add_filter( 'theme_page_templates', array( $this, 'fn_ictu_community_add_page_template' ) );
+
+			// provide the file location to the template
+			add_filter( 'template_include', array( $this, 'led_template_page_initiatieven' ) );
+
+
 		}
 
 		/** ----------------------------------------------------------------------------------------------------
@@ -108,6 +119,46 @@ if ( ! class_exists( 'DO_COMMUNITY_CPT' ) ) :
 		public function fn_ictu_community_register_posttypes() {
 
 			require_once plugin_dir_path( __FILE__ ) . 'includes/register-community-posttype.php';
+
+		}
+
+
+		/** ----------------------------------------------------------------------------------------------------
+		 * Do actually register the post types we need
+		 *
+		 * @return void
+		 */
+		public function fn_ictu_community_add_page_template( $post_templates ) {
+
+			$post_templates[ $this->template_overview_communities ] = _x( 'Overview communities', "naam template", 'wp-rijkshuisstijl' );
+
+			return $post_templates;
+
+		}
+
+		/** ----------------------------------------------------------------------------------------------------
+		 * Do actually register the post types we need
+		 *
+		 * @return void
+		 */
+		public function led_template_page_initiatieven( $archive_template ) {
+
+			global $post;
+
+			$page_template = get_post_meta( get_the_id(), '_wp_page_template', true );
+
+			if ( is_singular( CPT_INITIATIEF ) ) {
+//				// het is een single voor CPT = CPT_INITIATIEF
+//				$archive_template = dirname( __FILE__ ) . '/templates/single-initiatief.php';
+
+			} elseif ( 'template_overview_communities.php' == $page_template ) {
+
+				// het is een overzicht van community's
+				$archive_template = dirname( __FILE__ ) . '/templates/template-overview-communities.php';
+
+			}
+
+			return $archive_template;
 
 		}
 
@@ -253,6 +304,3 @@ function fn_ictu_community_add_templates() {
 }
 
 //========================================================================================================
-
-
-
