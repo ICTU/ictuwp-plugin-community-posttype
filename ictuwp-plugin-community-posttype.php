@@ -26,20 +26,23 @@ if ( ! defined( 'WPINC' ) ) {
 //========================================================================================================
 
 // Dutch slug for taxonomy
-$slug       = 'community';
-$slugtype   = 'community-type';
-$slugtopics = 'onderwerpen-community';
+$slug          = 'community';
+$slugtype      = 'community-type';
+$slugtopics    = 'onderwerpen-community';
+$slugaudiences = 'doelgroepen-community';
 
 if ( get_bloginfo( 'language' ) !== 'nl-NL' ) {
 	// non Dutch slugs
-	$slug       = 'community';
-	$slugtopics = 'topics-community';
+	$slug          = 'community';
+	$slugtopics    = 'topics-community';
+	$slugaudiences = 'audience-community';
 }
 
 
 define( 'DO_COMMUNITY_CPT', $slug );
 define( 'DO_COMMUNITYTYPE_CT', $slugtype );
 define( 'DO_COMMUNITYTOPICS_CT', $slugtopics );
+define( 'DO_COMMUNITYAUDIENCE_CT', $slugaudiences );
 
 defined( 'DO_COMMUNITY_OVERVIEW_TEMPLATE' ) or define( 'DO_COMMUNITY_OVERVIEW_TEMPLATE', 'template-overview-communities.php' );
 defined( 'DO_COMMUNITY_DETAIL_TEMPLATE' ) or define( 'DO_COMMUNITY_DETAIL_TEMPLATE', 'template-community-detail.php' );
@@ -383,7 +386,7 @@ function communitys_filter_breadcrumb( $crumb = '', $args = '' ) {
 
 	if ( ! (
 		is_singular( DO_COMMUNITY_CPT ) ||
-//		is_post_type_archive( DO_COMMUNITY_CPT ) ||
+		//		is_post_type_archive( DO_COMMUNITY_CPT ) ||
 		is_tax( DO_COMMUNITYTYPE_CT ) ||
 		is_tax( DO_COMMUNITYTOPICS_CT ) ) ) {
 		// niks doen we niet met een initiatief bezig zijn

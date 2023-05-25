@@ -9,8 +9,7 @@
  *
  * ----------------------------------------------------- */
 
-
-// ---------------------------------------------------------------------------------------------------
+//========================================================================================================
 
 //$page_initatieven = get_theme_mod( 'customizer_community_pageid_overview' );
 // if ( $page_initatieven ) {
@@ -71,6 +70,8 @@ $args = array(
 
 register_post_type( DO_COMMUNITY_CPT, $args );
 
+//========================================================================================================
+
 // Communitytype
 $labels = array(
 	'name'              => esc_html_x( 'Type community', 'taxonomy', 'wp-rijkshuisstijl' ),
@@ -83,7 +84,7 @@ $labels = array(
 	'update_item'       => esc_html_x( 'Update communitytype', 'taxonomy', 'wp-rijkshuisstijl' ),
 	'add_new_item'      => esc_html_x( 'Add new communitytype', 'taxonomy', 'wp-rijkshuisstijl' ),
 	'new_item_name'     => esc_html_x( 'New communitytype name', 'taxonomy', 'wp-rijkshuisstijl' ),
-	'menu_name'         => esc_html_x( 'Communitytype', 'taxonomy', 'wp-rijkshuisstijl' ),
+	'menu_name'         => esc_html_x( 'Types', 'taxonomy', 'wp-rijkshuisstijl' ),
 );
 
 $args = array(
@@ -97,11 +98,12 @@ $args = array(
 
 register_taxonomy( DO_COMMUNITYTYPE_CT, array( DO_COMMUNITY_CPT ), $args );
 
+//========================================================================================================
 
 // Community-onderwerpen
 $labels = array(
 	'name'              => esc_html_x( 'Community-onderwerpen', 'taxonomy', 'wp-rijkshuisstijl' ),
-	'singular_name'     => esc_html_x( 'Community onderwerp', 'taxonomy singular name', 'wp-rijkshuisstijl' ),
+	'singular_name'     => esc_html_x( 'Onderwerp', 'taxonomy singular name', 'wp-rijkshuisstijl' ),
 	'search_items'      => esc_html_x( 'Search onderwerpen', 'taxonomy', 'wp-rijkshuisstijl' ),
 	'all_items'         => esc_html_x( 'Alle onderwerpen', 'taxonomy', 'wp-rijkshuisstijl' ),
 	'parent_item'       => esc_html_x( 'Parent onderwerp', 'taxonomy', 'wp-rijkshuisstijl' ),
@@ -110,7 +112,7 @@ $labels = array(
 	'update_item'       => esc_html_x( 'Update onderwerp', 'taxonomy', 'wp-rijkshuisstijl' ),
 	'add_new_item'      => esc_html_x( 'Add new onderwerp', 'taxonomy', 'wp-rijkshuisstijl' ),
 	'new_item_name'     => esc_html_x( 'New onderwerp name', 'taxonomy', 'wp-rijkshuisstijl' ),
-	'menu_name'         => esc_html_x( 'Communitygrootte', 'taxonomy', 'wp-rijkshuisstijl' ),
+	'menu_name'         => esc_html_x( 'Onderwerpen', 'taxonomy', 'wp-rijkshuisstijl' ),
 );
 
 $args = array(
@@ -125,6 +127,34 @@ $args = array(
 
 register_taxonomy( DO_COMMUNITYTOPICS_CT, array( DO_COMMUNITY_CPT ), $args );
 
+//========================================================================================================
+
+// Community-doelgroepen
+$labels = array(
+	'name'              => esc_html_x( 'Community-doelgroepen', 'taxonomy', 'wp-rijkshuisstijl' ),
+	'singular_name'     => esc_html_x( 'Doelgroep', 'taxonomy singular name', 'wp-rijkshuisstijl' ),
+	'search_items'      => esc_html_x( 'Search doelgroepen', 'taxonomy', 'wp-rijkshuisstijl' ),
+	'all_items'         => esc_html_x( 'Alle doelgroepen', 'taxonomy', 'wp-rijkshuisstijl' ),
+	'parent_item'       => esc_html_x( 'Parent doelgroep', 'taxonomy', 'wp-rijkshuisstijl' ),
+	'parent_item_colon' => esc_html_x( 'Parent doelgroep:', 'taxonomy', 'wp-rijkshuisstijl' ),
+	'edit_item'         => esc_html_x( 'Edit doelgroep', 'taxonomy', 'wp-rijkshuisstijl' ),
+	'update_item'       => esc_html_x( 'Update doelgroep', 'taxonomy', 'wp-rijkshuisstijl' ),
+	'add_new_item'      => esc_html_x( 'Add new doelgroep', 'taxonomy', 'wp-rijkshuisstijl' ),
+	'new_item_name'     => esc_html_x( 'New doelgroep name', 'taxonomy', 'wp-rijkshuisstijl' ),
+	'menu_name'         => esc_html_x( 'Doelgroepen', 'taxonomy', 'wp-rijkshuisstijl' ),
+);
+
+$args = array(
+	'hierarchical'      => true,
+	'labels'            => $labels,
+	'show_ui'           => true,
+	'show_admin_column' => true,
+	'query_var'         => true,
+	'sort'              => false,
+	'rewrite'           => array( 'slug' => DO_COMMUNITYAUDIENCE_CT ),
+);
+
+register_taxonomy( DO_COMMUNITYAUDIENCE_CT, array( DO_COMMUNITY_CPT ), $args );
 
 //========================================================================================================
 

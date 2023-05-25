@@ -2,7 +2,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: ICTU / Digitale Overheid / Community\n"
-"POT-Creation-Date: 2023-05-24 22:41+0200\n"
+"POT-Creation-Date: 2023-05-25 16:32+0200\n"
 "PO-Revision-Date: 2023-05-17 15:30+0200\n"
 "Last-Translator: Paul van Buuren <poedit@wbvb.nl>\n"
 "Language-Team: Paul van Buuren <poedit@wbvb.nl>\n"
@@ -237,7 +237,7 @@ msgstr ""
 
 #: includes/register-community-posttype.php:86
 msgctxt "taxonomy"
-msgid "Communitytype"
+msgid "Types"
 msgstr ""
 
 #: includes/register-community-posttype.php:103
@@ -247,7 +247,7 @@ msgstr ""
 
 #: includes/register-community-posttype.php:104
 msgctxt "taxonomy singular name"
-msgid "Community onderwerp"
+msgid "Onderwerp"
 msgstr ""
 
 #: includes/register-community-posttype.php:105
@@ -292,10 +292,10 @@ msgstr ""
 
 #: includes/register-community-posttype.php:113
 msgctxt "taxonomy"
-msgid "Communitygrootte"
+msgid "Onderwerpen"
 msgstr ""
 
-#: templates/template-overview-communities.php:66
+#: templates/template-overview-communities.php:68
 msgctxt "header overview"
 msgid "Alle community's"
 msgstr ""
