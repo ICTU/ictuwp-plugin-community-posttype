@@ -148,6 +148,11 @@ if ( ! class_exists( 'DO_COMMUNITY_CPT' ) ) :
 
 			global $post;
 
+			if ( is_search() ) {
+				// do not overwrite search template
+				return $archive_template;
+			}
+
 			$page_template = get_post_meta( get_the_id(), '_wp_page_template', true );
 
 			if ( is_singular( DO_COMMUNITY_CPT ) ) {
@@ -382,30 +387,26 @@ function communitys_filter_breadcrumb( $crumb = '', $args = '' ) {
 
 	global $post;
 
-//	$object = get_post_type_object( CPT_PROJECT );
-
 	if ( ! (
 		is_singular( DO_COMMUNITY_CPT ) ||
-		//		is_post_type_archive( DO_COMMUNITY_CPT ) ||
 		is_tax( DO_COMMUNITYTYPE_CT ) ||
-		is_tax( DO_COMMUNITYTOPICS_CT ) ) ) {
-		// niks doen we niet met een initiatief bezig zijn
+		is_tax( DO_COMMUNITYTOPICS_CT ) ||
+		is_tax( DO_COMMUNITYAUDIENCE_CT ) ) ) {
+		// hier niks doen, omdat we niet met een initiatief bezig zijn
 		return $crumb;
-	}
-
-
-	// uit siteopties de pagina ophalen die het overzicht is van alle links
-	if ( is_singular( DO_COMMUNITY_CPT ) ||
-	     is_post_type_archive( DO_COMMUNITY_CPT )
-	) {
+	} else {
+		// uit siteopties de pagina ophalen die het overzicht is van alle links
 		$page_initatieven = get_theme_mod( 'customizer_community_pageid_overview' );
 	}
 
 	$currentitem = explode( '</span>', $crumb );
+	$termid      = null;
 	$parents     = array();
 	$return      = '';
 
-	if ( $page_initatieven ) {
+	if ( ! $page_initatieven ) {
+		return $crumb;
+	} else {
 
 		// haal de ancestors op voor deze pagina
 		$ancestors = get_post_ancestors( $page_initatieven );
@@ -431,59 +432,11 @@ function communitys_filter_breadcrumb( $crumb = '', $args = '' ) {
 				] );
 			}
 		}
-
-//	} else {
-//
-//		// er is geen pagina bekend waaronder de items getoond worden
-//		if ( is_singular( DO_COMMUNITY_CPT ) || is_singular( CPT_PROJECT ) ) {
-//			return $crumb;
-//		}
-//
-//		if ( is_post_type_archive( DO_COMMUNITY_CPT ) ||
-//		     is_tax( CT_INITIATIEFTYPE ) ||
-//		     is_tax( CT_PROVINCIE ) ) {
-//			$obj = get_post_type_object( DO_COMMUNITY_CPT );
-//
-//			if ( is_post_type_archive( DO_COMMUNITY_CPT ) ) {
-//
-//			} elseif ( is_post_type_archive( DO_COMMUNITY_CPT ) ) {
-//
-//				$parents[] = array(
-//					'text' => $obj->label,
-//				);
-//
-//			} elseif ( is_tax( CT_INITIATIEFTYPE ) || is_tax( CT_PROVINCIE ) ) {
-//				$parents[] = array(
-//					'url'  => get_post_type_archive_link( DO_COMMUNITY_CPT ),
-//					'text' => $obj->label,
-//				);
-//
-//			}
-//		} else {
-//			// geen archief voor DO_COMMUNITY_CPT of is_tax( CT_INITIATIEFTYPE / CT_PROVINCIE )
-//			$obj = get_post_type_object( CPT_PROJECT );
-//
-//			if ( is_post_type_archive( CPT_PROJECT ) ) {
-//
-//				$parents[] = array(
-//					'text' => $obj->label,
-//				);
-//
-//			} elseif ( is_tax( CT_PROJECTORGANISATIE ) ) {
-//				$parents[] = array(
-//					'url'  => get_post_type_archive_link( CPT_PROJECT ),
-//					'text' => $obj->label,
-//				);
-//
-//			}
-//
-//		}
-
 	}
 
 	foreach ( $parents as $link ) {
 		if ( isset( $link['url'] ) && isset( $link['text'] ) ) {
-			$return .= '<a href="' . $link['url'] . '">' . $link['text'] . '</a> ';
+			$return .= '<a href="' . $link['url'] . '" class="parent-link">' . $link['text'] . '</a> ';
 		} else {
 			$return .= $link['text'] . '  ';
 		}
@@ -494,6 +447,9 @@ function communitys_filter_breadcrumb( $crumb = '', $args = '' ) {
 	} elseif ( is_post_type_archive( DO_COMMUNITY_CPT ) ) {
 		//
 	} else {
+		$queried_object = get_queried_object();
+		$termid         = $queried_object->term_id;
+
 		if ( $termid ) {
 			$term   = get_term( $termid );
 			$return .= $term->name;
