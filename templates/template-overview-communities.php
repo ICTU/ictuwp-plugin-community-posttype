@@ -1,18 +1,18 @@
 <?php
 
 if ( function_exists( 'genesis' ) ) {
-
 	// Genesis wordt gebruikt als framework
-	// dit geldt voor o.m. het theme voor Digitale Overheid
 
-	// in de breadcrumb zetten we de link naar de algemene kaart
-//	add_filter( 'genesis_single_crumb', 'projecten_initiatieven_filter_breadcrumb', 10, 2 );
-//	add_filter( 'genesis_page_crumb', 'projecten_initiatieven_filter_breadcrumb', 10, 2 );
-//	add_filter( 'genesis_archive_crumb', 'projecten_initiatieven_filter_breadcrumb', 10, 2 );
+	//* Force full-width-content layout
+	add_filter( 'genesis_pre_get_option_site_layout', '__genesis_return_full_width_content' );
 
 
-	add_action( 'genesis_entry_content', 'rhswp_show_dossiers_by_alphabet', 17 );
+//	add_action( 'genesis_entry_content', 'community_add_communities_grid', 17 );
 
+	add_action( 'genesis_entry_footer', 'community_add_communities_grid', 17 );
+
+
+	add_filter( 'body_class', 'community_remove_body_classes' );
 
 	// make it so
 	genesis();
@@ -27,7 +27,7 @@ if ( function_exists( 'genesis' ) ) {
 	<div id="primary" class="content-area">
 		<div id="content" class="clearfix">
 
-			<?php echo rhswp_show_dossiers_by_alphabet() ?>
+			<?php echo community_add_communities_grid() ?>
 
 		</div><!-- #content -->
 	</div><!-- #primary -->
@@ -43,7 +43,7 @@ if ( function_exists( 'genesis' ) ) {
 
 //========================================================================================================
 
-function rhswp_show_dossiers_by_alphabet( $doreturn = false ) {
+function community_add_communities_grid( $doreturn = false ) {
 
 	global $post;
 
@@ -60,13 +60,16 @@ function rhswp_show_dossiers_by_alphabet( $doreturn = false ) {
 	$contentblockpostscount->query( $argscount );
 	$headerlevel = 'h3';
 
-	$return = '';
+	$return              = '';
+	$community_types     = '';
+	$community_topics    = '';
+	$community_audiences = '';
 
 	if ( $contentblockpostscount->have_posts() ) {
 
 
 		$return      .= '<h2>' . _x( 'Alle community\'s', 'header overview', 'wp-rijkshuisstijl' ) . '</h2>';
-		$return      .= '<div class="grid archive-custom-loop columncount-2">';
+		$return      .= '<div class="grid archive-custom-loop columncount-3">';
 		$postcounter = 0;
 
 		while ( $contentblockpostscount->have_posts() ) : $contentblockpostscount->the_post();
@@ -75,7 +78,7 @@ function rhswp_show_dossiers_by_alphabet( $doreturn = false ) {
 			$current_post_id = isset( $post->ID ) ? $post->ID : 0;
 			$args2           = array(
 				'ID'          => $current_post_id,
-				'itemclass'   => 'griditem griditem--post colspan-1',
+				'itemclass'   => 'griditem griditem--community colspan-1',
 				'type'        => 'posts_normal',
 				'headerlevel' => $headerlevel,
 			);
@@ -94,6 +97,16 @@ function rhswp_show_dossiers_by_alphabet( $doreturn = false ) {
 	wp_reset_query();
 	wp_reset_postdata();
 
+	$community_types     = community_show_taxonomy_list( DO_COMMUNITYTYPE_CT, __( 'Types', 'taxonomie-lijst', 'wp-rijkshuisstijl' ), false, get_queried_object_id() );
+	$community_topics    = community_show_taxonomy_list( DO_COMMUNITYTOPICS_CT, __( 'Onderwerpen', 'taxonomie-lijst', 'wp-rijkshuisstijl' ), false, get_queried_object_id() );
+	$community_audiences = community_show_taxonomy_list( DO_COMMUNITYAUDIENCE_CT, __( 'Doelgroepen', 'taxonomie-lijst', 'wp-rijkshuisstijl' ), false, get_queried_object_id() );
+
+	if ( $community_types || $community_topics || $community_audiences ) {
+		$return .= '<div class="taxonomylist grid">';
+		$return .= $community_types . $community_topics . $community_audiences;
+		$return .= '</div>';
+	}
+
 	if ( $doreturn ) {
 		return $return;
 	} else {
@@ -103,4 +116,75 @@ function rhswp_show_dossiers_by_alphabet( $doreturn = false ) {
 
 //========================================================================================================
 
+function community_show_taxonomy_list( $taxonomy = 'category', $title = '', $doecho = false, $exclude = '', $hide_empty = true ) {
 
+	$return = '';
+
+	if ( taxonomy_exists( $taxonomy ) ) {
+
+		$args = array(
+			'taxonomy'           => $taxonomy,
+			'orderby'            => 'name',
+			'order'              => 'ASC',
+			'hide_empty'         => $hide_empty,
+			'ignore_custom_sort' => true,
+			'echo'               => 0,
+			'hierarchical'       => true,
+			'title_li'           => '',
+		);
+
+		if ( $exclude ) {
+			// do not include this term in the list
+			$args['exclude']    = $exclude;
+			$args['hide_empty'] = true;
+		}
+
+		$terms = get_terms( $args );
+
+		if ( ! empty( $terms ) && ! is_wp_error( $terms ) ) {
+
+			$return .= '<section class="taxonomy ' . $taxonomy . ' griditem griditem--post colspan-1"">';
+			if ( $title ) {
+				$return .= '<h2>' . $title . '</h2>';
+			}
+
+			$return .= '<ul>';
+			foreach ( $terms as $term ) {
+				$return .= '<li><a href="' . get_term_link( $term ) . '">' . $term->name . '</a>';
+				if ( $term->description ) {
+					$return .= '<br>' . $term->description;
+				}
+				$return .= '</li>';
+			}
+			$return .= '</ul>';
+			$return .= '</section>';
+
+		}
+	}
+
+	if ( $doecho ) {
+		echo $return;
+	} else {
+		return $return;
+	}
+
+}
+
+//========================================================================================================
+
+/*
+ * Remove 'page' from body classes
+ */
+function community_remove_body_classes( $classes ) {
+
+	$delete_value = 'page';
+
+	if ( ( $key = array_search( $delete_value, $classes ) ) !== false ) {
+		unset( $classes[ $key ] );
+	}
+
+	return $classes;
+
+}
+
+//========================================================================================================
