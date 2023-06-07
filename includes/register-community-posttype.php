@@ -18,7 +18,7 @@
 //	$crumb            = str_replace( get_bloginfo( 'url' ) . '/', '', $slug_of_posttype );
 //	$slug_of_posttype = $crumb;
 // } else {
-	$slug_of_posttype = DO_COMMUNITY_CPT;
+$slug_of_posttype = DO_COMMUNITY_CPT;
 // }
 
 $args = array(
@@ -81,6 +81,7 @@ $labels = array(
 	'parent_item'       => esc_html_x( 'Parent communitytype', 'taxonomy', 'wp-rijkshuisstijl' ),
 	'parent_item_colon' => esc_html_x( 'Parent communitytype:', 'taxonomy', 'wp-rijkshuisstijl' ),
 	'edit_item'         => esc_html_x( 'Edit communitytype', 'taxonomy', 'wp-rijkshuisstijl' ),
+	'view_item'         => esc_html_x( 'Bekijk communitytype', 'taxonomy', 'wp-rijkshuisstijl' ),
 	'update_item'       => esc_html_x( 'Update communitytype', 'taxonomy', 'wp-rijkshuisstijl' ),
 	'add_new_item'      => esc_html_x( 'Add new communitytype', 'taxonomy', 'wp-rijkshuisstijl' ),
 	'new_item_name'     => esc_html_x( 'New communitytype name', 'taxonomy', 'wp-rijkshuisstijl' ),
@@ -108,6 +109,7 @@ $labels = array(
 	'all_items'         => esc_html_x( 'Alle onderwerpen', 'taxonomy', 'wp-rijkshuisstijl' ),
 	'parent_item'       => esc_html_x( 'Parent onderwerp', 'taxonomy', 'wp-rijkshuisstijl' ),
 	'parent_item_colon' => esc_html_x( 'Parent onderwerp:', 'taxonomy', 'wp-rijkshuisstijl' ),
+	'view_item'         => esc_html_x( 'Bekijk onderwerp', 'taxonomy', 'wp-rijkshuisstijl' ),
 	'edit_item'         => esc_html_x( 'Edit onderwerp', 'taxonomy', 'wp-rijkshuisstijl' ),
 	'update_item'       => esc_html_x( 'Update onderwerp', 'taxonomy', 'wp-rijkshuisstijl' ),
 	'add_new_item'      => esc_html_x( 'Add new onderwerp', 'taxonomy', 'wp-rijkshuisstijl' ),
@@ -122,7 +124,7 @@ $args = array(
 	'show_admin_column' => true,
 	'query_var'         => true,
 	'sort'              => false,
-	'rewrite'           => array( 'slug' => DO_COMMUNITYTYPE_CT ),
+	'rewrite'           => array( 'slug' => DO_COMMUNITYTOPICS_CT ),
 );
 
 register_taxonomy( DO_COMMUNITYTOPICS_CT, array( DO_COMMUNITY_CPT ), $args );
@@ -138,6 +140,7 @@ $labels = array(
 	'parent_item'       => esc_html_x( 'Parent doelgroep', 'taxonomy', 'wp-rijkshuisstijl' ),
 	'parent_item_colon' => esc_html_x( 'Parent doelgroep:', 'taxonomy', 'wp-rijkshuisstijl' ),
 	'edit_item'         => esc_html_x( 'Edit doelgroep', 'taxonomy', 'wp-rijkshuisstijl' ),
+	'view_item'         => esc_html_x( 'Bekijk doelgroep', 'taxonomy', 'wp-rijkshuisstijl' ),
 	'update_item'       => esc_html_x( 'Update doelgroep', 'taxonomy', 'wp-rijkshuisstijl' ),
 	'add_new_item'      => esc_html_x( 'Add new doelgroep', 'taxonomy', 'wp-rijkshuisstijl' ),
 	'new_item_name'     => esc_html_x( 'New doelgroep name', 'taxonomy', 'wp-rijkshuisstijl' ),
@@ -158,4 +161,3 @@ register_taxonomy( DO_COMMUNITYAUDIENCE_CT, array( DO_COMMUNITY_CPT ), $args );
 
 //========================================================================================================
 
-// test
