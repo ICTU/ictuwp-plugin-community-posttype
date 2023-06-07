@@ -161,3 +161,9 @@ register_taxonomy( DO_COMMUNITYAUDIENCE_CT, array( DO_COMMUNITY_CPT ), $args );
 
 //========================================================================================================
 
+// If the dossier taxonomy exists, make it available to DO_COMMUNITY_CPT as well
+if ( defined( 'RHSWP_CT_DOSSIER' ) && taxonomy_exists( RHSWP_CT_DOSSIER ) ) {
+
+	register_taxonomy_for_object_type( RHSWP_CT_DOSSIER, DO_COMMUNITY_CPT );
+
+}
