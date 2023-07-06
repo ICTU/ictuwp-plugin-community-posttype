@@ -47,6 +47,7 @@ function community_add_communities_grid( $doreturn = false ) {
 
 	global $post;
 
+	$filtered  = false;
 	$argscount = array(
 		'post_type'      => DO_COMMUNITY_CPT,
 		'post_status'    => 'publish',
@@ -55,26 +56,122 @@ function community_add_communities_grid( $doreturn = false ) {
 		'posts_per_page' => - 1,
 	);
 
+	$filter_community_types     = ictuwp_communityfilter_get_filter_items( DO_COMMUNITYTYPE_CT, __( 'Types', 'taxonomie-lijst', 'wp-rijkshuisstijl' ) );
+	$filter_community_topics    = ictuwp_communityfilter_get_filter_items( DO_COMMUNITYTOPICS_CT, __( 'Onderwerpen', 'taxonomie-lijst', 'wp-rijkshuisstijl' ) );
+	$filter_community_audiences = ictuwp_communityfilter_get_filter_items( DO_COMMUNITYAUDIENCE_CT, __( 'Doelgroepen', 'taxonomie-lijst', 'wp-rijkshuisstijl' ) );
+
+	if ( $filter_community_types || $filter_community_topics || $filter_community_audiences ) {
+		$argscount['tax_query']             = array();
+		$argscount['tax_query']['relation'] = 'AND';
+		$filtered                           = true;
+
+		if ( isset( $filter_community_types['ids'] ) ) {
+			$argscount['tax_query'][] = array(
+				'taxonomy' => DO_COMMUNITYTYPE_CT,
+				'field'    => 'term_id',
+				'terms'    => $filter_community_types['ids'],
+			);
+		}
+		if ( isset( $filter_community_topics['ids'] ) ) {
+			$argscount['tax_query'][] = array(
+				'taxonomy' => DO_COMMUNITYTOPICS_CT,
+				'field'    => 'term_id',
+				'terms'    => $filter_community_topics['ids'],
+			);
+		}
+		if ( isset( $filter_community_audiences['ids'] ) ) {
+			$argscount['tax_query'][] = array(
+				'taxonomy' => DO_COMMUNITYAUDIENCE_CT,
+				'field'    => 'term_id',
+				'terms'    => $filter_community_audiences['ids'],
+			);
+		}
+	}
+
 	// Assign predefined $args to your query
-	$contentblockpostscount = new WP_query();
-	$contentblockpostscount->query( $argscount );
-	$headerlevel = 'h3';
+	$community_list = new WP_query();
+	$community_list->query( $argscount );
+	$headerlevel                     = 'h3';
+	$title                           = _x( 'Alle community\'s', 'header overview', 'wp-rijkshuisstijl' );
+	$filter_explication              = '';
+	$explication_community_types     = '';
+	$explication_community_topics    = '';
+	$explication_community_audiences = '';
+	$return                          = '';
+	$community_types                 = '';
+	$community_topics                = '';
+	$community_audiences             = '';
+	$columncount                     = 3;
 
-	$return              = '';
-	$community_types     = '';
-	$community_topics    = '';
-	$community_audiences = '';
+	if ( $community_list->have_posts() ) {
 
-	if ( $contentblockpostscount->have_posts() ) {
+		if ( $community_list->post_count < 3 ) {
+			$columncount = $community_list->post_count;
+		}
 
-		$columncount         = 3;
+		if ( $filtered ) {
+			$title = sprintf( _n( '%s community gevonden', '%s community\'s gevonden', $community_list->post_count, 'wp-rijkshuisstijl' ), number_format_i18n( $community_list->post_count ) );
 
+			if ( isset( $filter_community_types['ids'] ) ) {
+				if ( count( $filter_community_types['labels'] ) > 1 ) {
+					// more than 1 community_types selected
+					$explication_community_types = 'types: ' . implode( ' of ', $filter_community_types['labels'] );
+				} else {
+					$explication_community_types = 'type: ' . implode( ' of ', $filter_community_types['labels'] );
+				}
+			}
+			if ( isset( $filter_community_topics['ids'] ) ) {
+				if ( count( $filter_community_topics['labels'] ) > 1 ) {
+					// more than 1 topic selected
+					$explication_community_topics = 'onderwerpen: ' . implode( ' of ', $filter_community_topics['labels'] );
+				} else {
+					$explication_community_topics = 'onderwerp: ' . implode( ' of ', $filter_community_topics['labels'] );
+				}
+			}
+			if ( isset( $filter_community_audiences['ids'] ) ) {
+//				$explication_community_audiences = implode( ', ', $filter_community_audiences['labels'] );
+				if ( count( $filter_community_audiences['labels'] ) > 1 ) {
+					// more than 1 topic selected
+					$explication_community_topics = 'doelgroepen: ' . implode( ' of ', $filter_community_audiences['labels'] );
+				} else {
+					$explication_community_topics = 'doelgroep: ' . implode( ' of ', $filter_community_audiences['labels'] );
+				}
 
-		$return      .= '<h2>' . _x( 'Alle community\'s', 'header overview', 'wp-rijkshuisstijl' ) . '</h2>';
+			}
+
+			if ( $explication_community_types || $explication_community_topics || $explication_community_audiences ) {
+				$filter_explication = 'Gefilterd op ';
+				if ( $explication_community_types ) {
+					$filter_explication .= ' ' . $explication_community_types;
+				}
+				if ( $explication_community_topics ) {
+					if ( $explication_community_types ) {
+						$filter_explication .= ', gecombineerd met ' . $explication_community_topics;
+					} else {
+						$filter_explication .= ' ' . $explication_community_topics;
+					}
+				}
+				if ( $explication_community_audiences ) {
+					if ( $explication_community_topics || $explication_community_types ) {
+						$filter_explication .= ', gecombineerd met ' . $explication_community_audiences;
+					} else {
+						$filter_explication .= ' ' . $explication_community_audiences;
+					}
+				}
+
+			}
+
+		}
+
+		if ( $filter_explication ) {
+			$return .= '<p>' . $filter_explication . '.</p>';
+		}
+
+		$return      .= '<h2>' . $title . '</h2>';
 		$return      .= '<div class="grid archive-custom-loop columncount-' . $columncount . '" id="communities_list">';
 		$postcounter = 0;
 
-		while ( $contentblockpostscount->have_posts() ) : $contentblockpostscount->the_post();
+		while ( $community_list->have_posts() ) : $community_list->the_post();
 
 			$postcounter ++;
 			$current_post_id = isset( $post->ID ) ? $post->ID : 0;
@@ -99,7 +196,7 @@ function community_add_communities_grid( $doreturn = false ) {
 		}
 
 	} else {
-		$return .= 'geen initiatieven';
+		$return .= _x( 'Geen community\'s gevonden', 'no results', 'wp-rijkshuisstijl' );
 	}
 
 	wp_reset_query();
@@ -112,11 +209,12 @@ function community_add_communities_grid( $doreturn = false ) {
 	}
 }
 
+
 //========================================================================================================
 
-function ictuwp_communityfilter_list( $taxonomy = 'category', $title = '', $doecho = false, $exclude = '', $hide_empty = true ) {
+function ictuwp_communityfilter_get_filter_items( $taxonomy = 'category', $title = '' ) {
 
-	$return = '';
+	$return = array();
 
 	if ( taxonomy_exists( $taxonomy ) ) {
 
@@ -124,43 +222,37 @@ function ictuwp_communityfilter_list( $taxonomy = 'category', $title = '', $doec
 			'taxonomy'           => $taxonomy,
 			'orderby'            => 'name',
 			'order'              => 'ASC',
-			'hide_empty'         => $hide_empty,
+			'hide_empty'         => true,
 			'ignore_custom_sort' => true,
 			'echo'               => 0,
 			'hierarchical'       => true,
 			'title_li'           => '',
 		);
 
-		if ( $exclude ) {
-			// do not include this term in the list
-			$args['exclude']    = $exclude;
-			$args['hide_empty'] = true;
-		}
-
 		$terms = get_terms( $args );
 
 		if ( ! empty( $terms ) && ! is_wp_error( $terms ) ) {
 
-			$return .= '<fieldset class="taxonomy ' . $taxonomy . '">';
-			if ( $title ) {
-				$return .= '<legend>' . $title . '</legend>';
-			}
-
 			foreach ( $terms as $term ) {
-				$id = $term->slug . '_' . $term->term_id;
-				$checked = ' checked';
-				$return .= '<label for="' . $id . '"><input id="' . $id . '" type="checkbox" name="' . $term->slug . '" value="' . $term->term_id . '"' . $checked . '>' . $term->name . '</label>';
+				$check_id    = $term->slug . '_' . $term->term_id;
+				$check_value = isset( $_GET[ $check_id ] ) ? (int) $_GET[ $check_id ] : 0;
+
+				if ( $check_value === $term->term_id ) {
+					if ( $taxonomy === DO_COMMUNITYTOPICS_CT ) {
+						// no lower case for this tax
+						$return['labels'][] = $term->name;
+					} else {
+						// lower case for all else
+						$return['labels'][] = strtolower( $term->name );
+					}
+					$return['ids'][] = $term->term_id;
+				}
 			}
-			$return .= '</fieldset>';
 
 		}
 	}
 
-	if ( $doecho ) {
-		echo $return;
-	} else {
-		return $return;
-	}
+	return $return;
 
 }
 
