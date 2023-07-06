@@ -4,7 +4,7 @@ if ( function_exists( 'genesis' ) ) {
 	// Genesis wordt gebruikt als framework
 
 	//* Force full-width-content layout
-	add_filter( 'genesis_pre_get_option_site_layout', '__genesis_return_full_width_content' );
+///	add_filter( 'genesis_pre_get_option_site_layout', '__genesis_return_full_width_content' );
 
 
 //	add_action( 'genesis_entry_content', 'community_add_communities_grid', 17 );
@@ -67,9 +67,11 @@ function community_add_communities_grid( $doreturn = false ) {
 
 	if ( $contentblockpostscount->have_posts() ) {
 
+		$columncount         = 3;
+
 
 		$return      .= '<h2>' . _x( 'Alle community\'s', 'header overview', 'wp-rijkshuisstijl' ) . '</h2>';
-		$return      .= '<div class="grid archive-custom-loop columncount-3">';
+		$return      .= '<div class="grid archive-custom-loop columncount-' . $columncount . '" id="communities_list">';
 		$postcounter = 0;
 
 		while ( $contentblockpostscount->have_posts() ) : $contentblockpostscount->the_post();
@@ -90,22 +92,18 @@ function community_add_communities_grid( $doreturn = false ) {
 
 		$return .= '</div>';
 
+		if ( $community_types || $community_topics || $community_audiences ) {
+			$return .= '<div class="taxonomylist grid" id="communities_filter">';
+			$return .= $community_types . $community_topics . $community_audiences;
+			$return .= '</div>';
+		}
+
 	} else {
 		$return .= 'geen initiatieven';
 	}
 
 	wp_reset_query();
 	wp_reset_postdata();
-
-	$community_types     = community_show_taxonomy_list( DO_COMMUNITYTYPE_CT, __( 'Types', 'taxonomie-lijst', 'wp-rijkshuisstijl' ), false, get_queried_object_id() );
-	$community_topics    = community_show_taxonomy_list( DO_COMMUNITYTOPICS_CT, __( 'Onderwerpen', 'taxonomie-lijst', 'wp-rijkshuisstijl' ), false, get_queried_object_id() );
-	$community_audiences = community_show_taxonomy_list( DO_COMMUNITYAUDIENCE_CT, __( 'Doelgroepen', 'taxonomie-lijst', 'wp-rijkshuisstijl' ), false, get_queried_object_id() );
-
-	if ( $community_types || $community_topics || $community_audiences ) {
-		$return .= '<div class="taxonomylist grid">';
-		$return .= $community_types . $community_topics . $community_audiences;
-		$return .= '</div>';
-	}
 
 	if ( $doreturn ) {
 		return $return;
@@ -116,7 +114,7 @@ function community_add_communities_grid( $doreturn = false ) {
 
 //========================================================================================================
 
-function community_show_taxonomy_list( $taxonomy = 'category', $title = '', $doecho = false, $exclude = '', $hide_empty = true ) {
+function ictuwp_communityfilter_list( $taxonomy = 'category', $title = '', $doecho = false, $exclude = '', $hide_empty = true ) {
 
 	$return = '';
 
@@ -143,21 +141,17 @@ function community_show_taxonomy_list( $taxonomy = 'category', $title = '', $doe
 
 		if ( ! empty( $terms ) && ! is_wp_error( $terms ) ) {
 
-			$return .= '<section class="taxonomy ' . $taxonomy . ' griditem griditem--post colspan-1"">';
+			$return .= '<fieldset class="taxonomy ' . $taxonomy . '">';
 			if ( $title ) {
-				$return .= '<h2>' . $title . '</h2>';
+				$return .= '<legend>' . $title . '</legend>';
 			}
 
-			$return .= '<ul>';
 			foreach ( $terms as $term ) {
-				$return .= '<li><a href="' . get_term_link( $term ) . '">' . $term->name . '</a>';
-				if ( $term->description ) {
-					$return .= '<br>' . $term->description;
-				}
-				$return .= '</li>';
+				$id = $term->slug . '_' . $term->term_id;
+				$checked = ' checked';
+				$return .= '<label for="' . $id . '"><input id="' . $id . '" type="checkbox" name="' . $term->slug . '" value="' . $term->term_id . '"' . $checked . '>' . $term->name . '</label>';
 			}
-			$return .= '</ul>';
-			$return .= '</section>';
+			$return .= '</fieldset>';
 
 		}
 	}
