@@ -50,6 +50,9 @@ defined( 'DO_COMMUNITY_DETAIL_TEMPLATE' ) or define( 'DO_COMMUNITY_DETAIL_TEMPLA
 //========================================================================================================
 add_action( 'plugins_loaded', array( 'DO_COMMUNITY_CPT', 'init' ), 10 );
 
+//========================================================================================================
+
+require_once plugin_dir_path( __FILE__ ) . 'includes/widget-filter.php';
 
 //========================================================================================================
 
@@ -110,6 +113,11 @@ if ( ! class_exists( 'DO_COMMUNITY_CPT' ) ) :
 
 			// provide the file location to the template
 			add_filter( 'template_include', array( $this, 'led_template_page_initiatieven' ) );
+
+
+			// Register widgets
+//			add_action( 'widgets_init', array( $this, 'fn_ictu_community_register_widgets' ), 20 );
+			add_action( 'widgets_init', 'ictuwp_communityfilter_load_widgets' );
 
 
 		}
@@ -464,5 +472,136 @@ function communitys_filter_breadcrumb( $crumb = '', $args = '' ) {
 
 }
 
+//========================================================================================================
+/**
+ * Show lists with this posts's links to taxonomies DO_COMMUNITYTYPE_CT, DO_COMMUNITYTOPICS_CT, DO_COMMUNITYAUDIENCE_CT
+ *
+ * @param $doreturn
+ *
+ *
+ * @return string|void
+ */
+
+function rhswp_community_single_terms( $doreturn = false, $post_id = 0 ) {
+
+	global $post;
+
+	$return              = '';
+	$values              = '';
+	if ( ! $post_id ) {
+		if ( get_the_id() ) {
+			$post_id = get_the_id();
+		} else {
+			return;
+		}
+	}
+	$community_topics    = get_the_terms( $post_id, DO_COMMUNITYTOPICS_CT );
+	$community_types     = get_the_terms( $post_id, DO_COMMUNITYTYPE_CT );
+	$community_audiences = get_the_terms( $post_id, DO_COMMUNITYAUDIENCE_CT );
+
+	// toon aan welk onderwerp deze community is gekoppeld
+	if ( $community_topics && ! is_wp_error( $community_topics ) ) :
+		$labels = '<dd>';
+
+		foreach ( $community_topics as $term ) {
+			$labels .= '<a href="' . get_term_link( $term->term_id ) . '">' . $term->name . '</a>';
+			if ( next( $community_topics ) ) {
+				$labels .= ', ';
+			}
+		}
+		$labels .= '</dd>';
+
+		if ( $labels ) {
+			$values .= '<dt>' . _n( 'Onderwerp community', 'Onderwerpen community', count( $community_topics ), 'wp-rijkshuisstijl' ) . '</dt>';
+			$values .= $labels;
+		}
+
+	endif;
+
+	// toon aan welk type deze community is gekoppeld
+	if ( $community_types && ! is_wp_error( $community_types ) ) :
+		$labels = '<dd>';
+
+		foreach ( $community_types as $term ) {
+			$labels .= '<a href="' . get_term_link( $term->term_id ) . '">' . $term->name . '</a>';
+			if ( next( $community_types ) ) {
+				$labels .= ', ';
+			}
+		}
+
+		$labels .= '</dd>';
+
+		if ( $labels ) {
+			$values .= '<dt>' . _n( 'Type community', 'Types community', count( $community_types ), 'wp-rijkshuisstijl' ) . '</dt>';
+			$values .= $labels;
+		}
+
+	endif;
+
+	// toon aan welk doelgroep deze community is gekoppeld
+	if ( $community_audiences && ! is_wp_error( $community_audiences ) ) :
+		$labels = '<dd>';
+
+		foreach ( $community_audiences as $term ) {
+			$labels .= '<a href="' . get_term_link( $term->term_id ) . '">' . $term->name . '</a>';
+			if ( next( $community_audiences ) ) {
+				$labels .= ', ';
+			}
+		}
+
+		$labels .= '</dd>';
+
+		if ( $labels ) {
+			$values .= '<dt>' . _n( 'Doelgroep', 'Doelgroepen', count( $community_audiences ), 'wp-rijkshuisstijl' ) . '</dt>';
+			$values .= $labels;
+		}
+
+	endif;
+
+
+	if ( has_term( '', RHSWP_CT_DOSSIER, $post->ID ) ) {
+		// get dossier terms and their links
+
+		$terms = get_the_terms( $post->ID, RHSWP_CT_DOSSIER );
+		if ( $terms && ! is_wp_error( $terms ) ) {
+
+			$labels = '<dd>';
+
+			foreach ( $terms as $term ) {
+				$labels .= '<a href="';
+				if ( function_exists( 'rhswp_get_pagelink_for_dossier' ) ) {
+					$labels .= rhswp_get_pagelink_for_dossier( $term );
+				} else {
+					$labels .= get_term_link( $term->term_id, RHSWP_CT_DOSSIER );
+				}
+				$labels .= '">' . $term->name . '</a>';
+
+				if ( next( $terms ) ) {
+					$labels .= ', ';
+				}
+			}
+
+			$labels .= '</dd>';
+
+			if ( $labels ) {
+				$values .= '<dt>' . _x( 'Hoort bij', 'label dossiers bij een single community', 'wp-rijkshuisstijl' ) . '</dt>';
+				$values .= $labels;
+			}
+		}
+	}
+
+	if ( $values ) {
+		$return = '<dl class="community">';
+		$return .= $values;
+		$return .= '</dl>';
+	}
+
+	if ( $doreturn ) {
+		return $return;
+	} else {
+		echo $return;
+	}
+}
 
 //========================================================================================================
+
