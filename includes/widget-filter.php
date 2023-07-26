@@ -80,7 +80,10 @@ class ICTUWP_community_filter extends WP_Widget {
 			if ( ! empty( $description ) ) {
 				echo '<p>' . $description . '</p>';
 			}
-			echo $community_types . $community_topics . $community_audiences;
+			echo $community_topics;
+			echo $community_types;
+			echo $community_audiences;
+
 			echo '<div class="submit-buttons">';
 			echo '<button type="submit">' . __( 'Filter', 'taxonomie-lijst', 'wp-rijkshuisstijl' ) . '</button>';
 			echo '<a href="' . get_permalink( $thepage ) . '">' . __( 'Filter weghalen', 'taxonomie-lijst', 'wp-rijkshuisstijl' ) . '</a>';
