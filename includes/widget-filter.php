@@ -1,19 +1,14 @@
 <?php
 /*
-Plugin Name: BE Subpages Widget
-Plugin URI: http://www.billerickson.net
-Description: Lists subpages of the current section
-Version: 1.6.1
-Author: Bill Erickson
-Author URI: http://www.billerickson.net
-License: GPLv2
+Widget Name: Widget for Community Filter
+URI: https://github.com/ICTU/ictuwp-plugin-community-posttype
+Description: Add form with filter actions for community overview page
 */
 
 /**
  * Register Widget
  *
  */
-
 function ictuwp_communityfilter_load_widgets() {
 
 	register_widget( 'ICTUWP_community_filter' );
@@ -22,11 +17,8 @@ function ictuwp_communityfilter_load_widgets() {
 
 
 /**
- * Subpages Widget Class
+ * Community Filter Class
  *
- * @author       Bill Erickson <bill@billerickson.net>
- * @copyright    Copyright (c) 2011, Bill Erickson
- * @license      http://opensource.org/licenses/gpl-2.0.php GNU Public License
  */
 class ICTUWP_community_filter extends WP_Widget {
 
@@ -41,7 +33,7 @@ class ICTUWP_community_filter extends WP_Widget {
 			'classname'   => 'widget_community_filter',
 			'description' => __( "Widget community filter", 'wp-rijkshuisstijl' )
 		);
-		parent::__construct( 'widget-community_filter', __( '(DO) filter voor community pagina', 'wp-rijkshuisstijl' ), $widget_ops );
+		parent::__construct( 'widget-community_filter', _x( '(DO) community filter widget', 'widget name', 'wp-rijkshuisstijl' ), $widget_ops );
 
 	}
 

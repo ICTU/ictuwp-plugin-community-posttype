@@ -54,6 +54,8 @@ add_action( 'plugins_loaded', array( 'DO_COMMUNITY_CPT', 'init' ), 10 );
 
 require_once plugin_dir_path( __FILE__ ) . 'includes/widget-filter.php';
 
+require_once plugin_dir_path( __FILE__ ) . 'includes/widget-last-added.php';
+
 //========================================================================================================
 
 /**
@@ -116,8 +118,8 @@ if ( ! class_exists( 'DO_COMMUNITY_CPT' ) ) :
 
 
 			// Register widgets
-//			add_action( 'widgets_init', array( $this, 'fn_ictu_community_register_widgets' ), 20 );
 			add_action( 'widgets_init', 'ictuwp_communityfilter_load_widgets' );
+			add_action( 'widgets_init', 'ictuwp_load_widget_last_added_communities' );
 
 
 		}
