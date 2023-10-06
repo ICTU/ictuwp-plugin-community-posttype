@@ -4,15 +4,25 @@ if ( function_exists( 'genesis' ) ) {
 	// Genesis wordt gebruikt als framework
 
 	//* Force full-width-content layout
-///	add_filter( 'genesis_pre_get_option_site_layout', '__genesis_return_full_width_content' );
+	add_filter( 'genesis_pre_get_option_site_layout', '__genesis_return_full_width_content' );
 
 
-//	add_action( 'genesis_entry_content', 'community_add_communities_grid', 17 );
+	// append grid to entry_content
+	add_action( 'genesis_entry_content', 'community_add_communities_grid', 20 );
 
-	add_action( 'genesis_entry_footer', 'community_add_communities_grid', 17 );
-
-
+	// remove 'page' class from body
 	add_filter( 'body_class', 'community_remove_body_classes' );
+
+	// append content blocks
+	if ( function_exists( 'rhswp_extra_contentblokken_checker' ) && function_exists( 'rhswp_write_extra_contentblokken' ) ) {
+
+		if ( rhswp_extra_contentblokken_checker() ) {
+			add_action( 'genesis_entry_content', 'rhswp_write_extra_contentblokken', 30 );
+		}
+	}
+
+	add_action( 'genesis_entry_content', 'community_append_widget_sidebar', 40 );
+
 
 	// make it so
 	genesis();
@@ -51,7 +61,7 @@ function community_add_communities_grid( $doreturn = false ) {
 	$argscount = array(
 		'post_type'      => DO_COMMUNITY_CPT,
 		'post_status'    => 'publish',
-		'orderby'        => 'title',
+		'orderby'        => 'name',
 		'order'          => 'ASC',
 		'posts_per_page' => - 1,
 	);
@@ -92,7 +102,9 @@ function community_add_communities_grid( $doreturn = false ) {
 	$community_list = new WP_query();
 	$community_list->query( $argscount );
 	$headerlevel                     = 'h3';
-	$title                           = _x( 'Alle community\'s', 'header overview', 'wp-rijkshuisstijl' );
+	$title                           = ( get_field( 'community_list_title', $post ) ) ? get_field( 'community_list_title', $post ) : _x( 'Alle community\'s', 'header overview', 'wp-rijkshuisstijl' );
+	$community_show_alphabet_list    = ( get_field( 'community_layout_show_alphabet_list', $post ) !== 'community_layout_show_alphabet_list_false' ) ? true : false;
+	$list_layout                     = ( get_field( 'community_layout_list', $post ) ) ? get_field( 'community_layout_list', $post ) : 'community_layout_list_grid';
 	$filter_explication              = '';
 	$explication_community_types     = '';
 	$explication_community_topics    = '';
@@ -168,26 +180,117 @@ function community_add_communities_grid( $doreturn = false ) {
 		}
 
 		$return      .= '<h2>' . $title . '</h2>';
-		$return      .= '<div class="grid archive-custom-loop columncount-' . $columncount . '" id="communities_list">';
 		$postcounter = 0;
 
-		while ( $community_list->have_posts() ) : $community_list->the_post();
+		if ( 'community_layout_list_grid' !== $list_layout ) {
 
-			$postcounter ++;
-			$current_post_id = isset( $post->ID ) ? $post->ID : 0;
-			$args2           = array(
-				'ID'          => $current_post_id,
-				'itemclass'   => 'griditem griditem--community colspan-1',
-				'type'        => 'posts_normal',
-				'headerlevel' => $headerlevel,
-			);
-			$return          .= rhswp_get_grid_item( $args2 );
+			// show list with detail / summary items
+			if ( $community_show_alphabet_list ) {
+				$return .= '<div class="alphabet">';
+				while ( $community_list->have_posts() ) : $community_list->the_post();
+					$huidigeletter = substr( strtolower( $post->post_name ), 0, 1 );
+					if ( $huidigeletter !== $letter ) {
+						$return .= '<a href="#list_' . strtolower( $huidigeletter ) . '"><span>' . strtoupper( $huidigeletter ) . '</span></a>' . "\n";
+						$letter = $huidigeletter;
+					}
+				endwhile;
 
-			do_action( 'genesis_after_entry' );
+				$return .= '</div>'; // .alphabet
 
-		endwhile;
+			}
 
-		$return .= '</div>';
+
+			$return .= '<div class=".archive-custom-loop columncount-' . $columncount . '" id="communities_list">';
+			$return .= '<div class="dossier-list column-layout">';
+
+			if ( $community_show_alphabet_list ) {
+				$letter            = '';
+				$list_start        = '<!--- $list_start initial --><ul>';
+				$list_end          = '<!--- $list_end initial -->' . "\n";
+				$blok_letter_close = '<!--- $blok_letter_close initial -->' . "\n"; // initiele waarde voor afsluiter
+				$blok_letter_open  = '<div class="column-block">' . "\n";
+				$cummunitylijst    = '<!--- start -->' . "\n";
+			} else {
+				$cummunitylijst    = '<!--- start --><div class="column-block">' . "\n" . '<ul>' . "\n";
+				$list_end          = "\n</ul>\n";
+				$blok_letter_close = '</div>' . "\n";
+			}
+
+			while ( $community_list->have_posts() ) : $community_list->the_post();
+
+				$huidigeletter = substr( strtolower( $post->post_name ), 0, 1 );
+				$permalink     = get_permalink( $post );
+
+				if ( $community_show_alphabet_list ) {
+
+					// alleen dossiers met een geldige pagina tonen
+					if ( $huidigeletter !== $letter ) {
+
+						$cummunitylijst .= "\n" . $list_end;
+						$cummunitylijst .= $blok_letter_close;
+						$cummunitylijst .= "\n" . $blok_letter_open;
+						$cummunitylijst .= "\n" . '<h2 id="list_' . strtolower( $huidigeletter ) . '">' . strtoupper( $huidigeletter ) . '</h2>';
+						$cummunitylijst .= "\n" . $list_start;
+
+						// reset waarden
+						$letter = $huidigeletter;
+						// overschrijf initiele waarde voor afsluiter
+						$blok_letter_close = '</div>' . "\n";
+
+						$list_start = "<ul>\n";
+						$list_end   = "</ul>\n";
+					}
+				}
+
+				$cummunitylijst .= "\n" . '<li class="cat-item cat-item-' . $post->ID . '">';
+
+				$titel             = $post->post_title;
+				$excerpt           = get_the_excerpt( $post );
+				$link_and_linktext = $post->post_title;
+				if ( $permalink ) {
+					$link_and_linktext = '<a href="' . $permalink . '">';
+					$link_and_linktext .= $post->post_title;
+					$link_and_linktext .= '</a>';
+				}
+
+				if ( $headerlevel && $titel && $link_and_linktext && $excerpt ) {
+					$cummunitylijst .= '<details><summary><' . $headerlevel . '>' . $titel . '</' . $headerlevel . '></summary><p>' . wp_strip_all_tags( $excerpt ) . '</p>' . $link_and_linktext . '</details>';
+				} else {
+					$cummunitylijst .= $link_and_linktext;
+				}
+				$cummunitylijst .= '</li>';
+
+			endwhile;
+
+			$return .= $cummunitylijst;
+			$return .= $list_end;
+			$return .= $blok_letter_close;
+			$return .= '</div><!-- .dossier-list column-layout -->' . "\n";
+			$return .= '</div><!-- #communities_list -->' . "\n";
+
+		} else {
+
+			$return .= '<div class="grid archive-custom-loop columncount-' . $columncount . '" id="communities_list">';
+
+			while ( $community_list->have_posts() ) : $community_list->the_post();
+
+				$postcounter ++;
+				$current_post_id = isset( $post->ID ) ? $post->ID : 0;
+				$args2           = array(
+					'ID'          => $current_post_id,
+					'itemclass'   => 'griditem griditem--community colspan-1',
+					'type'        => 'posts_normal',
+					'headerlevel' => $headerlevel,
+				);
+				$return          .= rhswp_get_grid_item( $args2 );
+
+				do_action( 'genesis_after_entry' );
+
+			endwhile;
+			$return .= '</div>'; // #communities_list
+
+		}
+
 
 		if ( $community_types || $community_topics || $community_audiences ) {
 			$return .= '<div class="taxonomylist grid" id="communities_filter">';
@@ -274,3 +377,17 @@ function community_remove_body_classes( $classes ) {
 }
 
 //========================================================================================================
+
+function community_append_widget_sidebar() {
+
+	if ( is_active_sidebar( RHSWP_WIDGET_AREA_COMMUNITY_OVERVIEW ) ) {
+		echo '<div class="widget-single-footer">';
+		dynamic_sidebar( RHSWP_WIDGET_AREA_COMMUNITY_OVERVIEW );
+		echo '</div>';
+
+	}
+
+}
+
+//========================================================================================================
+
