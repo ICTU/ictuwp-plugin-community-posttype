@@ -143,7 +143,7 @@ if ( ! class_exists( 'DO_COMMUNITY_CPT' ) ) :
 		 */
 		public function fn_ictu_community_add_page_template( $post_templates ) {
 
-			$post_templates[ $this->template_overview_communities ] = _x( 'Overview communities', "naam template", 'wp-rijkshuisstijl' );
+			$post_templates[ $this->template_overview_communities ] = _x( "Overzicht community's", "naam template", "wp-rijkshuisstijl" );
 
 			return $post_templates;
 
