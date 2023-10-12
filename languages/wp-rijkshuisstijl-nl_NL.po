@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: ICTU / Digitale Overheid / Community\n"
-"POT-Creation-Date: 2023-08-01 10:21+0200\n"
-"PO-Revision-Date: 2023-08-01 10:21+0200\n"
+"POT-Creation-Date: 2023-10-12 15:34+0200\n"
+"PO-Revision-Date: 2023-10-12 15:34+0200\n"
 "Last-Translator: Paul van Buuren <poedit@wbvb.nl>\n"
 "Language-Team: Paul van Buuren <poedit@wbvb.nl>\n"
 "Language: nl_NL\n"
@@ -10,7 +10,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
-"X-Generator: Poedit 3.3.2\n"
+"X-Generator: Poedit 3.4\n"
 "X-Poedit-Basepath: ..\n"
 "X-Poedit-Flags-xgettext: --add-comments=translators:\n"
 "X-Poedit-WPHeader: ictuwp-plugin-community-posttype.php\n"
@@ -23,7 +23,7 @@ msgstr ""
 
 #: ictuwp-plugin-community-posttype.php:146
 msgctxt "naam template"
-msgid "Overview communities"
+msgid "Overzicht community's"
 msgstr ""
 
 #: ictuwp-plugin-community-posttype.php:316
@@ -397,19 +397,19 @@ msgctxt "widget name"
 msgid "(DO) community filter widget"
 msgstr ""
 
-#: includes/widget-filter.php:54 templates/template-overview-communities.php:59
+#: includes/widget-filter.php:54 templates/template-overview-communities.php:87
 msgid "Types"
 msgstr ""
 
-#: includes/widget-filter.php:55 templates/template-overview-communities.php:60
+#: includes/widget-filter.php:55 templates/template-overview-communities.php:88
 msgid "Onderwerpen"
 msgstr ""
 
-#: includes/widget-filter.php:56 templates/template-overview-communities.php:61
+#: includes/widget-filter.php:56 templates/template-overview-communities.php:89
 msgid "Doelgroepen"
 msgstr ""
 
-#: includes/widget-filter.php:63 includes/widget-filter.php:126
+#: includes/widget-filter.php:63 includes/widget-filter.php:127
 msgctxt "warning"
 msgid ""
 "Er is nog geen overzichtspagina ingesteld voor het overzicht van "
@@ -425,11 +425,11 @@ msgstr ""
 msgid "Filter weghalen"
 msgstr ""
 
-#: includes/widget-filter.php:134 includes/widget-last-added.php:133
+#: includes/widget-filter.php:135 includes/widget-last-added.php:133
 msgid "Titel"
 msgstr ""
 
-#: includes/widget-filter.php:142 includes/widget-last-added.php:141
+#: includes/widget-filter.php:143 includes/widget-last-added.php:141
 msgid "Beschrijving"
 msgstr ""
 
@@ -452,19 +452,19 @@ msgctxt "label"
 msgid "Maximum aantal community's"
 msgstr ""
 
-#: templates/template-overview-communities.php:95
+#: templates/template-overview-communities.php:123
 msgctxt "header overview"
 msgid "Alle community's"
 msgstr ""
 
-#: templates/template-overview-communities.php:113
+#: templates/template-overview-communities.php:144
 #, php-format
 msgid "%s community gevonden"
 msgid_plural "%s community's gevonden"
 msgstr[0] ""
 msgstr[1] ""
 
-#: templates/template-overview-communities.php:199
+#: templates/template-overview-communities.php:335
 msgctxt "no results"
 msgid "Geen community's gevonden"
 msgstr ""

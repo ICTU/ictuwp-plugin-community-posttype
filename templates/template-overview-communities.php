@@ -1,5 +1,23 @@
 <?php
 
+//========================================================================================================
+
+define( 'CONTAINER_ID', 'community_container' );
+
+
+add_action( 'wp_enqueue_scripts', 'community_set_id_for_openbuttons' );
+
+function community_set_id_for_openbuttons() {
+	if ( ! is_admin() ) {
+		$translation_array = array(
+			'id' => CONTAINER_ID,
+		);
+		wp_localize_script( 'details-element', 'detailssummarycontainerid', $translation_array );
+
+	}
+}
+
+
 if ( function_exists( 'genesis' ) ) {
 	// Genesis wordt gebruikt als framework
 
@@ -103,8 +121,9 @@ function community_add_communities_grid( $doreturn = false ) {
 	$community_list->query( $argscount );
 	$headerlevel                     = 'h3';
 	$title                           = ( get_field( 'community_list_title', $post ) ) ? get_field( 'community_list_title', $post ) : _x( 'Alle community\'s', 'header overview', 'wp-rijkshuisstijl' );
+	$community_layout_show_filter    = ( get_field( 'community_layout_show_filter', $post ) !== 'community_layout_show_filter_false' ) ? true : false;
 	$community_show_alphabet_list    = ( get_field( 'community_layout_show_alphabet_list', $post ) !== 'community_layout_show_alphabet_list_false' ) ? true : false;
-	$list_layout                     = ( get_field( 'community_layout_list', $post ) ) ? get_field( 'community_layout_list', $post ) : 'community_layout_list_grid';
+	$list_layout                     = ( get_field( 'community_layout_list', $post ) === 'community_layout_list_accordion' ) ? 'community_layout_list_accordion' : 'community_layout_list_grid';
 	$filter_explication              = '';
 	$explication_community_types     = '';
 	$explication_community_topics    = '';
@@ -182,6 +201,18 @@ function community_add_communities_grid( $doreturn = false ) {
 		$return      .= '<h2>' . $title . '</h2>';
 		$postcounter = 0;
 
+		if ( $community_layout_show_filter ) {
+//			$return .= '<h1>HIER WEL EEN FILTER</h1>';
+			if ( is_active_sidebar( RHSWP_WIDGET_AREA_COMMUNITY_OVERVIEW ) ) {
+				$return .= '<div class="widget-single-footer">';
+				$return .= dynamic_sidebar( RHSWP_WIDGET_AREA_COMMUNITY_OVERVIEW );
+				$return .= '</div>';
+			}
+		} else {
+			//
+//			$return .= '<h1>HIER WEL GEEN FILTER</h1>';
+		}
+
 		if ( 'community_layout_list_grid' !== $list_layout ) {
 
 			// show list with detail / summary items
@@ -199,9 +230,7 @@ function community_add_communities_grid( $doreturn = false ) {
 
 			}
 
-
-			$return .= '<div class=".archive-custom-loop columncount-' . $columncount . '" id="communities_list">';
-			$return .= '<div class="dossier-list column-layout">';
+			$css = 'no-list-style community-container';
 
 			if ( $community_show_alphabet_list ) {
 				$letter            = '';
@@ -210,11 +239,15 @@ function community_add_communities_grid( $doreturn = false ) {
 				$blok_letter_close = '<!--- $blok_letter_close initial -->' . "\n"; // initiele waarde voor afsluiter
 				$blok_letter_open  = '<div class="column-block">' . "\n";
 				$cummunitylijst    = '<!--- start -->' . "\n";
+				$css               .= ' column-layout';
 			} else {
-				$cummunitylijst    = '<!--- start --><div class="column-block">' . "\n" . '<ul>' . "\n";
+				$cummunitylijst    = '<!--- start -->' . "\n" . '<ul>' . "\n";
 				$list_end          = "\n</ul>\n";
-				$blok_letter_close = '</div>' . "\n";
+				$blok_letter_close = "\n";
 			}
+
+			$return .= '<div class="archive-custom-loop columncount-' . $columncount . '">';
+			$return .= '<div class="' . $css . '" id="' . CONTAINER_ID . '">';
 
 			while ( $community_list->have_posts() ) : $community_list->the_post();
 
@@ -248,9 +281,9 @@ function community_add_communities_grid( $doreturn = false ) {
 				$excerpt           = get_the_excerpt( $post );
 				$link_and_linktext = $post->post_title;
 				if ( $permalink ) {
-					$link_and_linktext = '<a href="' . $permalink . '">';
+					$link_and_linktext = '<p class="read-more"><a href="' . $permalink . '">';
 					$link_and_linktext .= $post->post_title;
-					$link_and_linktext .= '</a>';
+					$link_and_linktext .= '</a></p>';
 				}
 
 				if ( $headerlevel && $titel && $link_and_linktext && $excerpt ) {
@@ -266,11 +299,11 @@ function community_add_communities_grid( $doreturn = false ) {
 			$return .= $list_end;
 			$return .= $blok_letter_close;
 			$return .= '</div><!-- .dossier-list column-layout -->' . "\n";
-			$return .= '</div><!-- #communities_list -->' . "\n";
+			$return .= '</div><!-- #community_container -->' . "\n";
 
 		} else {
 
-			$return .= '<div class="grid archive-custom-loop columncount-' . $columncount . '" id="communities_list">';
+			$return .= '<div class="archive-custom-loop columncount-' . $columncount . '" id="' . CONTAINER_ID . '">';
 
 			while ( $community_list->have_posts() ) : $community_list->the_post();
 
@@ -287,7 +320,7 @@ function community_add_communities_grid( $doreturn = false ) {
 				do_action( 'genesis_after_entry' );
 
 			endwhile;
-			$return .= '</div>'; // #communities_list
+			$return .= '</div>'; // .archive-custom-loop columncount-
 
 		}
 
