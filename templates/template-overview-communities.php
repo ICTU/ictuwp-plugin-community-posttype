@@ -75,7 +75,24 @@ function community_add_communities_grid( $doreturn = false ) {
 
 	global $post;
 
-	$filtered  = false;
+	// variables
+	$filtered                        = false;
+	$headerlevel                     = 'h3';
+	$title                           = ( get_field( 'community_list_title', $post ) ) ? get_field( 'community_list_title', $post ) : _x( 'Alle community\'s', 'header overview', 'wp-rijkshuisstijl' );
+	$community_layout_show_filter    = ( get_field( 'community_layout_show_filter', $post ) !== 'community_layout_show_filter_false' ) ? true : false;
+	$community_show_alphabet_list    = ( get_field( 'community_layout_show_alphabet_list', $post ) !== 'community_layout_show_alphabet_list_false' ) ? true : false;
+	$list_layout                     = ( get_field( 'community_layout_list', $post ) === 'community_layout_list_accordion' ) ? 'community_layout_list_accordion' : 'community_layout_list_grid';
+	$filter_explication              = '';
+	$explication_community_types     = '';
+	$explication_community_topics    = '';
+	$explication_community_audiences = '';
+	$return                          = '';
+	$community_types                 = '';
+	$community_topics                = '';
+	$community_audiences             = '';
+	$columncount                     = 3;
+	$container_labelid               = CONTAINER_ID . '_header';
+
 	$argscount = array(
 		'post_type'      => DO_COMMUNITY_CPT,
 		'post_status'    => 'publish',
@@ -92,6 +109,7 @@ function community_add_communities_grid( $doreturn = false ) {
 		$argscount['tax_query']             = array();
 		$argscount['tax_query']['relation'] = 'AND';
 		$filtered                           = true;
+		$community_show_alphabet_list       = false;
 
 		if ( isset( $filter_community_types['ids'] ) ) {
 			$argscount['tax_query'][] = array(
@@ -114,25 +132,12 @@ function community_add_communities_grid( $doreturn = false ) {
 				'terms'    => $filter_community_audiences['ids'],
 			);
 		}
+
 	}
 
 	// Assign predefined $args to your query
 	$community_list = new WP_query();
 	$community_list->query( $argscount );
-	$headerlevel                     = 'h3';
-	$title                           = ( get_field( 'community_list_title', $post ) ) ? get_field( 'community_list_title', $post ) : _x( 'Alle community\'s', 'header overview', 'wp-rijkshuisstijl' );
-	$community_layout_show_filter    = ( get_field( 'community_layout_show_filter', $post ) !== 'community_layout_show_filter_false' ) ? true : false;
-	$community_show_alphabet_list    = ( get_field( 'community_layout_show_alphabet_list', $post ) !== 'community_layout_show_alphabet_list_false' ) ? true : false;
-	$list_layout                     = ( get_field( 'community_layout_list', $post ) === 'community_layout_list_accordion' ) ? 'community_layout_list_accordion' : 'community_layout_list_grid';
-	$filter_explication              = '';
-	$explication_community_types     = '';
-	$explication_community_topics    = '';
-	$explication_community_audiences = '';
-	$return                          = '';
-	$community_types                 = '';
-	$community_topics                = '';
-	$community_audiences             = '';
-	$columncount                     = 3;
 
 	if ( $community_list->have_posts() ) {
 
@@ -194,23 +199,26 @@ function community_add_communities_grid( $doreturn = false ) {
 
 		}
 
-		if ( $filter_explication ) {
-			$return .= '<p>' . $filter_explication . '.</p>';
-		}
 
-		$return      .= '<h2>' . $title . '</h2>';
 		$postcounter = 0;
 
+
 		if ( $community_layout_show_filter ) {
-//			$return .= '<h1>HIER WEL EEN FILTER</h1>';
-			if ( is_active_sidebar( RHSWP_WIDGET_AREA_COMMUNITY_OVERVIEW ) ) {
-				$return .= '<div class="widget-single-footer">';
-				$return .= dynamic_sidebar( RHSWP_WIDGET_AREA_COMMUNITY_OVERVIEW );
-				$return .= '</div>';
+
+			$list_layout = 'community_layout_list_grid';
+
+			$arghs2 = array(
+				'ID'           => $post->ID,
+				'title'        => '<h2 id="' . $container_labelid . '">' . $title . '</h2>',
+				'before_title' => '',
+				'after_title'  => '',
+			);
+			if ( $filter_explication ) {
+				$arghs2['description'] = $filter_explication;
 			}
-		} else {
-			//
-//			$return .= '<h1>HIER WEL GEEN FILTER</h1>';
+
+			$form   = rhswp_community_get_filter_form( $arghs2 );
+			$return .= $form;
 		}
 
 		if ( 'community_layout_list_grid' !== $list_layout ) {
@@ -247,9 +255,15 @@ function community_add_communities_grid( $doreturn = false ) {
 			}
 
 			$return .= '<div class="archive-custom-loop columncount-' . $columncount . '">';
-			$return .= '<div class="' . $css . '" id="' . CONTAINER_ID . '">';
+			$return .= '<section class="' . $css . '" id="' . CONTAINER_ID . '" aria-labelledby="' . $container_labelid . '">';
 
 			while ( $community_list->have_posts() ) : $community_list->the_post();
+
+				// if possible add list of tax.terms
+				$extra_html = '';
+				if ( $filter_community_types || $filter_community_topics || $filter_community_audiences ) {
+					$extra_html = rhswp_community_single_terms( true, $post->ID, false, false );
+				}
 
 				$huidigeletter = substr( strtolower( $post->post_name ), 0, 1 );
 				$permalink     = get_permalink( $post );
@@ -262,7 +276,7 @@ function community_add_communities_grid( $doreturn = false ) {
 						$cummunitylijst .= "\n" . $list_end;
 						$cummunitylijst .= $blok_letter_close;
 						$cummunitylijst .= "\n" . $blok_letter_open;
-						$cummunitylijst .= "\n" . '<h2 id="list_' . strtolower( $huidigeletter ) . '">' . strtoupper( $huidigeletter ) . '</h2>';
+						$cummunitylijst .= "\n" . '<h3 id="list_' . strtolower( $huidigeletter ) . '">' . strtoupper( $huidigeletter ) . '</h3>';
 						$cummunitylijst .= "\n" . $list_start;
 
 						// reset waarden
@@ -287,7 +301,10 @@ function community_add_communities_grid( $doreturn = false ) {
 				}
 
 				if ( $headerlevel && $titel && $link_and_linktext && $excerpt ) {
-					$cummunitylijst .= '<details><summary><' . $headerlevel . '>' . $titel . '</' . $headerlevel . '></summary><p>' . wp_strip_all_tags( $excerpt ) . '</p>' . $link_and_linktext . '</details>';
+					$cummunitylijst .= '<details><summary><' . $headerlevel . '>' . $titel . '</' . $headerlevel . '></summary>';
+					$cummunitylijst .= '<p>' . wp_strip_all_tags( $excerpt ) . '</p>';
+					$cummunitylijst .= $extra_html;
+					$cummunitylijst .= $link_and_linktext . '</details>';
 				} else {
 					$cummunitylijst .= $link_and_linktext;
 				}
@@ -298,16 +315,23 @@ function community_add_communities_grid( $doreturn = false ) {
 			$return .= $cummunitylijst;
 			$return .= $list_end;
 			$return .= $blok_letter_close;
-			$return .= '</div><!-- .dossier-list column-layout -->' . "\n";
+			$return .= '</section><!-- .dossier-list column-layout -->' . "\n";
 			$return .= '</div><!-- #community_container -->' . "\n";
 
 		} else {
 
-			$return .= '<div class="archive-custom-loop columncount-' . $columncount . '" id="' . CONTAINER_ID . '">';
+			$return .= '<div class="archive-custom-loop grid columncount-' . $columncount . '" id="' . CONTAINER_ID . '">';
 
 			while ( $community_list->have_posts() ) : $community_list->the_post();
 
 				$postcounter ++;
+				// if possible add list of tax.terms
+				$extra_html = '';
+				if ( $filter_community_types || $filter_community_topics || $filter_community_audiences ) {
+					$extra_html = rhswp_community_single_terms( true, $post->ID, false, false );
+				}
+
+
 				$current_post_id = isset( $post->ID ) ? $post->ID : 0;
 				$args2           = array(
 					'ID'          => $current_post_id,
