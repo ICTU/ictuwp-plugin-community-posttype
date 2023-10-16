@@ -484,12 +484,12 @@ function communitys_filter_breadcrumb( $crumb = '', $args = '' ) {
  * @return string|void
  */
 
-function rhswp_community_single_terms( $doreturn = false, $post_id = 0 ) {
+function rhswp_community_single_terms( $doreturn = false, $post_id = 0, $show_dossiers = true, $clickable_links = true ) {
 
 	global $post;
 
-	$return              = '';
-	$values              = '';
+	$return = '';
+	$values = '';
 	if ( ! $post_id ) {
 		if ( get_the_id() ) {
 			$post_id = get_the_id();
@@ -506,7 +506,11 @@ function rhswp_community_single_terms( $doreturn = false, $post_id = 0 ) {
 		$labels = '<dd>';
 
 		foreach ( $community_topics as $term ) {
-			$labels .= '<a href="' . get_term_link( $term->term_id ) . '">' . $term->name . '</a>';
+			if ( $clickable_links ) {
+				$labels .= '<a href="' . get_term_link( $term->term_id ) . '">' . $term->name . '</a>';
+			} else {
+				$labels .= $term->name;
+			}
 			if ( next( $community_topics ) ) {
 				$labels .= ', ';
 			}
@@ -525,7 +529,11 @@ function rhswp_community_single_terms( $doreturn = false, $post_id = 0 ) {
 		$labels = '<dd>';
 
 		foreach ( $community_types as $term ) {
-			$labels .= '<a href="' . get_term_link( $term->term_id ) . '">' . $term->name . '</a>';
+			if ( $clickable_links ) {
+				$labels .= '<a href="' . get_term_link( $term->term_id ) . '">' . $term->name . '</a>';
+			} else {
+				$labels .= $term->name;
+			}
 			if ( next( $community_types ) ) {
 				$labels .= ', ';
 			}
@@ -545,7 +553,11 @@ function rhswp_community_single_terms( $doreturn = false, $post_id = 0 ) {
 		$labels = '<dd>';
 
 		foreach ( $community_audiences as $term ) {
-			$labels .= '<a href="' . get_term_link( $term->term_id ) . '">' . $term->name . '</a>';
+			if ( $clickable_links ) {
+				$labels .= '<a href="' . get_term_link( $term->term_id ) . '">' . $term->name . '</a>';
+			} else {
+				$labels .= $term->name;
+			}
 			if ( next( $community_audiences ) ) {
 				$labels .= ', ';
 			}
@@ -560,34 +572,41 @@ function rhswp_community_single_terms( $doreturn = false, $post_id = 0 ) {
 
 	endif;
 
+	if ( $show_dossiers ) {
+		if ( has_term( '', RHSWP_CT_DOSSIER, $post->ID ) ) {
+			// get dossier terms and their links
 
-	if ( has_term( '', RHSWP_CT_DOSSIER, $post->ID ) ) {
-		// get dossier terms and their links
+			$terms = get_the_terms( $post->ID, RHSWP_CT_DOSSIER );
+			if ( $terms && ! is_wp_error( $terms ) ) {
 
-		$terms = get_the_terms( $post->ID, RHSWP_CT_DOSSIER );
-		if ( $terms && ! is_wp_error( $terms ) ) {
+				$labels = '<dd>';
 
-			$labels = '<dd>';
+				foreach ( $terms as $term ) {
 
-			foreach ( $terms as $term ) {
-				$labels .= '<a href="';
-				if ( function_exists( 'rhswp_get_pagelink_for_dossier' ) ) {
-					$labels .= rhswp_get_pagelink_for_dossier( $term );
-				} else {
-					$labels .= get_term_link( $term->term_id, RHSWP_CT_DOSSIER );
+					if ( $clickable_links ) {
+						$labels .= '<a href="';
+						if ( function_exists( 'rhswp_get_pagelink_for_dossier' ) ) {
+							$labels .= rhswp_get_pagelink_for_dossier( $term );
+						} else {
+							$labels .= get_term_link( $term->term_id, RHSWP_CT_DOSSIER );
+						}
+						$labels .= '">' . $term->name . '</a>';
+					} else {
+						$labels .= $term->name;
+					}
+
+
+					if ( next( $terms ) ) {
+						$labels .= ', ';
+					}
 				}
-				$labels .= '">' . $term->name . '</a>';
 
-				if ( next( $terms ) ) {
-					$labels .= ', ';
+				$labels .= '</dd>';
+
+				if ( $labels ) {
+					$values .= '<dt>' . _x( 'Hoort bij', 'label dossiers bij een single community', 'wp-rijkshuisstijl' ) . '</dt>';
+					$values .= $labels;
 				}
-			}
-
-			$labels .= '</dd>';
-
-			if ( $labels ) {
-				$values .= '<dt>' . _x( 'Hoort bij', 'label dossiers bij een single community', 'wp-rijkshuisstijl' ) . '</dt>';
-				$values .= $labels;
 			}
 		}
 	}
@@ -603,6 +622,65 @@ function rhswp_community_single_terms( $doreturn = false, $post_id = 0 ) {
 	} else {
 		echo $return;
 	}
+}
+
+//========================================================================================================
+
+function rhswp_community_get_filter_form( $args ) {
+
+	global $post;
+
+	$defaults        = array(
+		'ID'           => 0,
+		'title'        => '',
+		'description'  => '',
+		'before_title' => '<h2>',
+		'after_title'  => '</h2>',
+		'echo'         => false
+	);
+	$args            = wp_parse_args( $args, $defaults );
+	$title           = $args['title'];
+	$description     = $args['description'];
+	$thepage         = get_theme_mod( 'customizer_community_pageid_overview' );
+	$current_post_id = ( is_object( $post ) ? $post->ID : 0 );
+	$return          = '';
+
+	if ( ! $thepage ) {
+		$return .= '<p>' . _x( 'Er is nog geen overzichtspagina ingesteld voor het overzicht van community\'s. Gebruik hiervoor de customizer: kies een pagina onder "Community\'s".', 'warning', 'wp-rijkshuisstijl' ) . '</p>';
+
+	} elseif ( ( $current_post_id === $thepage ) || ( is_singular( 'community' ) ) ) {
+
+		$community_types     = ictuwp_communityfilter_list( DO_COMMUNITYTYPE_CT, _n( 'Type community', 'Types community', 2, 'wp-rijkshuisstijl' ), false, $args['ID'] );
+		$community_topics    = ictuwp_communityfilter_list( DO_COMMUNITYTOPICS_CT, _n( 'Onderwerp community', 'Onderwerpen community', 2, 'wp-rijkshuisstijl' ), false, $args['ID'] );
+		$community_audiences = ictuwp_communityfilter_list( DO_COMMUNITYAUDIENCE_CT, _n( 'Doelgroep', 'Doelgroepen', 2, 'wp-rijkshuisstijl' ), false, $args['ID'] );
+
+		if ( $community_types || $community_topics || $community_audiences ) {
+
+			$return .= '<form id="widget_community_filter" action="' . get_permalink( $thepage ) . '" method="get">';
+			if ( ! empty( $title ) ) {
+				$return .= $args['before_title'] . $title . $args['after_title'];
+			}
+			if ( ! empty( $description ) ) {
+				$return .= '<p>' . $description . '</p>';
+			}
+			$return .= '<div class="fieldsets">';
+			$return .= $community_topics;
+			$return .= $community_types;
+			$return .= $community_audiences;
+			$return .= '</div>';
+			$return .= '<div class="submit-buttons">';
+			$return .= '<button type="submit" id="widget_community_filter-submit">' . __( 'Filter', 'taxonomie-lijst', 'wp-rijkshuisstijl' ) . '</button>';
+			$return .= '<a href="' . get_permalink( $thepage ) . '" id="widget_community_filter-remove">' . __( 'Filter weghalen', 'taxonomie-lijst', 'wp-rijkshuisstijl' ) . '</a>';
+			$return .= '</div>';
+			$return .= '</form>';
+
+		} else {
+			$return .= '<p>' . _x( 'We konden geen lijst met filters maken.', 'warning', 'wp-rijkshuisstijl' ) . '</p>';
+		}
+	}
+
+	return $return;
+
 }
 
 //========================================================================================================
