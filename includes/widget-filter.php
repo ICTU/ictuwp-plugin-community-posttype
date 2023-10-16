@@ -22,6 +22,9 @@ function ictuwp_communityfilter_load_widgets() {
  */
 class ICTUWP_community_filter extends WP_Widget {
 
+
+	//----------------------------------------------------------------------------------------------------
+
 	/**
 	 * Constructor
 	 *
@@ -37,6 +40,8 @@ class ICTUWP_community_filter extends WP_Widget {
 
 	}
 
+	//----------------------------------------------------------------------------------------------------
+
 	/**
 	 * Outputs the HTML for this widget.
 	 *
@@ -49,44 +54,21 @@ class ICTUWP_community_filter extends WP_Widget {
 
 		extract( $args, EXTR_SKIP );
 
-		global $post;
+		$form = rhswp_community_get_filter_form( array(
+			'ID'           => get_queried_object_id(),
+			'title'        => $instance['title'],
+			'description'  => $instance['widget_description'],
+			'after_title'  => $after_title,
+			'before_title' => $before_title
+		) );
 
-		$community_types     = ictuwp_communityfilter_list( DO_COMMUNITYTYPE_CT, __( 'Types', 'taxonomie-lijst', 'wp-rijkshuisstijl' ), false, get_queried_object_id() );
-		$community_topics    = ictuwp_communityfilter_list( DO_COMMUNITYTOPICS_CT, __( 'Onderwerpen', 'taxonomie-lijst', 'wp-rijkshuisstijl' ), false, get_queried_object_id() );
-		$community_audiences = ictuwp_communityfilter_list( DO_COMMUNITYAUDIENCE_CT, __( 'Doelgroepen', 'taxonomie-lijst', 'wp-rijkshuisstijl' ), false, get_queried_object_id() );
-		$current_post_id     = ( is_object( $post ) ? $post->ID : 0 );
-		$title               = esc_attr( $instance['title'] );
-		$description         = esc_attr( $instance['widget_description'] );
-		$thepage             = get_theme_mod( 'customizer_community_pageid_overview' );
+		echo $before_widget;
+		echo $form;
+		echo $after_widget;
 
-		if ( ! $thepage ) {
-			$message = _x( 'Er is nog geen overzichtspagina ingesteld voor het overzicht van community\'s. Gebruik hiervoor de customizer: kies een pagina onder "Community\'s".', 'warning', 'wp-rijkshuisstijl' );
-			echo '<p>' . $message . '</p>';
-		} elseif ( ( $community_types || $community_topics || $community_audiences ) && ( $current_post_id === $thepage ) ) {
-			echo $before_widget;
-
-			echo '<form id="widget_community_filter" action="' . get_permalink( $thepage ) . '" method="get">';
-			if ( ! empty( $title ) ) {
-				echo $before_title . $title . $after_title;
-			}
-			if ( ! empty( $description ) ) {
-				echo '<p>' . $description . '</p>';
-			}
-			echo $community_topics;
-			echo $community_types;
-			echo $community_audiences;
-
-			echo '<div class="submit-buttons">';
-			echo '<button type="submit" id="widget_community_filter-submit">' . __( 'Filter', 'taxonomie-lijst', 'wp-rijkshuisstijl' ) . '</button>';
-			echo '<a href="' . get_permalink( $thepage ) . '" id="widget_community_filter-remove">' . __( 'Filter weghalen', 'taxonomie-lijst', 'wp-rijkshuisstijl' ) . '</a>';
-			echo '</div>';
-			echo '</form>';
-			echo $after_widget;
-		}
-
-		#686868
 	}
 
+	//----------------------------------------------------------------------------------------------------
 
 	/**
 	 * Sanitizes form inputs on save
@@ -105,6 +87,8 @@ class ICTUWP_community_filter extends WP_Widget {
 
 		return $instance;
 	}
+
+	//----------------------------------------------------------------------------------------------------
 
 	/**
 	 * Build the widget's form
@@ -148,6 +132,8 @@ class ICTUWP_community_filter extends WP_Widget {
 		<?php
 
 	}
+
+	//----------------------------------------------------------------------------------------------------
 
 }
 
