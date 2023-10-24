@@ -70,6 +70,9 @@ $args = array(
 
 register_post_type( DO_COMMUNITY_CPT, $args );
 
+// add tags to this CPT
+register_taxonomy_for_object_type( 'post_tag', DO_COMMUNITY_CPT );
+
 //========================================================================================================
 
 // Communitytype
