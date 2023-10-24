@@ -281,17 +281,17 @@ function community_add_communities_grid( $doreturn = false ) {
 	$list_with_postids   = $result['list_with_postids'];
 	$countertje          = count( $list_with_postids );
 
-	if ( $result['filter_community_types'] ) {
+	if ( isset( $result['filter_community_types'] ) ) {
 		$filter_community_types = $result['filter_community_types'];
 	} else {
 		$filter_community_types = 0;
 	}
-	if ( $result['filter_community_topics'] ) {
+	if ( isset( $result['filter_community_topics'] ) ) {
 		$filter_community_topics = $result['filter_community_topics'];
 	} else {
 		$filter_community_topics = 0;
 	}
-	if ( $result['filter_community_audiences'] ) {
+	if ( isset( $result['filter_community_audiences'] ) ) {
 		$filter_community_audiences = $result['filter_community_audiences'];
 	} else {
 		$filter_community_audiences = 0;
