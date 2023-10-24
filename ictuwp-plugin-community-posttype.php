@@ -47,6 +47,10 @@ define( 'DO_COMMUNITYAUDIENCE_CT', $slugaudiences );
 defined( 'DO_COMMUNITY_OVERVIEW_TEMPLATE' ) or define( 'DO_COMMUNITY_OVERVIEW_TEMPLATE', 'template-overview-communities.php' );
 defined( 'DO_COMMUNITY_DETAIL_TEMPLATE' ) or define( 'DO_COMMUNITY_DETAIL_TEMPLATE', 'template-community-detail.php' );
 
+if ( ! defined( 'RHSWP_WIDGET_AREA_COMMUNITY_OVERVIEW' ) ) {
+	define( 'RHSWP_WIDGET_AREA_COMMUNITY_OVERVIEW', 'sidebar-community-overview' );
+}
+
 //========================================================================================================
 add_action( 'plugins_loaded', array( 'DO_COMMUNITY_CPT', 'init' ), 10 );
 
