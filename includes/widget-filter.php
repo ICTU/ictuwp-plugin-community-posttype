@@ -62,9 +62,11 @@ class ICTUWP_community_filter extends WP_Widget {
 			'before_title' => $before_title
 		) );
 
-		echo $before_widget;
-		echo $form;
-		echo $after_widget;
+		if ( $form ) {
+			echo $before_widget;
+			echo $form;
+			echo $after_widget;
+		}
 
 	}
 
@@ -139,7 +141,7 @@ class ICTUWP_community_filter extends WP_Widget {
 
 //========================================================================================================
 
-function ictuwp_communityfilter_list( $taxonomy = 'category', $title = '', $doecho = false, $exclude = '', $hide_empty = true ) {
+function ictuwp_communityfilter_list( $taxonomy = 'category', $title = '', $doecho = false, $exclude = '', $hide_empty = true, $make_checkboxes = 'default', $header_tag = 'h3' ) {
 
 	$return = '';
 
@@ -166,22 +168,39 @@ function ictuwp_communityfilter_list( $taxonomy = 'category', $title = '', $doec
 
 		if ( ! empty( $terms ) && ! is_wp_error( $terms ) ) {
 
-			$return .= '<fieldset class="taxonomy ' . $taxonomy . '">';
-			if ( $title ) {
-				$return .= '<legend>' . $title . '</legend>';
-			}
+			if ( $make_checkboxes ) {
 
-			foreach ( $terms as $term ) {
-				$id        = $term->slug . '_' . $term->term_id;
-				$checked   = '';
-				$dossierid = isset( $_GET[ $id ] ) ? (int) $_GET[ $id ] : 0; // een dossier
-
-				if ( $dossierid === $term->term_id ) {
-					$checked = ' checked';
+				$return .= '<fieldset class="taxonomy ' . $taxonomy . '">';
+				if ( $title ) {
+					$return .= '<legend>' . $title . '</legend>';
 				}
-				$return .= '<label for="' . $id . '"><input id="' . $id . '" type="checkbox" name="' . $id . '" value="' . $term->term_id . '"' . $checked . '>' . $term->name . '</label>';
+
+				foreach ( $terms as $term ) {
+					$id        = $term->slug . '_' . $term->term_id;
+					$checked   = '';
+					$dossierid = isset( $_GET[ $id ] ) ? (int) $_GET[ $id ] : 0; // een dossier
+
+					if ( $dossierid === $term->term_id ) {
+						$checked = ' checked';
+					}
+					$return .= '<label for="' . $id . '"><input id="' . $id . '" type="checkbox" name="' . $id . '" value="' . $term->term_id . '"' . $checked . '>' . $term->name . '</label>';
+				}
+				$return .= '</fieldset>';
+
+			} else {
+
+				$return .= '<div class="taxonomy ' . $taxonomy . '">';
+				if ( $title ) {
+					$return .= '<' . $header_tag . '>' . $title . '</' . $header_tag . '>';
+				}
+
+				$return .= '<ul>';
+				foreach ( $terms as $term ) {
+					$return .= '<li><a href="' . get_term_link( $term->term_id ) . '">' . $term->name . '</a></li>';
+				}
+				$return .= '</ul>';
+				$return .= '</div>';
 			}
-			$return .= '</fieldset>';
 
 		}
 	}
@@ -193,6 +212,7 @@ function ictuwp_communityfilter_list( $taxonomy = 'category', $title = '', $doec
 	}
 
 }
+
 
 //========================================================================================================
 

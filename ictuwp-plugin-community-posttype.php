@@ -714,11 +714,18 @@ function rhswp_community_get_filter_form( $args ) {
 	if ( ! $thepage ) {
 		$return .= '<p>' . _x( 'Er is nog geen overzichtspagina ingesteld voor het overzicht van community\'s. Gebruik hiervoor de customizer: kies een pagina onder "Community\'s".', 'warning', 'wp-rijkshuisstijl' ) . '</p>';
 
-	} elseif ( ( $current_post_id === $thepage ) || ( is_singular( 'community' ) ) ) {
+	} elseif ( ( $current_post_id === $thepage ) || ( is_singular( DO_COMMUNITY_CPT ) ) ) {
 
-		$community_types     = ictuwp_communityfilter_list( DO_COMMUNITYTYPE_CT, _n( 'Type community', 'Types community', 2, 'wp-rijkshuisstijl' ), false, $args['ID'] );
-		$community_topics    = ictuwp_communityfilter_list( DO_COMMUNITYTOPICS_CT, _n( 'Onderwerp community', 'Onderwerpen community', 2, 'wp-rijkshuisstijl' ), false, $args['ID'] );
-		$community_audiences = ictuwp_communityfilter_list( DO_COMMUNITYAUDIENCE_CT, _n( 'Doelgroep', 'Doelgroepen', 2, 'wp-rijkshuisstijl' ), false, $args['ID'] );
+		if ( is_singular( DO_COMMUNITY_CPT ) ) {
+			$make_checkboxes = 1;
+		} else {
+			$make_checkboxes = 0;
+		}
+
+		$community_types     = ictuwp_communityfilter_list( DO_COMMUNITYTYPE_CT, _n( 'Type community', 'Types community', 2, 'wp-rijkshuisstijl' ), false, $args['ID'], false,  $make_checkboxes );
+		$community_topics    = ictuwp_communityfilter_list( DO_COMMUNITYTOPICS_CT, _n( 'Onderwerp community', 'Onderwerpen community', 2, 'wp-rijkshuisstijl' ), false, $args['ID'], false,  $make_checkboxes );
+		$community_audiences = ictuwp_communityfilter_list( DO_COMMUNITYAUDIENCE_CT, _n( 'Doelgroep', 'Doelgroepen', 2, 'wp-rijkshuisstijl' ), false, $args['ID'], false,  $make_checkboxes );
+
 		if ( isset( $_GET['community_search_string'] ) ) {
 			$community_search_string = sanitize_text_field( $_GET['community_search_string'] );
 		} else {
