@@ -504,7 +504,7 @@ function rhswp_community_single_terms( $doreturn = false, $post_id = 0, $show_do
 	$community_topics    = get_the_terms( $post_id, DO_COMMUNITYTOPICS_CT );
 	$community_types     = get_the_terms( $post_id, DO_COMMUNITYTYPE_CT );
 	$community_audiences = get_the_terms( $post_id, DO_COMMUNITYAUDIENCE_CT );
-	$community_tags = get_the_terms( $post_id, 'post_tag' );
+	$community_tags      = get_the_terms( $post_id, 'post_tag' );
 
 	// toon aan welk onderwerp deze community is gekoppeld
 	if ( $community_topics && ! is_wp_error( $community_topics ) ) :
@@ -660,18 +660,20 @@ function rhswp_community_get_filter_form( $args ) {
 
 	global $post;
 
-	$defaults        = array(
+	$defaults = array(
 		'ID'           => 0,
 		'title'        => '',
 		'type'         => 'div', // 'div' or 'details'
 		'container_id' => 0,
 		'is_open'      => 0,
 		'cssclass'     => 0,
+		'checkboxes'   => true,
 		'description'  => '',
 		'before_title' => '<h2>',
 		'after_title'  => '</h2>',
 		'echo'         => false
 	);
+
 	$args            = wp_parse_args( $args, $defaults );
 	$title           = $args['title'];
 	$description     = $args['description'];
@@ -695,7 +697,6 @@ function rhswp_community_get_filter_form( $args ) {
 	}
 
 	if ( $args['type'] === 'details' ) {
-
 		$container_tag_start = '<details' . $attr_id . $attr_is_open . $attr_classes . '>';
 		$container_tag_start .= '<summary>' . $args['before_title'] . $title . $args['after_title'] . '</summary>';
 		$container_tag_end   = '</details>';
@@ -714,11 +715,18 @@ function rhswp_community_get_filter_form( $args ) {
 	if ( ! $thepage ) {
 		$return .= '<p>' . _x( 'Er is nog geen overzichtspagina ingesteld voor het overzicht van community\'s. Gebruik hiervoor de customizer: kies een pagina onder "Community\'s".', 'warning', 'wp-rijkshuisstijl' ) . '</p>';
 
-	} elseif ( ( $current_post_id === $thepage ) || ( is_singular( 'community' ) ) ) {
+	} elseif ( ( $current_post_id === $thepage ) || ( is_singular( DO_COMMUNITY_CPT ) ) ) {
 
-		$community_types     = ictuwp_communityfilter_list( DO_COMMUNITYTYPE_CT, _n( 'Type community', 'Types community', 2, 'wp-rijkshuisstijl' ), false, $args['ID'] );
-		$community_topics    = ictuwp_communityfilter_list( DO_COMMUNITYTOPICS_CT, _n( 'Onderwerp community', 'Onderwerpen community', 2, 'wp-rijkshuisstijl' ), false, $args['ID'] );
-		$community_audiences = ictuwp_communityfilter_list( DO_COMMUNITYAUDIENCE_CT, _n( 'Doelgroep', 'Doelgroepen', 2, 'wp-rijkshuisstijl' ), false, $args['ID'] );
+		if ( is_singular( DO_COMMUNITY_CPT ) ) {
+			$make_checkboxes = 1;
+		} else {
+			$make_checkboxes = 0;
+		}
+
+		$community_types     = ictuwp_communityfilter_list( DO_COMMUNITYTYPE_CT, _n( 'Type community', 'Types community', 2, 'wp-rijkshuisstijl' ), false, $args['ID'], false,  $make_checkboxes );
+		$community_topics    = ictuwp_communityfilter_list( DO_COMMUNITYTOPICS_CT, _n( 'Onderwerp community', 'Onderwerpen community', 2, 'wp-rijkshuisstijl' ), false, $args['ID'], false,  $make_checkboxes );
+		$community_audiences = ictuwp_communityfilter_list( DO_COMMUNITYAUDIENCE_CT, _n( 'Doelgroep', 'Doelgroepen', 2, 'wp-rijkshuisstijl' ), false, $args['ID'], false,  $make_checkboxes );
+
 		if ( isset( $_GET['community_search_string'] ) ) {
 			$community_search_string = sanitize_text_field( $_GET['community_search_string'] );
 		} else {
@@ -747,7 +755,7 @@ function rhswp_community_get_filter_form( $args ) {
 
 //		$return .= '<div class="filter-keyword">';
 		$return .= '<label for="community_search_string" class="visuallyhidden">' . _x( 'Zoekterm', 'label keyword veld', 'wp-rijkshuisstijl' ) . '</label>';
-		$return .= '<input type="test" id="community_search_string" name="community_search_string" value="' . $community_search_string . '">';
+		$return .= '<input type="search" id="community_search_string" name="community_search_string" value="' . $community_search_string . '">';
 //		$return .= '</div>';
 
 		$return .= '<button type="submit" id="widget_community_filter-submit">' . __( 'Filter', 'taxonomie-lijst', 'wp-rijkshuisstijl' ) . '</button>';
