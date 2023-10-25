@@ -62,9 +62,11 @@ class ICTUWP_community_filter extends WP_Widget {
 			'before_title' => $before_title
 		) );
 
-		echo $before_widget;
-		echo $form;
-		echo $after_widget;
+		if ( $form ) {
+			echo $before_widget;
+			echo $form;
+			echo $after_widget;
+		}
 
 	}
 
@@ -165,7 +167,7 @@ function ictuwp_communityfilter_list( $taxonomy = 'category', $title = '', $doec
 		$terms = get_terms( $args );
 
 		if ( ! empty( $terms ) && ! is_wp_error( $terms ) ) {
-			
+
 			if ( $make_checkboxes ) {
 
 				$return .= '<fieldset class="taxonomy ' . $taxonomy . '">';
@@ -210,6 +212,7 @@ function ictuwp_communityfilter_list( $taxonomy = 'category', $title = '', $doec
 	}
 
 }
+
 
 //========================================================================================================
 
