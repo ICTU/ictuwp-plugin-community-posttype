@@ -385,6 +385,7 @@ function community_add_communities_grid( $doreturn = false ) {
 			}
 
 			$items .= '<div class="archive-custom-loop columncount-' . $columncount . '">';
+			$items .= '<h2 id="' . $container_labelid . '">' . $title . '</h2>';
 			$items .= '<section class="' . $css . '" id="' . CONTAINER_ID . '" aria-labelledby="' . $container_labelid . '">';
 
 			foreach ( $list_with_postids as $post_id ) :
