@@ -738,8 +738,14 @@ function rhswp_community_get_filter_form( $args ) {
 			$return .= '<p>' . $description . '</p>';
 		}
 
-		if ( $community_types || $community_topics || $community_audiences ) {
+		$return .= '<div class="submit-buttons">';
+		$return .= '<label for="community_search_string" class="visuallyhidden">' . _x( 'Zoekterm', 'label keyword veld', 'wp-rijkshuisstijl' ) . '</label>';
+		$return .= '<input type="test" id="community_search_string" name="community_search_string" value="' . $community_search_string . '">';
+		$return .= '<button type="submit" id="widget_community_filter-submit">' . __( 'Filter', 'taxonomie-lijst', 'wp-rijkshuisstijl' ) . '</button>';
+		$return .= '<p id="widget_community_filter-remove"><a href="' . get_permalink( $thepage ) . '">' . __( 'Filter weghalen', 'taxonomie-lijst', 'wp-rijkshuisstijl' ) . '</a></p>';
+		$return .= '</div>';
 
+		if ( $community_types || $community_topics || $community_audiences ) {
 			$return .= '<div class="fieldsets">';
 			$return .= $community_topics;
 			$return .= $community_types;
@@ -749,18 +755,8 @@ function rhswp_community_get_filter_form( $args ) {
 			$return .= '<p>' . _x( 'We konden geen lijst met filters maken.', 'warning', 'wp-rijkshuisstijl' ) . '</p>';
 		}
 
-
-		$return .= '<div class="submit-buttons">';
-
-//		$return .= '<div class="filter-keyword">';
-		$return .= '<label for="community_search_string" class="visuallyhidden">' . _x( 'Zoekterm', 'label keyword veld', 'wp-rijkshuisstijl' ) . '</label>';
-		$return .= '<input type="test" id="community_search_string" name="community_search_string" value="' . $community_search_string . '">';
-//		$return .= '</div>';
-
-		$return .= '<button type="submit" id="widget_community_filter-submit">' . __( 'Filter', 'taxonomie-lijst', 'wp-rijkshuisstijl' ) . '</button>';
-		$return .= '<p id="widget_community_filter-remove"><a href="' . get_permalink( $thepage ) . '">' . __( 'Filter weghalen', 'taxonomie-lijst', 'wp-rijkshuisstijl' ) . '</a></p>';
-		$return .= '</div>';
 		$return .= '</form>';
+
 	}
 
 	$return .= $container_tag_end;
