@@ -740,7 +740,7 @@ function rhswp_community_get_filter_form( $args ) {
 
 		$return .= '<div class="submit-buttons">';
 		$return .= '<label for="community_search_string" class="visuallyhidden">' . _x( 'Zoekterm', 'label keyword veld', 'wp-rijkshuisstijl' ) . '</label>';
-		$return .= '<input type="test" id="community_search_string" name="community_search_string" value="' . $community_search_string . '">';
+		$return .= '<input type="search" id="community_search_string" name="community_search_string" value="' . $community_search_string . '">';
 		$return .= '<button type="submit" id="widget_community_filter-submit">' . __( 'Filter', 'taxonomie-lijst', 'wp-rijkshuisstijl' ) . '</button>';
 		$return .= '<p id="widget_community_filter-remove"><a href="' . get_permalink( $thepage ) . '">' . __( 'Filter weghalen', 'taxonomie-lijst', 'wp-rijkshuisstijl' ) . '</a></p>';
 		$return .= '</div>';
