@@ -258,29 +258,176 @@ function community_add_communities_grid( $doreturn = false ) {
 	global $post;
 
 	// variables
-	$headerlevel  = 'h3';
-	$page_id      = $post->ID;
-	$title        = ( get_field( 'community_list_title', $post ) ) ? get_field( 'community_list_title', $post ) : _x( 'Alle community\'s', 'community lijst titel', 'wp-rijkshuisstijl' );
-	$filter_label = ( get_field( 'community_layout_filter_label', $post ) ) ? get_field( 'community_layout_filter_label', $post ) : _x( 'Filter de lijst', 'community label filter', 'wp-rijkshuisstijl' );
-	$list_layout  = ( get_field( 'community_layout_list', $post ) === 'community_layout_list_accordion' ) ? 'community_layout_list_accordion' : 'community_layout_list_grid';
+	$headerlevel          = 'h3';
+	$page_id              = $post->ID;
+	$community_terms_list = '';
+	$itemcount            = 0;
+	$columncount          = 0;
+	$colspan              = 1;
+	$blockidattribute     = '';
+	$extra_blocks         = '';
+	$losseblokken         = '';
+	$date_format          = get_option( 'date_format' ); // e.g. "F j, Y"
+	$title_tag            = 'h2';
+	$title_tag_start      = '<' . $title_tag . '>';
+	$title_tag_end        = '</' . $title_tag . '>';
+	$title                = ( get_field( 'community_list_title', $post ) ) ? get_field( 'community_list_title', $post ) : _x( 'Alle community\'s', 'community lijst titel', 'wp-rijkshuisstijl' );
+	$filter_label         = ( get_field( 'community_layout_searchform_label', $post ) ) ? get_field( 'community_layout_searchform_label', $post ) : _x( 'Filter de lijst', 'community label filter', 'wp-rijkshuisstijl' );
+	$list_layout          = ( get_field( 'community_layout_list', $post ) === 'community_layout_list_accordion' ) ? 'community_layout_list_accordion' : 'community_layout_list_grid';
+	$group_search         = get_field( 'community_layout_block_search_group', $post );
+	$group_agenda         = get_field( 'community_layout_block_agenda_group', $post );
+	$group_posts          = get_field( 'community_layout_block_posts_group', $post );
+	$group_latest         = get_field( 'community_layout_block_latest_communities_group', $post );
 
-	$community_layout_show_filter = ( get_field( 'community_layout_show_filter', $post ) !== 'community_layout_show_filter_false' ) ? true : false;
+	if ( $group_search['community_layout_block_searchform_show'] !== 'community_layout_block_searchform_show_false' ) {
+		$searchform_show              = true;
+		$searchform_input_label       = ( $group_search['community_layout_block_searchform_label'] ) ?: _x( 'Zoek een community', 'label keyword veld', 'wp-rijkshuisstijl' );
+		$searchform_button_label      = ( $group_search['community_layout_block_searchform_button_label'] ) ?: _x( 'Zoeken', 'label input', 'wp-rijkshuisstijl' );
+		$searchform_input_placeholder = _x( '[zoekterm voor community]', 'placeholder input', 'wp-rijkshuisstijl' );
+
+	} else {
+		$searchform_show = false;
+	}
+
+
+	if ( $group_agenda['community_layout_block_posts_show'] !== 'community_layout_block_posts_show_false' ) {
+
+		if ( $group_agenda['rss_sources'] ) {
+
+			$itemcount ++;
+
+			$feeds = array();
+			foreach ( $group_agenda['rss_sources'] as $item ) {
+				$feeds[] .= $item->post_name;
+			}
+			$title         = ( $group_agenda['community_layout_block_agenda_title'] ) ?: _x( 'Berichten', 'label keyword veld', 'wp-rijkshuisstijl' );
+			$overview_link = $group_agenda['overview_link'];
+			$limit         = (int) ( $group_agenda['community_layout_block_posts_number_items'] ) ?: 5;
+			$template      = ( $group_agenda['rss_template'] ) ? ' template="' . $group_agenda['rss_template']->post_name . '"' : '5'; // template='agenda-items"
+			$shortcode     = '[wp-rss-aggregator' . $template . ' feeds="' . implode( ',', $feeds ) . '" limit="' . $limit . '" pagination="off"]';
+			$content       = do_shortcode( $shortcode );
+
+			if ( $content ) {
+				$extra_blocks .= '<div class="griditem colspan-' . $colspan . '">';
+				$extra_blocks .= $title_tag_start . $title . $title_tag_end;
+				$extra_blocks .= $content;
+				if ( isset( $overview_link['url'] ) && isset( $overview_link['title'] ) ) {
+					$extra_blocks .= '<p class="more"><a href="' . $overview_link['url'] . '">' . $overview_link['title'] . '</a></p>';
+				}
+				$extra_blocks .= '</div>'; // .griditem
+			}
+		}
+
+	}
+
+	if ( $group_posts['community_layout_block_posts_show'] !== 'community_layout_block_posts_show_false' ) {
+
+		if ( $group_posts['rss_sources'] ) {
+
+			$itemcount ++;
+
+			$feeds = array();
+			foreach ( $group_posts['rss_sources'] as $item ) {
+				$feeds[] .= $item->post_name;
+			}
+
+			$title         = ( $group_posts['community_layout_block_posts_title'] ) ?: _x( 'Berichten', 'label keyword veld', 'wp-rijkshuisstijl' );
+			$overview_link = $group_posts['overview_link'];
+			$limit         = (int) ( $group_posts['community_layout_block_agenda_number_items'] ) ?: 5;
+			$template      = ( $group_posts['rss_template'] ) ? ' template="' . $group_posts['rss_template']->post_name . '"' : '5'; // template='agenda-items"
+			$shortcode     = '[wp-rss-aggregator' . $template . ' feeds="' . implode( ',', $feeds ) . '" limit="' . $limit . '" pagination="off"]';
+			$content       = do_shortcode( $shortcode );
+
+			if ( $content ) {
+				$extra_blocks .= '<div class="griditem colspan-' . $colspan . '">';
+				$extra_blocks .= $title_tag_start . $title . $title_tag_end;
+				$extra_blocks .= $content;
+				if ( isset( $overview_link['url'] ) && isset( $overview_link['title'] ) ) {
+					$extra_blocks .= '<p class="more"><a href="' . $overview_link['url'] . '">' . $overview_link['title'] . '</a></p>';
+				}
+				$extra_blocks .= '</div>'; // .griditem
+			}
+		}
+
+
+	}
+
+	if ( $group_latest ) {
+		$content       = '';
+		$limit         = (int) ( $group_latest['community_layout_block_latest_communities_items'] ) ?: 5;
+		$max_age       = (int) ( $group_latest['community_layout_block_latest_communities_max_days'] ) ?: 90;
+		$overview_link = $group_latest['overview_link'];
+		$date_after    = date( 'Y-m-d', strtotime( ' - ' . $max_age . ' days' ) );
+		$title         = ( $group_posts['community_layout_block_latest_communities_title'] ) ?: _x( 'Laatst toegevoegd', 'label keyword veld', 'wp-rijkshuisstijl' );
+
+		$argscount = array(
+			'post_type'      => DO_COMMUNITY_CPT,
+			'post_status'    => 'publish',
+			'orderby'        => 'date',
+			'order'          => 'DESC',
+			'date_query'     => array( 'after' => $date_after ),
+			'posts_per_page' => $limit,
+		);
+
+		// Assign predefined $args to your query
+		$community_list = new WP_query();
+		$community_list->query( $argscount );
+
+		if ( $community_list->have_posts() ) {
+
+//			$content .= '<p>alles na ' . date( $date_format, strtotime( $date_after ) ) . '</p>';
+			$content .= '<ul>';
+
+			while ( $community_list->have_posts() ) : $community_list->the_post();
+				$the_id    = get_the_id();
+				$post_date = get_the_date( $date_format, $the_id );
+				$content   .= '<li><a href="' . get_permalink( $the_id ) . '">' . get_the_title( $the_id ) . '</a> (' . $post_date . ')</li>';
+			endwhile;
+			$content .= '</ul>';
+			if ( isset( $overview_link['url'] ) && isset( $overview_link['title'] ) ) {
+				$content .= '<p class="more"><a href="' . $overview_link['url'] . '">' . $overview_link['title'] . '</a></p>';
+			}
+
+		}
+
+		if ( $content ) {
+			$itemcount ++;
+
+			$extra_blocks .= '<div class="griditem colspan-' . $colspan . '">';
+			$extra_blocks .= $title_tag_start . $title . $title_tag_end;
+			$extra_blocks .= $content;
+			$extra_blocks .= '</div>'; // .griditem
+		}
+
+
+	}
+
+	if ( $extra_blocks ) {
+
+		$losseblokken .= '<section class="losseblokken"' . $blockidattribute . '>';
+		$losseblokken .= '<div class="grid itemcount-' . $itemcount . ' columncount-' . $columncount . '">';
+		$losseblokken .= $extra_blocks; // .wrap
+		$losseblokken .= '</div>'; // .wrap
+		$losseblokken .= '</section>'; // .losseblokken
+	}
+
+	$community_layout_show_terms_filter = ( get_field( 'community_layout_show_terms_lists', $post ) !== 'community_layout_show_terms_filter_false' ) ? true : false;
 	if ( 'community_layout_list_grid' === $list_layout ) {
 		$community_show_alphabet_list = false;
 	} else {
 		$community_show_alphabet_list = ( get_field( 'community_layout_show_alphabet_list', $post ) !== 'community_layout_show_alphabet_list_false' ) ? true : false;
 	}
 
-	$return            = '';
-	$container_before  = '';
-	$container_after   = '';
-	$container_labelid = CONTAINER_ID . '_header';
-	$filter_form       = '';
-	$alphabet_list     = '';
-	$items             = '';
-	$result            = community_get_selection();
-	$list_with_postids = $result['list_with_postids'];
-	$countertje        = count( $list_with_postids );
+	$return                = '';
+	$container_before      = '';
+	$container_after       = '';
+	$container_labelid     = CONTAINER_ID . '_header';
+	$community_search_form = '';
+	$alphabet_list         = '';
+	$extra_blocks          = '';
+	$result                = community_get_selection();
+	$list_with_postids     = $result['list_with_postids'];
+	$countertje            = count( $list_with_postids );
 
 	if ( isset( $result['filter_community_types'] ) ) {
 		$filter_community_types = $result['filter_community_types'];
@@ -318,20 +465,65 @@ function community_add_communities_grid( $doreturn = false ) {
 
 	// ---------------------------------------------------------
 	// append filter
-	if ( $community_layout_show_filter ) {
+	if ( $searchform_show ) {
 
 		$arghs_for_filter = array(
 			'ID'           => $page_id,
-			'type'         => 'details',
-			'title'        => $filter_label,
-			'container_id' => 'details_community_filter',
-			'before_title' => '<h2>',
-			'after_title'  => '</h2>',
+			'container_id' => 'community_filter',
+			'input_label'  => $searchform_input_label,
+			'button_label' => $searchform_button_label,
+			'placeholder'  => $searchform_input_placeholder,
+
 		);
-		if ( isset( $result['is_filtered'] ) ) {
-			$arghs_for_filter['is_open'] = true;
+
+		$community_search_form = rhswp_community_get_filter_form( $arghs_for_filter );
+
+	}
+
+
+	// ---------------------------------------------------------
+	// append filter
+	if ( $community_layout_show_terms_filter ) {
+
+		$community_types     = ictuwp_communityfilter_list( DO_COMMUNITYTYPE_CT, _n( 'Type community', 'Types community', 2, 'wp-rijkshuisstijl' ), false, $args['ID'], false, $make_checkboxes );
+		$community_topics    = ictuwp_communityfilter_list( DO_COMMUNITYTOPICS_CT, _n( 'Onderwerp community', 'Onderwerpen community', 2, 'wp-rijkshuisstijl' ), false, $args['ID'], false, $make_checkboxes );
+		$community_audiences = ictuwp_communityfilter_list( DO_COMMUNITYAUDIENCE_CT, _n( 'Doelgroep', 'Doelgroepen', 2, 'wp-rijkshuisstijl' ), false, $args['ID'], false, $make_checkboxes );
+		$extra_blocks        = '';
+		$community_terms     = rhswp_community_get_terms_list( $arghs_for_filter );
+
+		if ( $community_types || $community_topics || $community_audiences ) {
+			$itemcount = 0;
+			$colspan   = 1;
+
+			if ( $community_types ) {
+				$itemcount ++;
+
+				$extra_blocks .= '<div class="griditem colspan-' . $colspan . '">';
+				$extra_blocks .= $community_types;
+				$extra_blocks .= '</div>'; // .griditem
+			}
+			if ( $community_topics ) {
+				$itemcount ++;
+
+				$extra_blocks .= '<div class="griditem colspan-' . $colspan . '">';
+				$extra_blocks .= $community_topics;
+				$extra_blocks .= '</div>'; // .griditem
+			}
+			if ( $community_audiences ) {
+				$itemcount ++;
+
+				$extra_blocks .= '<div class="griditem colspan-' . $colspan . '">';
+				$extra_blocks .= $community_audiences;
+				$extra_blocks .= '</div>'; // .griditem
+			}
+
+			$community_terms_list = '<section' . $blockidattribute . '>';
+			$community_terms_list .= '<div class="grid itemcount-' . $itemcount . ' columncount-' . $columncount . '">';
+			$community_terms_list .= $extra_blocks; // .wrap
+			$community_terms_list .= '</div>'; // .wrap
+			$community_terms_list .= '</section>'; // .losseblokken
 		}
-		$filter_form = rhswp_community_get_filter_form( $arghs_for_filter );
+
 
 	}
 
@@ -371,8 +563,9 @@ function community_add_communities_grid( $doreturn = false ) {
 	if ( isset( $result['filter_explication'] ) ) {
 		$container_before .= '<p>' . $result['filter_explication'] . '</p>';
 	}
-	if ( $alphabet_list ) {
+	if ( $alphabet_list || $community_search_form ) {
 		$container_before .= '<div class="filters-and-alphabet">';
+		$container_before .= $community_search_form;
 		$container_before .= $alphabet_list;
 		$container_before .= '</div>';
 	}
@@ -399,7 +592,8 @@ function community_add_communities_grid( $doreturn = false ) {
 	// construct the list with all relevant communities
 	if ( ! empty( $list_with_postids ) ) {
 
-		$postcounter = 0;
+		$postcounter          = 0;
+		$community_list_items = '';
 
 		if ( 'community_layout_list_grid' !== $list_layout ) {
 			// show list with detail / summary items
@@ -447,7 +641,7 @@ function community_add_communities_grid( $doreturn = false ) {
 				$cummunitylijst .= "\n" . '<li class="cat-item cat-item-' . $post->ID . '">';
 
 				$titel             = $post->post_title;
-				$excerpt           = get_the_excerpt( $post );
+				$excerpt           = ( get_the_excerpt( $post ) ) ? get_the_excerpt( $post ) : '[beschrijving volgt]';
 				$link_and_linktext = $post->post_title;
 				if ( $permalink ) {
 					$link_and_linktext = '<p class="read-more"><a href="' . $permalink . '">';
@@ -466,9 +660,9 @@ function community_add_communities_grid( $doreturn = false ) {
 
 			endforeach;
 
-			$items .= $cummunitylijst;
-			$items .= $list_end;
-			$items .= $blok_letter_close;
+			$community_list_items .= $cummunitylijst;
+			$community_list_items .= $list_end;
+			$community_list_items .= $blok_letter_close;
 
 		} else {
 
@@ -486,8 +680,8 @@ function community_add_communities_grid( $doreturn = false ) {
 					'headerlevel' => $headerlevel,
 				);
 
-				$this_item = rhswp_get_grid_item( $args_grid_item );
-				$items     .= $this_item;
+				$this_item            = rhswp_get_grid_item( $args_grid_item );
+				$community_list_items .= $this_item;
 
 				do_action( 'genesis_after_entry' );
 
@@ -498,17 +692,23 @@ function community_add_communities_grid( $doreturn = false ) {
 
 
 	} else {
-		$items .= _x( 'Geen community\'s gevonden', 'no results', 'wp-rijkshuisstijl' );
+		$community_list_items .= _x( 'Geen community\'s gevonden', 'no results', 'wp-rijkshuisstijl' );
 	}
-
 
 	$return .= $container_before;
-	$return .= $items;
+	$return .= $community_list_items;
 	$return .= $container_after;
 
-	if ( $filter_form ) {
-		$return .= $filter_form;
+
+	if ( $losseblokken ) {
+		$return .= $losseblokken;
 	}
+
+
+	if ( $community_terms_list ) {
+		$return .= $community_terms_list;
+	}
+
 
 	wp_reset_query();
 	wp_reset_postdata();
