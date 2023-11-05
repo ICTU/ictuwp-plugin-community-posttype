@@ -616,9 +616,6 @@ function rhswp_community_single_terms( $doreturn = false, $post_id = 0, $show_do
 		}
 	}
 
-
-	$community_tags = get_the_terms( $post->ID, 'post_tag' );
-
 	if ( $community_tags && ! is_wp_error( $community_tags ) ) {
 
 		$labels = '<dd>';

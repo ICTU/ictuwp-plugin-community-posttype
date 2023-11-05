@@ -303,7 +303,7 @@ function community_add_communities_grid( $doreturn = false ) {
 			$title         = ( $group_agenda['community_layout_block_agenda_title'] ) ?: _x( 'Berichten', 'label keyword veld', 'wp-rijkshuisstijl' );
 			$overview_link = $group_agenda['overview_link'];
 			$limit         = (int) ( $group_agenda['community_layout_block_posts_number_items'] ) ?: 5;
-			$template      = ( $group_agenda['rss_template'] ) ? ' template="' . $group_agenda['rss_template']->post_name . '"' : '5'; // template='agenda-items"
+			$template      = ( $group_agenda['rss_template'] ) ? ' template="' . $group_agenda['rss_template']->post_name . '"' : '';
 			$shortcode     = '[wp-rss-aggregator' . $template . ' feeds="' . implode( ',', $feeds ) . '" limit="' . $limit . '" pagination="off"]';
 			$content       = do_shortcode( $shortcode );
 
@@ -334,7 +334,7 @@ function community_add_communities_grid( $doreturn = false ) {
 			$title         = ( $group_posts['community_layout_block_posts_title'] ) ?: _x( 'Berichten', 'label keyword veld', 'wp-rijkshuisstijl' );
 			$overview_link = $group_posts['overview_link'];
 			$limit         = (int) ( $group_posts['community_layout_block_agenda_number_items'] ) ?: 5;
-			$template      = ( $group_posts['rss_template'] ) ? ' template="' . $group_posts['rss_template']->post_name . '"' : '5'; // template='agenda-items"
+			$template      = ( $group_posts['rss_template'] ) ? ' template="' . $group_posts['rss_template']->post_name . '"' : ''
 			$shortcode     = '[wp-rss-aggregator' . $template . ' feeds="' . implode( ',', $feeds ) . '" limit="' . $limit . '" pagination="off"]';
 			$content       = do_shortcode( $shortcode );
 
