@@ -47,9 +47,9 @@ define( 'DO_COMMUNITYAUDIENCE_CT', $slugaudiences );
 defined( 'DO_COMMUNITY_OVERVIEW_TEMPLATE' ) or define( 'DO_COMMUNITY_OVERVIEW_TEMPLATE', 'template-overview-communities.php' );
 defined( 'DO_COMMUNITY_DETAIL_TEMPLATE' ) or define( 'DO_COMMUNITY_DETAIL_TEMPLATE', 'template-community-detail.php' );
 
-if ( ! defined( 'RHSWP_WIDGET_AREA_COMMUNITY_OVERVIEW' ) ) {
-	define( 'RHSWP_WIDGET_AREA_COMMUNITY_OVERVIEW', 'sidebar-community-overview' );
-}
+//if ( ! defined( 'RHSWP_WIDGET_AREA_COMMUNITY_OVERVIEW' ) ) {
+//	define( 'RHSWP_WIDGET_AREA_COMMUNITY_OVERVIEW', 'sidebar-community-overview' );
+//}
 
 //========================================================================================================
 add_action( 'plugins_loaded', array( 'DO_COMMUNITY_CPT', 'init' ), 10 );
@@ -118,12 +118,15 @@ if ( ! class_exists( 'DO_COMMUNITY_CPT' ) ) :
 			add_filter( 'theme_page_templates', array( $this, 'fn_ictu_community_add_page_template' ) );
 
 			// provide the file location to the template
-			add_filter( 'template_include', array( $this, 'led_template_page_initiatieven' ) );
+			add_filter( 'template_include', array( $this, 'ictuwp_community_determine_template' ) );
 
 
 			// Register widgets
 			add_action( 'widgets_init', 'ictuwp_communityfilter_load_widgets' );
 			add_action( 'widgets_init', 'ictuwp_load_widget_last_added_communities' );
+
+			// sort alphabetically and list all communities for a single taxonomy term
+			add_action( 'pre_get_posts', array( $this, 'fn_ictu_community_modify_main_query' ), 999 );
 
 
 		}
@@ -153,12 +156,46 @@ if ( ! class_exists( 'DO_COMMUNITY_CPT' ) ) :
 
 		}
 
+		//========================================================================================================
+		/*
+		 * Deze function wijzigt de main query voor archives van community's en bijbehorden taxonomieen.
+		 * Door deze wijziging wordt op 1 pagina een overzicht getoond van ALLE community's bij een bepaalde
+		 * taxonomie, en de lijst wordt alfabetisch gesorteerd op titel
+		 */
+		public function fn_ictu_community_modify_main_query( $query ) {
+
+			global $query_vars;
+
+			if ( ! is_admin() && $query->is_main_query() ) {
+
+				if ( is_post_type_archive( DO_COMMUNITY_CPT ) ||
+				     ( is_tax( DO_COMMUNITYTYPE_CT ) ) ||
+				     ( is_tax( DO_COMMUNITYTOPICS_CT ) ) ||
+				     ( is_tax( DO_COMMUNITYAUDIENCE_CT ) ) ) {
+					// geen pagination voor overzichten van:
+					// - community types
+					// - community onderwerpen
+					// - community doelgroepen
+					$query->set( 'posts_per_page', - 1 );
+					$query->set( 'orderby', 'title' );
+					$query->set( 'order', 'ASC' );
+
+					return $query;
+
+				}
+
+			}
+
+			return $query;
+		}
+
+
 		/** ----------------------------------------------------------------------------------------------------
 		 * Do actually register the post types we need
 		 *
 		 * @return void
 		 */
-		public function led_template_page_initiatieven( $archive_template ) {
+		public function ictuwp_community_determine_template( $archive_template ) {
 
 			global $post;
 
@@ -172,6 +209,9 @@ if ( ! class_exists( 'DO_COMMUNITY_CPT' ) ) :
 			if ( is_singular( DO_COMMUNITY_CPT ) ) {
 //				// het is een single voor CPT = DO_COMMUNITY_CPT
 //				$archive_template = dirname( __FILE__ ) . '/templates/single-initiatief.php';
+			} elseif ( is_tax( DO_COMMUNITYTYPE_CT ) || is_tax( DO_COMMUNITYTOPICS_CT ) || is_tax( DO_COMMUNITYAUDIENCE_CT ) ) {
+
+				$archive_template = dirname( __FILE__ ) . '/templates/archive-communities.php';
 
 			} elseif ( 'template_overview_communities.php' == $page_template ) {
 
@@ -676,9 +716,22 @@ function rhswp_community_get_terms_list( $args ) {
 		$make_checkboxes = 0;
 	}
 
-	$community_types     = ictuwp_communityfilter_list( DO_COMMUNITYTYPE_CT, _n( 'Type community', 'Types community', 2, 'wp-rijkshuisstijl' ), false, $args['ID'], false, $make_checkboxes );
-	$community_topics    = ictuwp_communityfilter_list( DO_COMMUNITYTOPICS_CT, _n( 'Onderwerp community', 'Onderwerpen community', 2, 'wp-rijkshuisstijl' ), false, $args['ID'], false, $make_checkboxes );
-	$community_audiences = ictuwp_communityfilter_list( DO_COMMUNITYAUDIENCE_CT, _n( 'Doelgroep', 'Doelgroepen', 2, 'wp-rijkshuisstijl' ), false, $args['ID'], false, $make_checkboxes );
+	$args2 = array(
+		'echo'            => false,
+		'exclude'         => $args['ID'],
+		'hide_empty'      => false,
+		'make_checkboxes' => $make_checkboxes,
+	);
+
+	$args2['taxonomy']   = DO_COMMUNITYTYPE_CT;
+	$args2['title']      = _n( 'Type community', 'Types community', 2, 'wp-rijkshuisstijl' );
+	$community_types     = ictuwp_communityfilter_list( $args2 );
+	$args2['taxonomy']   = DO_COMMUNITYTOPICS_CT;
+	$args2['title']      = _n( 'Onderwerp community', 'Onderwerpen community', 2, 'wp-rijkshuisstijl' );
+	$community_topics    = ictuwp_communityfilter_list( $args2 );
+	$args2['taxonomy']   = DO_COMMUNITYAUDIENCE_CT;
+	$args2['title']      = _n( 'Doelgroep', 'Doelgroepen', 2, 'wp-rijkshuisstijl' );
+	$community_audiences = ictuwp_communityfilter_list( $args2 );
 
 	if ( $community_types || $community_topics || $community_audiences ) {
 		$return .= '<div class="fieldsets">';
@@ -770,3 +823,197 @@ function rhswp_community_get_filter_form( $args ) {
 
 //========================================================================================================
 
+function ictuwp_community_get_latest_list( $argslist ) {
+
+
+	$default_args = array(
+		'max_items'     => 10,
+		'max_age'       => 180,
+		'overview_link' => '',
+		'css_class_ul'  => '',
+		'date_format'   => 'j F'
+	);
+
+	$return     = '';
+	$args       = wp_parse_args( $argslist, $default_args );
+	$date_after = date( 'Y-m-d', strtotime( ' - ' . $args['max_age'] . ' days' ) );
+
+	$argscount = array(
+		'post_type'      => DO_COMMUNITY_CPT,
+		'post_status'    => 'publish',
+		'orderby'        => 'date',
+		'order'          => 'DESC',
+		'date_query'     => array( 'after' => $date_after ),
+		'posts_per_page' => $args['max_items'],
+	);
+
+	// Assign predefined $args to your query
+	$community_list = new WP_query();
+	$community_list->query( $argscount );
+
+	if ( $community_list->have_posts() ) {
+
+//			$return .= '<p>alles na ' . date( $date_format, strtotime( $date_after ) ) . '</p>';
+		if ( $args['css_class_ul'] ) {
+			$return .= '<ul class="' . $args['css_class_ul'] . '">';
+		} else {
+			$return .= '<ul>';
+		}
+
+		while ( $community_list->have_posts() ) : $community_list->the_post();
+			$the_id = get_the_id();
+//			$post_date = get_the_date( $args['date_format'], $the_id );
+			$return .= '<li><a href="' . get_permalink( $the_id ) . '">' . get_the_title( $the_id ) . '</a></li>';
+		endwhile;
+		$content .= '</ul>';
+		if ( isset( $overview_link['url'] ) && isset( $overview_link['title'] ) ) {
+			$return .= '<p class="more"><a href="' . $overview_link['url'] . '">' . $overview_link['title'] . '</a></p>';
+		}
+	}
+
+	return $return;
+}
+
+//========================================================================================================
+
+function ictuwp_communityfilter_list( $args_in = array() ) {
+
+	$return = '';
+
+	$defaults = array(
+		'taxonomy'        => 'category',
+		'title'           => '',
+		'echo'            => false,
+		'exclude'         => false,
+		'hide_empty'      => true,
+		'make_checkboxes' => true,
+		'header_tag'      => 'h3',
+		'show_counter'    => false,
+		'title_li'        => '',
+		'css_class_ul'    => '',
+	);
+	$args     = wp_parse_args( $args_in, $defaults );
+
+
+	if ( taxonomy_exists( $args['taxonomy'] ) ) {
+
+		$tersm_args = array(
+			'taxonomy'           => $args['taxonomy'],
+			'orderby'            => 'name',
+			'order'              => 'ASC',
+			'hide_empty'         => $args['hide_empty'],
+			'ignore_custom_sort' => true,
+			'echo'               => 0,
+			'hierarchical'       => true,
+		);
+
+		if ( isset( $args['exclude'] ) ) {
+			// do not include this term in the list
+			$tersm_args['exclude']    = $exclude;
+			$tersm_args['hide_empty'] = true;
+		}
+
+		if ( isset( $args['show_counter'] ) ) {
+			$tersm_args['count'] = true;
+		}
+
+		$terms = get_terms( $tersm_args );
+
+		if ( ! empty( $terms ) && ! is_wp_error( $terms ) ) {
+
+			if ( $args['make_checkboxes'] ) {
+
+				$return .= '<fieldset class="taxonomy ' . $args['taxonomy'] . '">';
+				if ( $args['title'] ) {
+					$return .= '<legend>' . $args['title'] . '</legend>';
+				}
+
+				foreach ( $terms as $term ) {
+					$id        = $term->slug . '_' . $term->term_id;
+					$checked   = '';
+					$dossierid = isset( $_GET[ $id ] ) ? (int) $_GET[ $id ] : 0; // een dossier
+
+					if ( $dossierid === $term->term_id ) {
+						$checked = ' checked';
+					}
+					$return .= '<label for="' . $id . '"><input id="' . $id . '" type="checkbox" name="' . $id . '" value="' . $term->term_id . '"' . $checked . '>' . $term->name . '</label>';
+				}
+				$return .= '</fieldset>';
+
+			} else {
+
+				$return .= '<div class="taxonomy ' . $args['taxonomy'] . '">';
+				if ( $args['title'] ) {
+					$return .= '<' . $args['header_tag'] . '>' . $args['title'] . '</' . $args['header_tag'] . '>';
+				}
+
+				if ( $args['css_class_ul'] ) {
+					$return .= '<ul class="' . $args['css_class_ul'] . '">';
+				} else {
+					$return .= '<ul>';
+				}
+				foreach ( $terms as $term ) {
+					$return .= '<li><a href="' . get_term_link( $term->term_id ) . '">' . $term->name . '</a>';
+					if ( $args['show_counter'] ) {
+						$return .= ' (' . $term->count . ' ' . _n( 'community', "community's", $term->count, 'wp-rijkshuisstijl' ) . ')';
+					}
+					$return .= '</li>';
+				}
+				$return .= '</ul>';
+				$return .= '</div>';
+			}
+
+		}
+	}
+
+	if ( $args['echo'] ) {
+		echo $return;
+	} else {
+		return $return;
+	}
+
+}
+
+//========================================================================================================
+
+/*
+ * Deze functie hoest een titel op boven de lijst met initiatieven.
+ * Deze titel komt voor op een overzicht van ALLE initiatieven of een lijst
+ * met initiatieven per provincie.
+ * Je ziet ook het aantal initiatieven.
+ */
+function ictuwp_community_archive_title( $doreturn = false ) {
+
+	global $wp_query;
+	global $post;
+
+	$archive_title       = _x( "Overzicht community's", "naam template", "wp-rijkshuisstijl" );
+	$archive_description = '';
+	$return              = '';
+
+	$term_id = get_queried_object_id();
+	$term    = get_term( $term_id, $thetax );
+
+	if ( $term && ! is_wp_error( $term ) ) {
+		$archive_title = $term->name;
+		if ( $term->description ) {
+			$archive_description = $term->description;
+		}
+	}
+
+	$return = '<h1>' . $archive_title . '</h1>';
+
+
+	if ( $archive_description ) {
+		$return .= '<p>' . $archive_description . '</p>';
+	}
+
+	if ( $doreturn ) {
+		return $return;
+	} else {
+		echo $return;
+	}
+
+}
+
+//========================================================================================================
