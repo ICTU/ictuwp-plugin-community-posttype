@@ -767,8 +767,8 @@ function rhswp_community_get_filter_form( $args ) {
 		'echo'         => false
 	);
 	$args                = wp_parse_args( $args, $defaults );
-	$title               = $args['title'];
-	$description         = $args['description'];
+	$title               = '';
+	$description         = '';
 	$thepage             = get_theme_mod( 'customizer_community_pageid_overview' );
 	$return              = '';
 	$attr_id             = '';
@@ -791,17 +791,17 @@ function rhswp_community_get_filter_form( $args ) {
 		$community_search_string = '';
 	}
 
-	if ( ! isset( $args['title'] ) ) {
-		$title               .= '<' . $args['before_title'] . '>' . $args['title'] . '</' . $args['after_title'] . '>';
+	if ( $args['title'] )  {
+		$title               .= $args['before_title']  . $args['title'] . $args['after_title'] ;
 		$container_tag_start = '<fieldset>';
 		$container_tag_end   = '</fieldset>';
 	}
 
-	if ( ! isset( $args['description'] ) ) {
+	if ( $args['description'] )  {
 		$description .= '<p>' . $args['description'] . '</p>';
 	}
 
-	$return .= '<form id="' . $attr_id . '"' . $attr_classes . 'action="' . get_permalink( $thepage ) . '" method="get">';
+	$return .= '<form id="' . $attr_id . '"' . $attr_classes . ' action="' . get_permalink( $thepage ) . '" method="get">';
 	$return .= $container_tag_start;
 	$return .= $title;
 	$return .= $description;
@@ -897,27 +897,27 @@ function ictuwp_communityfilter_list( $args_in = array() ) {
 
 	if ( taxonomy_exists( $args['taxonomy'] ) ) {
 
-		$tersm_args = array(
+		$args_terms = array(
 			'taxonomy'           => $args['taxonomy'],
 			'orderby'            => 'name',
 			'order'              => 'ASC',
-			'hide_empty'         => $args['hide_empty'],
+			'hide_empty'         => ( $args['hide_empty'] ? true : false ),
 			'ignore_custom_sort' => true,
 			'echo'               => 0,
 			'hierarchical'       => true,
 		);
 
-		if ( isset( $args['exclude'] ) ) {
+		if ( $args['exclude'] ) {
 			// do not include this term in the list
-			$tersm_args['exclude']    = $args['exclude'];
-			$tersm_args['hide_empty'] = true;
+			$args_terms['exclude']    = $args['exclude'];
+			$args_terms['hide_empty'] = true;
 		}
 
 		if ( isset( $args['show_counter'] ) ) {
-			$tersm_args['count'] = true;
+			$args_terms['count'] = true;
 		}
 
-		$terms = get_terms( $tersm_args );
+		$terms = get_terms( $args_terms );
 
 		if ( ! empty( $terms ) && ! is_wp_error( $terms ) ) {
 
@@ -955,7 +955,11 @@ function ictuwp_communityfilter_list( $args_in = array() ) {
 				foreach ( $terms as $term ) {
 					$return .= '<li><a href="' . get_term_link( $term->term_id ) . '">' . $term->name . '</a>';
 					if ( $args['show_counter'] ) {
-						$return .= ' (' . $term->count . ' ' . _n( 'community', "community's", $term->count, 'wp-rijkshuisstijl' ) . ')';
+						if ( $term->count ) {
+							$return .= ' (' . $term->count . ' ' . _n( 'community', "community's", $term->count, 'wp-rijkshuisstijl' ) . ')';
+						} else {
+							$return .= " (nog geen community's)";
+						}
 					}
 					$return .= '</li>';
 				}
