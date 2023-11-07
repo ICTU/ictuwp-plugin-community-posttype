@@ -865,7 +865,7 @@ function ictuwp_community_get_latest_list( $argslist ) {
 //			$post_date = get_the_date( $args['date_format'], $the_id );
 			$return .= '<li><a href="' . get_permalink( $the_id ) . '">' . get_the_title( $the_id ) . '</a></li>';
 		endwhile;
-		$content .= '</ul>';
+		$return .= '</ul>';
 		if ( isset( $overview_link['url'] ) && isset( $overview_link['title'] ) ) {
 			$return .= '<p class="more"><a href="' . $overview_link['url'] . '">' . $overview_link['title'] . '</a></p>';
 		}
@@ -909,7 +909,7 @@ function ictuwp_communityfilter_list( $args_in = array() ) {
 
 		if ( isset( $args['exclude'] ) ) {
 			// do not include this term in the list
-			$tersm_args['exclude']    = $exclude;
+			$tersm_args['exclude']    = $args['exclude'];
 			$tersm_args['hide_empty'] = true;
 		}
 

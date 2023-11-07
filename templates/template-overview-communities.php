@@ -70,8 +70,9 @@ if ( function_exists( 'genesis' ) ) {
 
 function community_get_selection( $args = array() ) {
 
-	$return                      = array();
-	$return['list_with_postids'] = array();
+	$return                             = array();
+	$return['list_with_postids']        = array();
+	$tax_query                          = array();
 
 	if ( isset( $_GET['community_search_string'] ) && ( $_GET['community_search_string'] !== '' ) ) {
 
@@ -88,10 +89,6 @@ function community_get_selection( $args = array() ) {
 				'fields' => 'ids', // only return IDs
 				'page'   => $search_page
 			);
-			if ( $tax_query ) {
-				$arguments['s']         = $searchterm;
-				$arguments['tax_query'] = $tax_query;
-			}
 			$searchwp_query     = new \SearchWP\Query( $searchterm, $arguments );
 			$community_list     = $searchwp_query->get_results();
 			$filter_explication = "Gefilterd op '" . $searchterm . "'";
@@ -114,10 +111,6 @@ function community_get_selection( $args = array() ) {
 			'posts_per_page' => - 1,
 		);
 
-		if ( $tax_query ) {
-			$argscount['tax_query'] = $tax_query;
-		}
-
 		// Assign predefined $args to your query
 		$community_list = new WP_query();
 		$community_list->query( $argscount );
@@ -135,15 +128,6 @@ function community_get_selection( $args = array() ) {
 	if ( $filter_explication ) {
 		$return['is_filtered']        = true;
 		$return['filter_explication'] = $filter_explication;
-	}
-	if ( $filter_community_types ) {
-		$return['filter_community_types'] = $filter_community_types;
-	}
-	if ( $filter_community_topics ) {
-		$return['filter_community_topics'] = $filter_community_topics;
-	}
-	if ( $filter_community_audiences ) {
-		$return['filter_community_audiences'] = $filter_community_audiences;
 	}
 
 	return $return;
@@ -163,7 +147,7 @@ function community_add_communities_grid( $doreturn = false ) {
 	$itemcount                   = 0;
 	$columncount                 = 0;
 	$colspan                     = 1;
-	$blockidattribute            = '';
+	$return                      = '';
 	$extra_blocks                = '';
 	$losseblokken                = '';
 	$container_header            = '';
@@ -541,9 +525,8 @@ function community_add_communities_grid( $doreturn = false ) {
 
 		$args2           = array(
 			'echo'            => false,
-			'exclude'         => $args['ID'],
 			'hide_empty'      => false,
-			'make_checkboxes' => $make_checkboxes,
+			'make_checkboxes' => false,
 			'taxonomy'        => DO_COMMUNITYTYPE_CT,
 			'css_class_ul'    => 'links',
 			'show_counter'    => true,
