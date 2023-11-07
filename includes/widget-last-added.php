@@ -54,37 +54,33 @@ class ICTUWP_widget_last_added_communities extends WP_Widget {
 		$title       = esc_attr( $instance['title'] );
 		$description = esc_attr( $instance['widget_description'] );
 		$maxnr_posts = esc_attr( $instance['maxnr_posts'] );
-
-		// Assign predefined $args to your query
-		$args              = array(
-			'post_type'      => DO_COMMUNITY_CPT,
-			'post_status'    => 'publish',
-			'posts_per_page' => $maxnr_posts,
-			'orderby'        => 'post_date',
-			'order'          => 'DESC',
+		$max_age     = esc_attr( $instance['max_age'] );
+		$args        = array(
+			'max_items'     => $maxnr_posts,
+			'max_age'       => $max_age,
+			'overview_link' => $overview_link
 		);
-		$contentblockposts = new WP_query();
-		$contentblockposts->query( $args );
 
+		$content = ictuwp_community_get_latest_list( $args );
 
-		echo $before_widget;
+		if ( $content ) {
 
-		if ( ! empty( $title ) ) {
-			echo $before_title . $title . $after_title;
+			echo $before_widget;
+
+			if ( ! empty( $title ) ) {
+				echo $before_title . $title . $after_title;
+			}
+			if ( ! empty( $description ) ) {
+				echo '<p>' . $description . '</p>';
+			}
+
+			echo $content;
+			echo $after_widget;
+		} else {
+			echo '<pre>';
+			var_dump( $args );
+			echo '</pre>';
 		}
-		if ( ! empty( $description ) ) {
-			echo '<p>' . $description . '</p>';
-		}
-
-		if ( $contentblockposts->have_posts() ) {
-			echo '<ul class="links">';
-			while ( $contentblockposts->have_posts() ) : $contentblockposts->the_post();
-				echo '<li><a href="' . get_permalink( $post->ID ) . '">' . get_the_title( $post->ID ) . '</a></li>';
-			endwhile;
-			echo '</ul>';
-		}
-
-		echo $after_widget;
 
 	}
 
@@ -104,6 +100,7 @@ class ICTUWP_widget_last_added_communities extends WP_Widget {
 		$instance['title']              = esc_attr( $new_instance['title'] );
 		$instance['widget_description'] = esc_attr( $new_instance['widget_description'] );
 		$instance['maxnr_posts']        = esc_attr( $new_instance['maxnr_posts'] );
+		$instance['max_age']            = esc_attr( $new_instance['max_age'] );
 
 		return $instance;
 	}
@@ -125,12 +122,14 @@ class ICTUWP_widget_last_added_communities extends WP_Widget {
 		);
 
 		$instance = wp_parse_args( (array) $instance, $defaults );
+		$max_days = ( (int) $instance['max_age'] > 0 ) ? (int) $instance['max_age'] : 90;
 
 		?>
 
 		<p>
 			<label
-				for="<?php echo $this->get_field_id( 'title' ); ?>"><?php _e( 'Titel', 'wp-rijkshuisstijl' ); ?>:</label>
+				for="<?php echo $this->get_field_id( 'title' ); ?>"><?php _e( 'Titel', 'wp-rijkshuisstijl' ); ?>
+				:</label>
 			<input class="widefat" type="text" id="<?php echo $this->get_field_id( 'title' ); ?>"
 				   name="<?php echo $this->get_field_name( 'title' ); ?>" value="<?php echo $instance['title']; ?>"/>
 		</p>
@@ -138,14 +137,16 @@ class ICTUWP_widget_last_added_communities extends WP_Widget {
 
 		<p>
 			<label
-				for="<?php echo $this->get_field_id( 'widget_description' ); ?>"><?php _e( 'Beschrijving', 'wp-rijkshuisstijl' ); ?>:</label>
+				for="<?php echo $this->get_field_id( 'widget_description' ); ?>"><?php _e( 'Beschrijving', 'wp-rijkshuisstijl' ); ?>
+				:</label>
 			<textarea class="widefat" type="text" id="<?php echo $this->get_field_id( 'widget_description' ); ?>"
 					  name="<?php echo $this->get_field_name( 'widget_description' ); ?>"><?php echo $instance['widget_description']; ?></textarea>
 		</p>
 
 		<p>
 			<label
-				for="<?php echo $this->get_field_id( 'maxnr_posts' ); ?>"><?php echo _x( 'Maximum aantal community\'s','label', 'wp-rijkshuisstijl' ); ?>:</label>
+				for="<?php echo $this->get_field_id( 'maxnr_posts' ); ?>"><?php echo _x( 'Maximum aantal community\'s', 'label', 'wp-rijkshuisstijl' ); ?>
+				:</label>
 			<?php
 			echo '<select id="' . $this->get_field_id( 'maxnr_posts' ) . '" name="' . $this->get_field_name( 'maxnr_posts' ) . '">';
 			$max = 10;
@@ -160,6 +161,17 @@ class ICTUWP_widget_last_added_communities extends WP_Widget {
 			}
 			echo '</select>';
 			?>
+		</p>
+
+		<p>
+			<label
+				for="<?php echo $this->get_field_id( 'max_age' ); ?>"><?php echo _x( 'Niet ouder dan hoeveel dagen?', 'label', 'wp-rijkshuisstijl' ); ?>
+				:</label>
+
+			<input class="widefat" type="number" id="<?php echo $this->get_field_id( 'max_age' ); ?>"
+				   name="<?php echo $this->get_field_name( 'max_age' ); ?>" value="<?php echo $max_days; ?>"/>
+
+
 		</p>
 
 		<?php
