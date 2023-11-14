@@ -81,6 +81,8 @@ function community_get_selection( $args = array() ) {
 	$tax_query                   = array();
 	$filter_explication          = '';
 
+	echo '<h1>community_get_selection</h1>';
+
 	if ( isset( $_GET['community_search_string'] ) && ( $_GET['community_search_string'] !== '' ) ) {
 
 		// a search query for the supplemental 'communities' searchwp engine
@@ -136,6 +138,9 @@ function community_get_selection( $args = array() ) {
 		$return['is_filtered']        = true;
 		$return['filter_explication'] = $filter_explication;
 	}
+
+	echo '<h1>community_get_selection: ' . count( $return['list_with_postids'] ) . '</h1>';
+
 
 	return $return;
 
