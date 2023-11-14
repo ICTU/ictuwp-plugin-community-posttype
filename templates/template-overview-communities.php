@@ -288,6 +288,8 @@ function community_add_communities_grid( $doreturn = false ) {
 
 	}
 
+	echo 'tot zover';
+
 	// ---------------------------------------------------------
 	/**
 	 * Three options for layout:
