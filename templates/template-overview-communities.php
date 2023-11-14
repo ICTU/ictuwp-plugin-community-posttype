@@ -183,25 +183,25 @@ function community_add_communities_grid( $doreturn = false ) {
 	$countertje        = count( $list_with_postids );
 
 	/**
-	echo '<pre>';
-	var_dump( $community_layout_list );
-	echo '</pre>';
-	echo '<hr>';
-	echo '<pre>';
-	var_dump( $block_search_community_form );
-	echo '</pre>';
-	echo '<hr>';
-	echo '<pre>';
-	var_dump( $block_rss_agenda_items );
-	echo '</pre>';
-	echo '<hr>';
-	echo '<pre>';
-	var_dump( $block_rss_post_items );
-	echo '</pre>';
-	echo '<hr>';
-	echo '<pre>';
-	var_dump( $block_latest_communities );
-	echo '</pre>';
+	 * echo '<pre>';
+	 * var_dump( $community_layout_list );
+	 * echo '</pre>';
+	 * echo '<hr>';
+	 * echo '<pre>';
+	 * var_dump( $block_search_community_form );
+	 * echo '</pre>';
+	 * echo '<hr>';
+	 * echo '<pre>';
+	 * var_dump( $block_rss_agenda_items );
+	 * echo '</pre>';
+	 * echo '<hr>';
+	 * echo '<pre>';
+	 * var_dump( $block_rss_post_items );
+	 * echo '</pre>';
+	 * echo '<hr>';
+	 * echo '<pre>';
+	 * var_dump( $block_latest_communities );
+	 * echo '</pre>';
 	 *
 	 */
 
@@ -471,24 +471,23 @@ function community_add_communities_grid( $doreturn = false ) {
 			$limit         = (int) ( $block_rss_agenda_items['max_items'] ) ?: 5;
 			$title_block   = ( $block_rss_agenda_items['block_title'] ) ?: _x( 'Agenda', 'label keyword veld', 'wp-rijkshuisstijl' );
 			$rss_content   = '';
+			$args_selection = array(
+				'event_type'     => 'event',
+				'paging'         => false,
+				'posts_per_page' => $limit,
+				'echo'           => false
+			);
 
-			if ( 222 === 222 ) {
+			$community_items = community_feed_items_get( $args_selection );
 
-				$args_selection = array(
-					'event_type'     => 'event',
-					'paging'         => false,
-					'posts_per_page' => $limit,
-					'echo'           => false
-				);
+			if ( ! $community_items ) {
+				// no items
+			} else {
 
-				$community_items = community_feed_items_get( $args_selection );
-
-				if ( ! $community_items ) {
-				}
 				// Query to get all feed items for display
 				$date_format_badge = get_option( 'date_format' );
 				$time_format       = get_option( 'time_format' );
-//				$date_format_badge = 'j F';// get_option( 'date_format' ); // e.g. "F j, Y"
+				//				$date_format_badge = 'j F';// get_option( 'date_format' ); // e.g. "F j, Y"
 				$date_format_badge = 'j M';// get_option( 'date_format' ); // e.g. "F j, Y"
 				$date_format_year  = 'Y';// get_option( 'date_format' ); // e.g. "F j, Y"
 				$date_format_month = 'F';// get_option( 'date_format' ); // e.g. "F j, Y"
@@ -536,37 +535,8 @@ function community_add_communities_grid( $doreturn = false ) {
 					$rss_content .= '</ul>';
 
 				}
-			} else {
-
-				$feeds       = array();
-				$args_feeds  = array(
-					'post_type'      => 'wprss_feed',
-					'post_status'    => 'publish',
-					'meta_key'       => 'community_rssfeed_type',
-					'meta_value'     => 'event',
-					'posts_per_page' => - 1,
-				);
-				$rss_sources = new WP_Query( $args_feeds );
-
-				if ( $rss_sources->have_posts() ) {
-					while ( $rss_sources->have_posts() ) : $rss_sources->the_post();
-						$feeds[] .= $post->post_name;
-					endwhile;
-				}
-
-				if ( $feeds ) {
-
-					$itemcount ++;
-
-					$template    = ( $block_rss_agenda_items['rss_template'] ) ? ' template="' . $block_rss_agenda_items['rss_template']->post_name . '"' : '';
-					$shortcode   = '[wp-rss-aggregator' . $template . ' feeds="' . implode( ',', $feeds ) . '" limit="' . $limit . '" pagination="off"]';
-					$rss_content = do_shortcode( $shortcode );
-
-					if ( str_contains( $rss_content, 'No feed items found.' ) ) {
-						$rss_content = '';
-					}
-				}
 			}
+
 
 			if ( $rss_content ) {
 
