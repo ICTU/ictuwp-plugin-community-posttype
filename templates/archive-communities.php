@@ -1,5 +1,6 @@
 <?php
 /**
+ *
  * archive-communities.php
  *
  */
@@ -50,6 +51,10 @@ function ictuwp_community_term_archive_list( $doreturn = false ) {
 //		$itemcount = 3;
 		$itemcount   = $wp_query->post_count;
 		$columncount = 2;
+		$postcounter = 0;
+		if ( $itemcount < $columncount ) {
+			$columncount = $itemcount;
+		}
 
 		echo '<h2>' . $itemcount . ' ' . _n( 'community', "community's", $itemcount, 'wp-rijkshuisstijl' ) . '</h2>';
 		echo '<div class="grid columncount-' . $columncount . ' itemcount-' . $itemcount . '">';
