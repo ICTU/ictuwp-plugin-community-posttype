@@ -181,6 +181,7 @@ function community_add_communities_grid( $doreturn = false ) {
 	$list_with_postids = $result['list_with_postids'];
 	$countertje        = count( $list_with_postids );
 
+	/**
 	echo '<pre>';
 	var_dump( $community_layout_list );
 	echo '</pre>';
@@ -200,6 +201,8 @@ function community_add_communities_grid( $doreturn = false ) {
 	echo '<pre>';
 	var_dump( $block_latest_communities );
 	echo '</pre>';
+	 *
+	 */
 
 	if ( $community_layout_list ) {
 
@@ -288,7 +291,6 @@ function community_add_communities_grid( $doreturn = false ) {
 
 	}
 
-	echo 'tot zover';
 
 	// ---------------------------------------------------------
 	/**
@@ -353,6 +355,7 @@ function community_add_communities_grid( $doreturn = false ) {
 	// ---------------------------------------------------------
 	// construct the list with all relevant communities
 	if ( ! empty( $list_with_postids ) ) {
+		echo 'Er zijn communitys<br>';
 
 		$postcounter          = 0;
 		$community_list_items = '';
