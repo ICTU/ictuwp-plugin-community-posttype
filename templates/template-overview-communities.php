@@ -181,25 +181,25 @@ function community_add_communities_grid( $doreturn = false ) {
 	$list_with_postids = $result['list_with_postids'];
 	$countertje        = count( $list_with_postids );
 
-//	echo '<pre>';
-//	var_dump( $community_layout_list );
-//	echo '</pre>';
-//	echo '<hr>';
-//	echo '<pre>';
-//	var_dump( $block_search_community_form );
-//	echo '</pre>';
-//	echo '<hr>';
-//	echo '<pre>';
-//	var_dump( $block_rss_agenda_items );
-//	echo '</pre>';
-//	echo '<hr>';
-//	echo '<pre>';
-//	var_dump( $block_rss_post_items );
-//	echo '</pre>';
-//	echo '<hr>';
-//	echo '<pre>';
-//	var_dump( $block_latest_communities );
-//	echo '</pre>';
+	echo '<pre>';
+	var_dump( $community_layout_list );
+	echo '</pre>';
+	echo '<hr>';
+	echo '<pre>';
+	var_dump( $block_search_community_form );
+	echo '</pre>';
+	echo '<hr>';
+	echo '<pre>';
+	var_dump( $block_rss_agenda_items );
+	echo '</pre>';
+	echo '<hr>';
+	echo '<pre>';
+	var_dump( $block_rss_post_items );
+	echo '</pre>';
+	echo '<hr>';
+	echo '<pre>';
+	var_dump( $block_latest_communities );
+	echo '</pre>';
 
 	if ( $community_layout_list ) {
 
