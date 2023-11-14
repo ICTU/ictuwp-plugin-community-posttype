@@ -181,8 +181,6 @@ function community_add_communities_grid( $doreturn = false ) {
 	$list_with_postids = $result['list_with_postids'];
 	$countertje        = count( $list_with_postids );
 
-	echo '<h1>community_add_communities_grid</h1>';
-
 //	echo '<pre>';
 //	var_dump( $community_layout_list );
 //	echo '</pre>';
