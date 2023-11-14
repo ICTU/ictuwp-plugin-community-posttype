@@ -45,6 +45,7 @@ define( 'DO_COMMUNITYTOPICS_CT', $slugtopics );
 define( 'DO_COMMUNITYAUDIENCE_CT', $slugaudiences );
 
 defined( 'DO_COMMUNITY_OVERVIEW_TEMPLATE' ) or define( 'DO_COMMUNITY_OVERVIEW_TEMPLATE', 'template-overview-communities.php' );
+defined( 'DO_COMMUNITY_PAGE_RSS_AGENDA' ) or define( 'DO_COMMUNITY_PAGE_RSS_AGENDA', 'template-rss-agenda.php' );
 defined( 'DO_COMMUNITY_DETAIL_TEMPLATE' ) or define( 'DO_COMMUNITY_DETAIL_TEMPLATE', 'template-community-detail.php' );
 
 //if ( ! defined( 'RHSWP_WIDGET_AREA_COMMUNITY_OVERVIEW' ) ) {
@@ -94,6 +95,7 @@ if ( ! class_exists( 'DO_COMMUNITY_CPT' ) ) :
 		public function __construct() {
 
 			$this->template_overview_communities = 'template_overview_communities.php';
+			$this->template_page_agenda          = 'template-rss-agenda.php';
 
 			$this->fn_ictu_community_setup_actions();
 
@@ -150,7 +152,8 @@ if ( ! class_exists( 'DO_COMMUNITY_CPT' ) ) :
 		 */
 		public function fn_ictu_community_add_page_template( $post_templates ) {
 
-			$post_templates[ $this->template_overview_communities ] = _x( "Overzicht community's", "naam template", "wp-rijkshuisstijl" );
+			$post_templates[ $this->template_overview_communities ] = _x( "[community] overzicht", "naam template", "wp-rijkshuisstijl" );
+			$post_templates[ $this->template_page_agenda ]          = _x( "[community] agenda", "naam template", "wp-rijkshuisstijl" );
 
 			return $post_templates;
 
@@ -213,6 +216,10 @@ if ( ! class_exists( 'DO_COMMUNITY_CPT' ) ) :
 
 				$archive_template = dirname( __FILE__ ) . '/templates/archive-communities.php';
 
+			} elseif ( 'template-rss-agenda.php' == $page_template ) {
+
+				$archive_template = dirname( __FILE__ ) . '/templates/template-rss-agenda.php';
+
 			} elseif ( 'template_overview_communities.php' == $page_template ) {
 
 				// het is een overzicht van community's
@@ -246,7 +253,7 @@ if ( ! class_exists( 'DO_COMMUNITY_CPT' ) ) :
 				// Get template name; this will only work for pages, obviously
 				$page_template = get_post_meta( $post->ID, '_wp_page_template', true );
 
-				if ( ( DO_COMMUNITY_OVERVIEW_TEMPLATE === $page_template ) || ( DO_COMMUNITY_DETAIL_TEMPLATE === $page_template ) ) {
+				if ( ( DO_COMMUNITY_OVERVIEW_TEMPLATE === $page_template ) || ( DO_COMMUNITY_DETAIL_TEMPLATE === $page_template || DO_COMMUNITY_PAGE_RSS_AGENDA === $page_template ) ) {
 					// these names are added by this plugin, so we return
 					// the actual file path for this template
 					$file = $pluginpath . $page_template;
@@ -358,7 +365,9 @@ function fn_ictu_community_add_templates() {
 
 	$return_array = array(
 		DO_COMMUNITY_OVERVIEW_TEMPLATE => _x( '[Community] alle community\'s', 'label page template', 'wp-rijkshuisstijl' ),
-		DO_COMMUNITY_DETAIL_TEMPLATE   => _x( '[Community] community-detail', 'label page template', 'wp-rijkshuisstijl' )
+		DO_COMMUNITY_DETAIL_TEMPLATE   => _x( '[Community] community-detail', 'label page template', 'wp-rijkshuisstijl' ),
+		DO_COMMUNITY_PAGE_RSS_AGENDA   => _x( '[Community] pagina agenda', 'label page template', 'wp-rijkshuisstijl' )
+
 	);
 
 	return $return_array;
@@ -791,13 +800,13 @@ function rhswp_community_get_filter_form( $args ) {
 		$community_search_string = '';
 	}
 
-	if ( $args['title'] )  {
-		$title               .= $args['before_title']  . $args['title'] . $args['after_title'] ;
+	if ( $args['title'] ) {
+		$title               .= $args['before_title'] . $args['title'] . $args['after_title'];
 		$container_tag_start = '<fieldset>';
 		$container_tag_end   = '</fieldset>';
 	}
 
-	if ( $args['description'] )  {
+	if ( $args['description'] ) {
 		$description .= '<p>' . $args['description'] . '</p>';
 	}
 
@@ -865,7 +874,8 @@ function ictuwp_community_get_latest_list( $argslist ) {
 //			$post_date = get_the_date( $args['date_format'], $the_id );
 			$return .= '<li><a href="' . get_permalink( $the_id ) . '">' . get_the_title( $the_id ) . '</a></li>';
 		endwhile;
-		$return .= '</ul>';
+		$return        .= '</ul>';
+		$overview_link = $args['overview_link'];
 		if ( isset( $overview_link['url'] ) && isset( $overview_link['title'] ) ) {
 			$return .= '<p class="more"><a href="' . $overview_link['url'] . '">' . $overview_link['title'] . '</a></p>';
 		}
@@ -990,16 +1000,19 @@ function ictuwp_community_archive_title( $doreturn = false ) {
 
 	global $wp_query;
 	global $post;
+	global $wp_taxonomies;
 
 	$archive_title       = _x( "Overzicht community's", "naam template", "wp-rijkshuisstijl" );
 	$archive_description = '';
 	$return              = '';
 
 	$term_id = get_queried_object_id();
-	$term    = get_term( $term_id, $thetax );
+	$term    = get_term( $term_id );
 
 	if ( $term && ! is_wp_error( $term ) ) {
-		$archive_title = $term->name;
+
+
+		$archive_title = $wp_taxonomies[ $term->taxonomy ]->labels->singular_name . ': ' . $term->name;
 		if ( $term->description ) {
 			$archive_description = $term->description;
 		}
@@ -1020,4 +1033,202 @@ function ictuwp_community_archive_title( $doreturn = false ) {
 
 }
 
+
 //========================================================================================================
+
+/*
+ * Remove 'page' from body classes
+ */
+function community_remove_body_classes( $classes ) {
+
+	$delete_value = 'page';
+
+	if ( ( $key = array_search( $delete_value, $classes ) ) !== false ) {
+		unset( $classes[ $key ] );
+	}
+
+	return $classes;
+
+}
+
+//========================================================================================================
+
+/**
+ * Returns the ID of RSS feeds that have a specified type (ACF field: community_rssfeed_type)
+ *
+ * @param $type_feed
+ *
+ * @return array with IDs, or false
+ */
+function community_get_feed_ids_for_feed_type( $type_feed = 'event' ) {
+
+	$type = ( $type_feed === 'event' ) ? 'event' : 'posts'; // should be either ( "event": "Agenda" OR 	"posts": "Berichten" )
+
+	if ( $type_feed ) {
+
+		$args_feeds = array(
+			'post_type'      => 'wprss_feed',
+			'post_status'    => 'publish',
+			'meta_key'       => 'community_rssfeed_type',
+			'meta_value'     => $type,
+			'fields'         => 'ids',
+			'posts_per_page' => - 1,
+		);
+
+		$result_query = new WP_Query( $args_feeds );
+		$feeds        = $result_query->posts;
+		wp_reset_postdata();
+
+		if ( $feeds ) {
+			return $feeds;
+		}
+	}
+
+	return false;
+
+}
+
+//========================================================================================================
+
+/**
+ * Returns a collection of RSS items for a selection (feed type; number of items etc).
+ *
+ * @param $args
+ *
+ * @return false|WP_Query
+ */
+function community_feed_items_get( $args = array() ) {
+
+	$defaults = array(
+		'event_type'     => 'event',
+		'post_types'     => 'wprss_feed_item',
+		'paging'         => false,
+		'posts_per_page' => - 1,
+		'echo'           => false
+	);
+
+	// set up arguments
+	$args = wp_parse_args( $args, $defaults );
+
+	// get the IDs for all feeds of whicht the type correspond to $args['event_type'] ('event' or 'posts')
+	$event_type = ( $args['event_type'] === 'event' ) ? 'event' : 'posts';
+	$feeds = community_get_feed_ids_for_feed_type( $event_type );
+
+	$post_type = 'wprss_feed_item';
+
+	// query the feed items
+	$feed_items_args = array(
+		'post_type'           => $post_type,
+		'posts_per_page'      => $args['posts_per_page'],
+		'orderby'             => 'meta_value',
+		'meta_key'            => 'wprss_item_date',
+		'order'               => 'ASC',
+		'suppress_filters'    => true,
+		'ignore_sticky_posts' => true,
+		'meta_query'          => array(
+			'relation' => 'AND',
+			array(
+				'key'     => 'wprss_feed_id',
+				'compare' => 'EXISTS',
+			),
+		),
+	);
+
+	// do we need paging?
+	if ( $args['paging'] ) {
+		if ( get_query_var( 'paged' ) ) {
+			$paged = get_query_var( 'paged' );
+		} elseif ( get_query_var( 'page' ) ) {
+			$paged = get_query_var( 'page' );
+		} else {
+			$paged = 1;
+		}
+
+		$feed_items_args['paged'] = $paged;
+	}
+
+
+	// feeds found, append to selection
+	if ( ! empty( $feeds ) ) {
+		$feed_items_args['meta_query'] = array(
+			array(
+				'key'     => 'wprss_feed_id',
+				'value'   => $feeds,
+				'type'    => 'numeric',
+				'compare' => 'IN',
+			),
+		);
+	}
+	$feed_items = new WP_Query( $feed_items_args );
+//	echo '<pre>';
+//	var_dump( $feed_items_args );
+//	echo '</pre>';
+
+	if ( $feed_items->have_posts() ) {
+		return $feed_items;
+	} else {
+		return false;
+	}
+}
+
+//========================================================================================================
+
+if ( 222 === 333 ) {
+
+	add_filter( 'wprss_single_feed_output', 'my_function' );
+	/**
+	 * Add 'Hello World' after each feed item.
+	 */
+	function my_function( $output ) {
+		$output .= 'Hello World';
+
+		return $output;
+	}
+
+	//========================================================================================================
+
+	add_filter( 'wpra/feeds/templates/feed_item_collection', 'wpra_sort_feed_items_alpha' );
+
+	function wpra_sort_feed_items_alpha( $collection ) {
+		return $collection->filter( [
+			'order_by' => 'title',
+			'order'    => 'ASC',
+		] );
+	}
+
+	//========================================================================================================
+
+	function x_wprss_display_feed_items( $args = [] ) {
+		$settings = get_option( 'wprss_settings_general' );
+		$args     = wprss_get_shortcode_default_args( $args );
+
+		$args = apply_filters( 'wprss_shortcode_args', $args );
+
+		$query_args = $settings;
+		if ( isset( $args['limit'] ) ) {
+			$query_args['feed_limit'] = filter_var( $args['limit'], FILTER_VALIDATE_INT, [
+				'options' => [
+					'min_range' => 1,
+					'default'   => $query_args['feed_limit'],
+				],
+			] );
+		}
+
+		if ( isset( $args['pagination'] ) ) {
+			$query_args['pagination'] = $args['pagination'];
+		}
+
+		if ( isset( $args['source'] ) ) {
+			$query_args['source'] = $args['source'];
+		} elseif ( isset( $args['exclude'] ) ) {
+			$query_args['exclude'] = $args['exclude'];
+		}
+
+		$query_args = apply_filters( 'wprss_process_shortcode_args', $query_args, $args );
+
+		$feed_items = wprss_get_feed_items_query( $query_args );
+
+		do_action( 'wprss_display_template', $args, $feed_items );
+	}
+
+}
