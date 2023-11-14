@@ -481,7 +481,6 @@ function community_add_communities_grid( $doreturn = false ) {
 				$community_items = community_feed_items_get( $args_selection );
 
 				if ( ! $community_items ) {
-//					return;
 				}
 				// Query to get all feed items for display
 				$date_format_badge = get_option( 'date_format' );
