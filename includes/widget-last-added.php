@@ -76,10 +76,6 @@ class ICTUWP_widget_last_added_communities extends WP_Widget {
 
 			echo $content;
 			echo $after_widget;
-		} else {
-			echo '<pre>';
-			var_dump( $args );
-			echo '</pre>';
 		}
 
 	}
