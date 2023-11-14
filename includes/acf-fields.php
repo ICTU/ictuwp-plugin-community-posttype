@@ -926,7 +926,7 @@ if ( ! function_exists( 'acf_add_local_field_group' ) ) {
 				'aria-label'           => '',
 				'type'                 => 'relationship',
 				'instructions'         => '',
-				'required'             => 1,
+				'required'             => 0,
 				'conditional_logic'    => array(
 					array(
 						array(
@@ -965,7 +965,7 @@ if ( ! function_exists( 'acf_add_local_field_group' ) ) {
 				'aria-label'           => '',
 				'type'                 => 'relationship',
 				'instructions'         => '',
-				'required'             => 1,
+				'required'             => 0,
 				'conditional_logic'    => array(
 					array(
 						array(
