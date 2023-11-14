@@ -130,6 +130,8 @@ if ( ! class_exists( 'DO_COMMUNITY_CPT' ) ) :
 			// sort alphabetically and list all communities for a single taxonomy term
 			add_action( 'pre_get_posts', array( $this, 'fn_ictu_community_modify_main_query' ), 999 );
 
+			// add the page template to the templates list
+			add_filter( 'acf/include_fields', array( $this, 'fn_ictu_community_acf_fields' ) );
 
 		}
 
@@ -141,6 +143,17 @@ if ( ! class_exists( 'DO_COMMUNITY_CPT' ) ) :
 		public function fn_ictu_community_register_posttypes() {
 
 			require_once plugin_dir_path( __FILE__ ) . 'includes/register-community-posttype.php';
+
+		}
+
+		/** ----------------------------------------------------------------------------------------------------
+		 * Do actually register the post types we need
+		 *
+		 * @return void
+		 */
+		public function fn_ictu_community_acf_fields() {
+
+			require_once plugin_dir_path( __FILE__ ) . 'includes/acf-fields.php';
 
 		}
 
