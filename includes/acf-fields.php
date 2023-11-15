@@ -5,6 +5,7 @@ if ( ! function_exists( 'acf_add_local_field_group' ) ) {
 
 } else {
 
+
 	acf_add_local_field_group( array(
 		'key'                   => 'group_651fc35278095',
 		'title'                 => '(community\'s) - instellingen overzichtspagina',
@@ -715,7 +716,7 @@ if ( ! function_exists( 'acf_add_local_field_group' ) ) {
 								array(
 									'field'    => 'field_651fd21086331',
 									'operator' => '==',
-									'value'    => 'community_layout_show_terms_lists_true',
+									'value'    => 'show_true',
 								),
 							),
 						),

@@ -3,7 +3,7 @@
  *
  * template-overview-communities.php
  *
- * @version 0.0.3 - Overview page for communities added.
+ * @version 0.0.4 - Restructure of overview page.
  */
 
 //========================================================================================================
@@ -177,6 +177,10 @@ function community_add_communities_grid( $doreturn = false ) {
 	$block_rss_agenda_items       = get_field( 'community_layout_block_agenda_group', $post );
 	$block_rss_post_items         = get_field( 'community_layout_block_posts_group', $post );
 	$block_latest_communities     = get_field( 'community_layout_block_latest_communities_group', $post );
+	$community_list_items         = '';
+	$community_list_items_start   = '';
+	$community_list_items_end     = '';
+
 
 	$result            = community_get_selection();
 	$list_with_postids = $result['list_with_postids'];
@@ -354,17 +358,20 @@ function community_add_communities_grid( $doreturn = false ) {
 	}
 
 	$container_start .= $container_title;
-	$container_start .= "\n" . '<div class="' . $inner_css_class . '" id="' . CONTAINER_ID . '">';
 
-	$container_footer .= '</div><!-- .archive-custom-loop -->' . "\n";
+	$community_list_items_start .= "\n" . '<div class="' . $inner_css_class . '" id="' . CONTAINER_ID . '">';
+
+	$community_list_items_end .= '</div><!-- .archive-custom-loop -->' . "\n";
+
 	$container_footer .= '</section><!-- .community-container -->' . "\n";
+
 
 	// ---------------------------------------------------------
 	// construct the list with all relevant communities
 	if ( ! empty( $list_with_postids ) ) {
 
-		$postcounter          = 0;
-		$community_list_items = '';
+		$postcounter                = 0;
+		$community_list_items       = '';
 
 		if ( 'community_layout_list_grid' !== $list_layout ) {
 			// show list with detail / summary items
@@ -697,22 +704,27 @@ function community_add_communities_grid( $doreturn = false ) {
 
 	}
 
+	$detailsblock = '';
+
 	if ( $terms_blocks ) {
 
 
-		$title                = ( $community_layout_terms_group['community_layout_terms_title'] ) ?: _x( 'Onderwerpen, types en doelgroepen', 'label keyword veld', 'wp-rijkshuisstijl' );
-		$community_list_items .= '<details id="' . CONTAINER_ID . '_terms">';
-		$community_list_items .= '<summary><h2>' . $title . '</h2></summary>';
-		$community_list_items .= '<div class="grid itemcount-' . $itemcount . ' columncount-' . $columncount . '">';
-		$community_list_items .= $terms_blocks;
-		$community_list_items .= '</div>'; // .wrap
-		$community_list_items .= '</details>'; // .wrap
+		$title        = ( $community_layout_terms_group['community_layout_terms_title'] ) ?: _x( 'Onderwerpen, types en doelgroepen', 'label keyword veld', 'wp-rijkshuisstijl' );
+		$detailsblock .= '<details id="' . CONTAINER_ID . '_terms">';
+		$detailsblock .= '<summary><h2>' . $title . '</h2></summary>';
+		$detailsblock .= '<div class="grid itemcount-' . $itemcount . ' columncount-' . $columncount . '">';
+		$detailsblock .= $terms_blocks;
+		$detailsblock .= '</div>'; // .wrap
+		$detailsblock .= '</details>'; // .wrap
 
 	}
 
 
 	$return .= $container_start;
+	$return .= $community_list_items_start;
 	$return .= $community_list_items;
+	$return .= $community_list_items_end;
+	$return .= $detailsblock;
 	$return .= $container_footer;
 
 
