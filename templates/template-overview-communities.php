@@ -3,7 +3,7 @@
  *
  * template-overview-communities.php
  *
- * @version 0.0.4 - Restructure of overview page.
+ * @version 0.1.1 - Added taxonomy 'bestuurslaag' (DO_COMMUNITYBESTUURSLAAG_CT)
  */
 
 //========================================================================================================
@@ -370,8 +370,8 @@ function community_add_communities_grid( $doreturn = false ) {
 	// construct the list with all relevant communities
 	if ( ! empty( $list_with_postids ) ) {
 
-		$postcounter                = 0;
-		$community_list_items       = '';
+		$postcounter          = 0;
+		$community_list_items = '';
 
 		if ( 'community_layout_list_grid' !== $list_layout ) {
 			// show list with detail / summary items
@@ -668,29 +668,40 @@ function community_add_communities_grid( $doreturn = false ) {
 			$args2['title']      = _n( 'Doelgroep', 'Doelgroepen', 2, 'wp-rijkshuisstijl' );
 			$community_audiences = ictuwp_communityfilter_list( $args2 );
 
-			$terms_blocks = '';
-			$itemcount    = 0;
-			$columncount  = 0;
+			$args2['taxonomy']       = DO_COMMUNITYBESTUURSLAAG_CT;
+			$args2['title']          = _n( 'Bestuurslaag', 'Bestuurslagen', 2, 'wp-rijkshuisstijl' );
+			$community_bestuurslagen = ictuwp_communityfilter_list( $args2 );
 
-			if ( $community_types || $community_topics || $community_audiences ) {
+			$terms_blocks      = '';
+			$itemcount_terms   = 0;
+			$columncount_terms = 0;
+
+			if ( $community_types || $community_topics || $community_audiences || $community_bestuurslagen ) {
 				$colspan = 1;
 
 				if ( $community_types ) {
-					$itemcount ++;
+					$itemcount_terms ++;
 
 					$terms_blocks .= '<div class="griditem colspan-' . $colspan . '">';
 					$terms_blocks .= $community_types;
 					$terms_blocks .= '</div>'; // .griditem
 				}
+				if ( $community_bestuurslagen ) {
+					$itemcount_terms ++;
+
+					$terms_blocks .= '<div class="griditem colspan-' . $colspan . '">';
+					$terms_blocks .= $community_bestuurslagen;
+					$terms_blocks .= '</div>'; // .griditem
+				}
 				if ( $community_topics ) {
-					$itemcount ++;
+					$itemcount_terms ++;
 
 					$terms_blocks .= '<div class="griditem colspan-' . $colspan . '">';
 					$terms_blocks .= $community_topics;
 					$terms_blocks .= '</div>'; // .griditem
 				}
 				if ( $community_audiences ) {
-					$itemcount ++;
+					$itemcount_terms ++;
 
 					$terms_blocks .= '<div class="griditem colspan-' . $colspan . '">';
 					$terms_blocks .= $community_audiences;
@@ -698,6 +709,7 @@ function community_add_communities_grid( $doreturn = false ) {
 				}
 
 			}
+			$columncount_terms = $itemcount_terms;
 
 
 		}
@@ -712,7 +724,7 @@ function community_add_communities_grid( $doreturn = false ) {
 		$title        = ( $community_layout_terms_group['community_layout_terms_title'] ) ?: _x( 'Onderwerpen, types en doelgroepen', 'label keyword veld', 'wp-rijkshuisstijl' );
 		$detailsblock .= '<details id="' . CONTAINER_ID . '_terms">';
 		$detailsblock .= '<summary><h2>' . $title . '</h2></summary>';
-		$detailsblock .= '<div class="grid itemcount-' . $itemcount . ' columncount-' . $columncount . '">';
+		$detailsblock .= '<div class="grid itemcount-' . $itemcount_terms . ' columncount-' . $columncount_terms . '">';
 		$detailsblock .= $terms_blocks;
 		$detailsblock .= '</div>'; // .wrap
 		$detailsblock .= '</details>'; // .wrap

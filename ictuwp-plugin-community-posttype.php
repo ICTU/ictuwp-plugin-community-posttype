@@ -26,10 +26,11 @@ if ( ! defined( 'WPINC' ) ) {
 //========================================================================================================
 
 // Dutch slug for taxonomy
-$slug          = 'community';
-$slugtype      = 'community-type';
-$slugtopics    = 'onderwerpen-community';
-$slugaudiences = 'doelgroepen-community';
+$slug             = 'community';
+$slugtype         = 'community-type';
+$slugtopics       = 'onderwerpen-community';
+$slugaudiences    = 'doelgroepen-community';
+$slugbestuurslaag = 'bestuurslaag';
 
 if ( get_bloginfo( 'language' ) !== 'nl-NL' ) {
 	// non Dutch slugs
@@ -43,6 +44,7 @@ define( 'DO_COMMUNITY_CPT', $slug );
 define( 'DO_COMMUNITYTYPE_CT', $slugtype );
 define( 'DO_COMMUNITYTOPICS_CT', $slugtopics );
 define( 'DO_COMMUNITYAUDIENCE_CT', $slugaudiences );
+define( 'DO_COMMUNITYBESTUURSLAAG_CT', $slugbestuurslaag );
 
 defined( 'DO_COMMUNITY_OVERVIEW_TEMPLATE' ) or define( 'DO_COMMUNITY_OVERVIEW_TEMPLATE', 'template-overview-communities.php' );
 defined( 'DO_COMMUNITY_PAGE_RSS_AGENDA' ) or define( 'DO_COMMUNITY_PAGE_RSS_AGENDA', 'template-rss-agenda.php' );
@@ -677,7 +679,8 @@ function rhswp_community_single_terms( $doreturn = false, $post_id = 0, $show_do
 			}
 		}
 	}
-
+/*
+ *
 	if ( $community_tags && ! is_wp_error( $community_tags ) ) {
 
 		$labels = '<dd>';
@@ -698,6 +701,7 @@ function rhswp_community_single_terms( $doreturn = false, $post_id = 0, $show_do
 			$values .= $labels;
 		}
 	}
+ */
 
 
 	if ( $values ) {
@@ -754,12 +758,16 @@ function rhswp_community_get_terms_list( $args ) {
 	$args2['taxonomy']   = DO_COMMUNITYAUDIENCE_CT;
 	$args2['title']      = _n( 'Doelgroep', 'Doelgroepen', 2, 'wp-rijkshuisstijl' );
 	$community_audiences = ictuwp_communityfilter_list( $args2 );
+	$args2['taxonomy']   = DO_COMMUNITYBESTUURSLAAG_CT;
+	$args2['title']      = _n( 'Bestuurslaag', 'Bestuurslagen', 2, 'wp-rijkshuisstijl' );
+	$community_bestuurslagen = ictuwp_communityfilter_list( $args2 );
 
-	if ( $community_types || $community_topics || $community_audiences ) {
+	if ( $community_types || $community_topics || $community_audiences || $community_bestuurslagen ) {
 		$return .= '<div class="fieldsets">';
 		$return .= $community_topics;
 		$return .= $community_types;
 		$return .= $community_audiences;
+		$return .= $community_bestuurslagen;
 		$return .= '</div>';
 	} else {
 		$return .= '<p>' . _x( 'We konden geen lijst met filters maken.', 'warning', 'wp-rijkshuisstijl' ) . '</p>';
@@ -1125,7 +1133,7 @@ function community_feed_items_get( $args = array() ) {
 
 	// get the IDs for all feeds of whicht the type correspond to $args['event_type'] ('event' or 'posts')
 	$event_type = ( $args['event_type'] === 'event' ) ? 'event' : 'posts';
-	$feeds = community_get_feed_ids_for_feed_type( $event_type );
+	$feeds      = community_get_feed_ids_for_feed_type( $event_type );
 
 	$post_type = 'wprss_feed_item';
 

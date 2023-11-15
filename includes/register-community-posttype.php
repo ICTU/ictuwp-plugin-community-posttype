@@ -134,6 +134,36 @@ register_taxonomy( DO_COMMUNITYTOPICS_CT, array( DO_COMMUNITY_CPT ), $args );
 
 //========================================================================================================
 
+// Community-onderwerpen
+$labels = array(
+	'name'              => esc_html_x( 'Bestuurslagen', 'taxonomy', 'wp-rijkshuisstijl' ),
+	'singular_name'     => esc_html_x( 'Bestuurslaag', 'taxonomy singular name', 'wp-rijkshuisstijl' ),
+	'search_items'      => esc_html_x( 'Search bestuurslagen', 'taxonomy', 'wp-rijkshuisstijl' ),
+	'all_items'         => esc_html_x( 'Alle bestuurslagen', 'taxonomy', 'wp-rijkshuisstijl' ),
+	'parent_item'       => esc_html_x( 'Parent bestuurslaag', 'taxonomy', 'wp-rijkshuisstijl' ),
+	'parent_item_colon' => esc_html_x( 'Parent bestuurslaag:', 'taxonomy', 'wp-rijkshuisstijl' ),
+	'view_item'         => esc_html_x( 'Bekijk bestuurslaag', 'taxonomy', 'wp-rijkshuisstijl' ),
+	'edit_item'         => esc_html_x( 'Edit bestuurslaag', 'taxonomy', 'wp-rijkshuisstijl' ),
+	'update_item'       => esc_html_x( 'Update bestuurslaag', 'taxonomy', 'wp-rijkshuisstijl' ),
+	'add_new_item'      => esc_html_x( 'Add new bestuurslaag', 'taxonomy', 'wp-rijkshuisstijl' ),
+	'new_item_name'     => esc_html_x( 'New bestuurslaag name', 'taxonomy', 'wp-rijkshuisstijl' ),
+	'menu_name'         => esc_html_x( 'Bestuurslagen', 'taxonomy', 'wp-rijkshuisstijl' ),
+);
+
+$args = array(
+	'hierarchical'      => true,
+	'labels'            => $labels,
+	'show_ui'           => true,
+	'show_admin_column' => true,
+	'query_var'         => true,
+	'sort'              => false,
+	'rewrite'           => array( 'slug' => DO_COMMUNITYBESTUURSLAAG_CT ),
+);
+
+register_taxonomy( DO_COMMUNITYBESTUURSLAAG_CT, array( DO_COMMUNITY_CPT ), $args );
+
+//========================================================================================================
+
 // Community-doelgroepen
 $labels = array(
 	'name'              => esc_html_x( 'Community-doelgroepen', 'taxonomy', 'wp-rijkshuisstijl' ),
