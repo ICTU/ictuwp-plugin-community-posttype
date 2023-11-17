@@ -2,10 +2,11 @@
 
 /**
  *
- * template-rss-agenda.php
+ * template-rss-posts.php
  *
  * @version 0.1.3 - Added page template for all RSS post items
  */
+
 
 if ( function_exists( 'genesis' ) ) {
 	// Genesis wordt gebruikt als framework
@@ -15,7 +16,7 @@ if ( function_exists( 'genesis' ) ) {
 
 
 	// append grid to entry_content
-	add_action( 'genesis_entry_content', 'community_add_agenda_grid', 20 );
+	add_action( 'genesis_entry_content', 'community_add_posts_grid', 20 );
 
 	// remove 'page' class from body
 	add_filter( 'body_class', 'community_remove_body_classes' );
@@ -37,10 +38,10 @@ if ( function_exists( 'genesis' ) ) {
 
 }
 
-function community_add_agenda_grid( $args = array() ) {
+function community_add_posts_grid( $args = array() ) {
 
 	$args_selection = array(
-		'event_type'     => 'events',
+		'event_type'     => 'posts',
 		'paging'         => false,
 		'posts_per_page' => - 1,
 		'echo'           => false
@@ -52,7 +53,8 @@ function community_add_agenda_grid( $args = array() ) {
 		// no items
 	} else {
 		$args_in     = array(
-			'title' => _x( 'Agenda', 'Header rss links', 'wp-rijkshuisstijl' ),
+			'title' => _x( 'Berichten', 'Header rss links', 'wp-rijkshuisstijl' ),
+			'type'  => 'posts',
 			'items' => $rss_items
 		);
 		$rss_content = community_feed_items_show( $args_in );

@@ -1,6 +1,7 @@
 # Changelog
 
 ## Version history
+* 0.1.3 - Added page template for all RSS post items
 * 0.1.2 - Renamed DO_COMMUNITYBESTUURSLAAG_CT to overheidslaag
 * 0.1.1 - Added taxonomy 'bestuurslaag' (DO_COMMUNITYBESTUURSLAAG_CT)
 * 0.0.4 - Restructure of overview page.
