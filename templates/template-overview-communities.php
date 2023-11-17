@@ -3,7 +3,7 @@
  *
  * template-overview-communities.php
  *
- * @version 0.1.1 - Added taxonomy 'bestuurslaag' (DO_COMMUNITYBESTUURSLAAG_CT)
+ * @version 0.1.3 - Added page template for all RSS post items
  */
 
 //========================================================================================================
@@ -480,74 +480,25 @@ function community_add_communities_grid( $doreturn = false ) {
 		// events from RSS feeds
 		if ( isset( $block_rss_agenda_items['community_layout_block_agenda_show'] ) && $block_rss_agenda_items['community_layout_block_agenda_show'] !== 'show_false' ) {
 
-			$overview_link  = $block_rss_agenda_items['overview_link'];
-			$limit          = (int) ( $block_rss_agenda_items['max_items'] ) ?: 5;
-			$title_block    = ( $block_rss_agenda_items['block_title'] ) ?: _x( 'Agenda', 'label keyword veld', 'wp-rijkshuisstijl' );
-			$rss_content    = '';
-			$args_selection = array(
-				'event_type'     => 'event',
+			$overview_link   = $block_rss_agenda_items['overview_link'];
+			$limit           = (int) ( $block_rss_agenda_items['max_items'] ) ?: 5;
+			$title_block     = ( $block_rss_agenda_items['block_title'] ) ?: _x( 'Agenda', 'Header rss links', 'wp-rijkshuisstijl' );
+			$rss_content     = '';
+			$args_selection  = array(
+				'event_type'     => 'events',
 				'paging'         => false,
 				'posts_per_page' => $limit,
 				'echo'           => false
 			);
-
 			$community_items = community_feed_items_get( $args_selection );
 
 			if ( ! $community_items ) {
 				// no items
 			} else {
-
-				// Query to get all feed items for display
-				$date_format_badge = get_option( 'date_format' );
-				$time_format       = get_option( 'time_format' );
-				//				$date_format_badge = 'j F';// get_option( 'date_format' ); // e.g. "F j, Y"
-				$date_format_badge = 'j M';// get_option( 'date_format' ); // e.g. "F j, Y"
-				$date_format_year  = 'Y';// get_option( 'date_format' ); // e.g. "F j, Y"
-				$date_format_month = 'F';// get_option( 'date_format' ); // e.g. "F j, Y"
-
-				if ( $community_items->have_posts() ) {
-					$month_previous = date_i18n( $date_format_month, date( $date_format_month ) );
-					$year_previous  = date_i18n( $date_format_year, date( $date_format_year ) );
-					$postcounter    = 0;
-
-					$rss_content .= '<ul class="agenda">';
-					while ( $community_items->have_posts() ) : $community_items->the_post();
-
-						$postcounter ++;
-						$post_meta          = get_post_meta( $community_items->post->ID, 'wprss_item_date', true );
-						$month_current_item = date_i18n( $date_format_month, strtotime( $post_meta ) );
-						$year_current_item  = date_i18n( $date_format_year, strtotime( $post_meta ) );
-
-						if ( $month_previous !== $month_current_item ) {
-							if ( $postcounter === 1 ) {
-							} else {
-								$rss_content .= '</ul>';
-							}
-							if ( $year_previous !== $year_current_item ) {
-								$rss_content .= '<h3>' . $year_current_item . ' - ' . $month_current_item . '</h3>';
-							} else {
-								$rss_content .= '<h3>' . ucfirst( $month_current_item ) . '</h3>';
-							}
-							$rss_content .= '<ul class="agenda"><li>';
-						} else {
-							$rss_content .= '<li>';
-						}
-
-						$date     = date_i18n( $date_format_badge, strtotime( $post_meta ) );
-						$date_tag = '<time datetime="' . date_i18n( $date_format_badge, strtotime( $post_meta ) ) . '">' . $date . '</time>';
-
-						$rss_content .= '<span>' . $date_tag . ' <a href="' . get_permalink() . '">' . get_the_title() . '</a></span>';
-
-						$rss_content .= '</li>';
-
-						$month_previous = $month_current_item;
-						$year_previous  = $year_current_item;
-
-
-					endwhile;
-					$rss_content .= '</ul>';
-
-				}
+				$args_in     = array(
+					'items' => $community_items
+				);
+				$rss_content = community_feed_items_show( $args_in );
 			}
 
 
@@ -569,45 +520,35 @@ function community_add_communities_grid( $doreturn = false ) {
 		// posts from RSS feeds
 		if ( isset( $block_rss_post_items['community_layout_block_posts_show'] ) && $block_rss_post_items['community_layout_block_posts_show'] !== 'show_false' ) {
 
-			$feeds       = array();
-			$args_feeds  = array(
-				'post_type'      => 'wprss_feed',
-				'post_status'    => 'publish',
-				'meta_key'       => 'community_rssfeed_type',
-				'meta_value'     => 'posts',
-				'posts_per_page' => - 1,
-			);
-			$rss_sources = new WP_Query( $args_feeds );
+			$overview_link                    = $block_rss_post_items['overview_link'];
+			$limit                            = (int) ( $block_rss_post_items['max_items'] ) ?: 5;
+			$title_block                      = ( $block_rss_post_items['block_title'] ) ?: _x( 'Berichten', 'Header rss links', 'wp-rijkshuisstijl' );
+			$rss_content                      = '';
+			$args_selection['event_type']     = 'posts';
+			$args_selection['posts_per_page'] = $limit;
+			$community_items                  = community_feed_items_get( $args_selection );
 
-			if ( $rss_sources->have_posts() ) {
-				while ( $rss_sources->have_posts() ) : $rss_sources->the_post();
-					$feeds[] .= $post->post_name;
-				endwhile;
+			if ( ! $community_items ) {
+				// no items
+			} else {
+				$args_in     = array(
+					'type'  => 'posts',
+					'items' => $community_items
+				);
+				$rss_content = community_feed_items_show( $args_in );
 			}
 
-			if ( $feeds ) {
 
-				$itemcount ++;
+			if ( $rss_content ) {
 
-				$title_block   = ( $block_rss_post_items['block_title'] ) ?: _x( 'Berichten', 'label keyword veld', 'wp-rijkshuisstijl' );
-				$overview_link = $block_rss_post_items['overview_link'];
-				$limit         = (int) ( $block_rss_post_items['max_items'] ) ?: 5;
-				$template      = ( $block_rss_post_items['rss_template'] ) ? ' template="' . $block_rss_post_items['rss_template']->post_name . '"' : '';
-				$shortcode     = '[wp-rss-aggregator' . $template . ' feeds="' . implode( ',', $feeds ) . '" limit="' . $limit . '" pagination="off"]';
-				$rss_content   = do_shortcode( $shortcode );
-
-				if ( ! str_contains( $rss_content, 'No feed items found.' ) ) {
-					$blocks_row_rss_items .= '<div class="griditem border-top colspan-' . $colspan . '">';
-					$blocks_row_rss_items .= $title_tag_start . $title_block . $title_tag_end;
-					$blocks_row_rss_items .= $rss_content;
-					if ( isset( $overview_link['url'] ) && isset( $overview_link['title'] ) ) {
-						$blocks_row_rss_items .= '<p class="more"><a href="' . $overview_link['url'] . '">' . $overview_link['title'] . '</a></p>';
-					}
-					$blocks_row_rss_items .= '</div>'; // .griditem
+				$blocks_row_rss_items .= '<div class="griditem border-top colspan-' . $colspan . '">';
+				$blocks_row_rss_items .= $title_tag_start . $title_block . $title_tag_end;
+				$blocks_row_rss_items .= $rss_content;
+				if ( isset( $overview_link['url'] ) && isset( $overview_link['title'] ) ) {
+					$blocks_row_rss_items .= '<p class="more"><a href="' . $overview_link['url'] . '">' . $overview_link['title'] . '</a></p>';
 				}
+				$blocks_row_rss_items .= '</div>'; // .griditem
 			}
-
-
 		}
 
 		// ---------------------------------------------------------
@@ -668,15 +609,15 @@ function community_add_communities_grid( $doreturn = false ) {
 			$args2['title']      = _n( 'Doelgroep', 'Doelgroepen', 2, 'wp-rijkshuisstijl' );
 			$community_audiences = ictuwp_communityfilter_list( $args2 );
 
-			$args2['taxonomy']       = DO_COMMUNITYBESTUURSLAAG_CT;
-			$args2['title']          = _n( 'Bestuurslaag', 'Bestuurslagen', 2, 'wp-rijkshuisstijl' );
-			$community_bestuurslagen = ictuwp_communityfilter_list( $args2 );
+			$args2['taxonomy']        = DO_COMMUNITYBESTUURSLAAG_CT;
+			$args2['title']           = _n( 'Bestuurslaag', 'Overheidslagen', 2, 'wp-rijkshuisstijl' );
+			$community_overheidslagen = ictuwp_communityfilter_list( $args2 );
 
 			$terms_blocks      = '';
 			$itemcount_terms   = 0;
 			$columncount_terms = 0;
 
-			if ( $community_types || $community_topics || $community_audiences || $community_bestuurslagen ) {
+			if ( $community_types || $community_topics || $community_audiences || $community_overheidslagen ) {
 				$colspan = 1;
 
 				if ( $community_types ) {
@@ -686,11 +627,11 @@ function community_add_communities_grid( $doreturn = false ) {
 					$terms_blocks .= $community_types;
 					$terms_blocks .= '</div>'; // .griditem
 				}
-				if ( $community_bestuurslagen ) {
+				if ( $community_overheidslagen ) {
 					$itemcount_terms ++;
 
 					$terms_blocks .= '<div class="griditem colspan-' . $colspan . '">';
-					$terms_blocks .= $community_bestuurslagen;
+					$terms_blocks .= $community_overheidslagen;
 					$terms_blocks .= '</div>'; // .griditem
 				}
 				if ( $community_topics ) {

@@ -8,8 +8,8 @@
  * Plugin Name:         ICTU / Digitale Overheid / Community
  * Plugin URI:          https://github.com/ICTU/ictuwp-plugin-community-posttype
  * Description:         Plugin voor het aanmaken van posttype 'community' en bijbehorende taxonomieen.
- * Version:             0.0.1
- * Version description: Initial version.
+ * Version:             0.1.3
+ * Version description: Added page template for all RSS post items
  * Author:              Paul van Buuren
  * Author URI:          https://github.com/ICTU/ictuwp-plugin-community-posttype/
  * License:             GPL-2.0+
@@ -26,11 +26,11 @@ if ( ! defined( 'WPINC' ) ) {
 //========================================================================================================
 
 // Dutch slug for taxonomy
-$slug             = 'community';
-$slugtype         = 'community-type';
-$slugtopics       = 'onderwerpen-community';
-$slugaudiences    = 'doelgroepen-community';
-$slugbestuurslaag = 'bestuurslaag';
+$slug              = 'community';
+$slugtype          = 'community-type';
+$slugtopics        = 'onderwerpen-community';
+$slugaudiences     = 'doelgroepen-community';
+$slugoverheidslaag = 'overheidslaag';
 
 if ( get_bloginfo( 'language' ) !== 'nl-NL' ) {
 	// non Dutch slugs
@@ -44,7 +44,7 @@ define( 'DO_COMMUNITY_CPT', $slug );
 define( 'DO_COMMUNITYTYPE_CT', $slugtype );
 define( 'DO_COMMUNITYTOPICS_CT', $slugtopics );
 define( 'DO_COMMUNITYAUDIENCE_CT', $slugaudiences );
-define( 'DO_COMMUNITYBESTUURSLAAG_CT', $slugbestuurslaag );
+define( 'DO_COMMUNITYBESTUURSLAAG_CT', $slugoverheidslaag );
 
 defined( 'DO_COMMUNITY_OVERVIEW_TEMPLATE' ) or define( 'DO_COMMUNITY_OVERVIEW_TEMPLATE', 'template-overview-communities.php' );
 defined( 'DO_COMMUNITY_PAGE_RSS_AGENDA' ) or define( 'DO_COMMUNITY_PAGE_RSS_AGENDA', 'template-rss-agenda.php' );
@@ -98,6 +98,7 @@ if ( ! class_exists( 'DO_COMMUNITY_CPT' ) ) :
 
 			$this->template_overview_communities = 'template_overview_communities.php';
 			$this->template_page_agenda          = 'template-rss-agenda.php';
+			$this->template_page_posts           = 'template-rss-posts.php';
 
 			$this->fn_ictu_community_setup_actions();
 
@@ -168,7 +169,8 @@ if ( ! class_exists( 'DO_COMMUNITY_CPT' ) ) :
 		public function fn_ictu_community_add_page_template( $post_templates ) {
 
 			$post_templates[ $this->template_overview_communities ] = _x( "[community] overzicht", "naam template", "wp-rijkshuisstijl" );
-			$post_templates[ $this->template_page_agenda ]          = _x( "[community] agenda", "naam template", "wp-rijkshuisstijl" );
+			$post_templates[ $this->template_page_agenda ]          = _x( "[community] toon agenda", "naam template", "wp-rijkshuisstijl" );
+			$post_templates[ $this->template_page_posts ]           = _x( "[community] toon berichten", "naam template", "wp-rijkshuisstijl" );
 
 			return $post_templates;
 
@@ -234,6 +236,10 @@ if ( ! class_exists( 'DO_COMMUNITY_CPT' ) ) :
 			} elseif ( 'template-rss-agenda.php' == $page_template ) {
 
 				$archive_template = dirname( __FILE__ ) . '/templates/template-rss-agenda.php';
+
+			} elseif ( 'template-rss-posts.php' == $page_template ) {
+
+				$archive_template = dirname( __FILE__ ) . '/templates/template-rss-posts.php';
 
 			} elseif ( 'template_overview_communities.php' == $page_template ) {
 
@@ -394,7 +400,7 @@ function fn_ictu_community_add_templates() {
 
 /**
  * Voeg een paginaselector toe aan de customizer
- * zie [admin] > Weergave > Customizer > Initiatievenkaart
+ * zie [admin] > Weergave > Customizer > Community's
  */
 function community_append_customizer_field( $wp_customize ) {
 
@@ -565,10 +571,11 @@ function rhswp_community_single_terms( $doreturn = false, $post_id = 0, $show_do
 			return;
 		}
 	}
-	$community_topics    = get_the_terms( $post_id, DO_COMMUNITYTOPICS_CT );
-	$community_types     = get_the_terms( $post_id, DO_COMMUNITYTYPE_CT );
-	$community_audiences = get_the_terms( $post_id, DO_COMMUNITYAUDIENCE_CT );
-	$community_tags      = get_the_terms( $post_id, 'post_tag' );
+	$community_topics         = get_the_terms( $post_id, DO_COMMUNITYTOPICS_CT );
+	$community_types          = get_the_terms( $post_id, DO_COMMUNITYTYPE_CT );
+	$community_audiences      = get_the_terms( $post_id, DO_COMMUNITYAUDIENCE_CT );
+	$community_overheidslagen = get_the_terms( $post_id, DO_COMMUNITYBESTUURSLAAG_CT );
+	$community_tags           = get_the_terms( $post_id, 'post_tag' );
 
 	// toon aan welk onderwerp deze community is gekoppeld
 	if ( $community_topics && ! is_wp_error( $community_topics ) ) :
@@ -587,7 +594,7 @@ function rhswp_community_single_terms( $doreturn = false, $post_id = 0, $show_do
 		$labels .= '</dd>';
 
 		if ( $labels ) {
-			$values .= '<dt>' . _n( 'Onderwerp community', 'Onderwerpen community', count( $community_topics ), 'wp-rijkshuisstijl' ) . '</dt>';
+			$values .= '<dt>' . _n( 'Onderwerp community', 'Onderwerpen community', count( $community_topics ), 'wp-rijkshuisstijl' ) . ': </dt>';
 			$values .= $labels;
 		}
 
@@ -611,7 +618,7 @@ function rhswp_community_single_terms( $doreturn = false, $post_id = 0, $show_do
 		$labels .= '</dd>';
 
 		if ( $labels ) {
-			$values .= '<dt>' . _n( 'Type community', 'Types community', count( $community_types ), 'wp-rijkshuisstijl' ) . '</dt>';
+			$values .= '<dt>' . _n( 'Type community', 'Types community', count( $community_types ), 'wp-rijkshuisstijl' ) . ': </dt>';
 			$values .= $labels;
 		}
 
@@ -635,11 +642,36 @@ function rhswp_community_single_terms( $doreturn = false, $post_id = 0, $show_do
 		$labels .= '</dd>';
 
 		if ( $labels ) {
-			$values .= '<dt>' . _n( 'Doelgroep', 'Doelgroepen', count( $community_audiences ), 'wp-rijkshuisstijl' ) . '</dt>';
+			$values .= '<dt>' . _n( 'Doelgroep', 'Doelgroepen', count( $community_audiences ), 'wp-rijkshuisstijl' ) . ': </dt>';
 			$values .= $labels;
 		}
 
 	endif;
+
+	// toon aan welk doelgroep deze community is gekoppeld
+	if ( $community_overheidslagen && ! is_wp_error( $community_overheidslagen ) ) :
+		$labels = '<dd>';
+
+		foreach ( $community_overheidslagen as $term ) {
+			if ( $clickable_links ) {
+				$labels .= '<a href="' . get_term_link( $term->term_id ) . '">' . $term->name . '</a>';
+			} else {
+				$labels .= $term->name;
+			}
+			if ( next( $community_overheidslagen ) ) {
+				$labels .= ', ';
+			}
+		}
+
+		$labels .= '</dd>';
+
+		if ( $labels ) {
+			$values .= '<dt>' . _n( 'Overheidslaag', 'Overheidslagen', count( $community_overheidslagen ), 'wp-rijkshuisstijl' ) . ': </dt>';
+			$values .= $labels;
+		}
+
+	endif;
+
 
 	if ( $show_dossiers ) {
 		if ( has_term( '', RHSWP_CT_DOSSIER, $post->ID ) ) {
@@ -673,35 +705,35 @@ function rhswp_community_single_terms( $doreturn = false, $post_id = 0, $show_do
 				$labels .= '</dd>';
 
 				if ( $labels ) {
-					$values .= '<dt>' . _x( 'Hoort bij', 'label dossiers bij een single community', 'wp-rijkshuisstijl' ) . '</dt>';
+					$values .= '<dt>' . _x( 'Hoort bij', 'label dossiers bij een single community', 'wp-rijkshuisstijl' ) . ': </dt>';
 					$values .= $labels;
 				}
 			}
 		}
 	}
-/*
- *
-	if ( $community_tags && ! is_wp_error( $community_tags ) ) {
+	/*
+	 *
+		if ( $community_tags && ! is_wp_error( $community_tags ) ) {
 
-		$labels = '<dd>';
+			$labels = '<dd>';
 
-		foreach ( $community_tags as $term ) {
+			foreach ( $community_tags as $term ) {
 
-			$labels .= $term->name;
+				$labels .= $term->name;
 
-			if ( next( $community_tags ) ) {
-				$labels .= ', ';
+				if ( next( $community_tags ) ) {
+					$labels .= ', ';
+				}
+			}
+
+			$labels .= '</dd>';
+
+			if ( $labels ) {
+				$values .= '<dt>' . _x( 'Trefwoord', 'label tags bij een single community', 'wp-rijkshuisstijl' ) . ': </dt>';
+				$values .= $labels;
 			}
 		}
-
-		$labels .= '</dd>';
-
-		if ( $labels ) {
-			$values .= '<dt>' . _x( 'Trefwoord', 'label tags bij een single community', 'wp-rijkshuisstijl' ) . '</dt>';
-			$values .= $labels;
-		}
-	}
- */
+	 */
 
 
 	if ( $values ) {
@@ -749,25 +781,25 @@ function rhswp_community_get_terms_list( $args ) {
 		'make_checkboxes' => $make_checkboxes,
 	);
 
-	$args2['taxonomy']   = DO_COMMUNITYTYPE_CT;
-	$args2['title']      = _n( 'Type community', 'Types community', 2, 'wp-rijkshuisstijl' );
-	$community_types     = ictuwp_communityfilter_list( $args2 );
-	$args2['taxonomy']   = DO_COMMUNITYTOPICS_CT;
-	$args2['title']      = _n( 'Onderwerp community', 'Onderwerpen community', 2, 'wp-rijkshuisstijl' );
-	$community_topics    = ictuwp_communityfilter_list( $args2 );
-	$args2['taxonomy']   = DO_COMMUNITYAUDIENCE_CT;
-	$args2['title']      = _n( 'Doelgroep', 'Doelgroepen', 2, 'wp-rijkshuisstijl' );
-	$community_audiences = ictuwp_communityfilter_list( $args2 );
-	$args2['taxonomy']   = DO_COMMUNITYBESTUURSLAAG_CT;
-	$args2['title']      = _n( 'Bestuurslaag', 'Bestuurslagen', 2, 'wp-rijkshuisstijl' );
-	$community_bestuurslagen = ictuwp_communityfilter_list( $args2 );
+	$args2['taxonomy']        = DO_COMMUNITYTYPE_CT;
+	$args2['title']           = _n( 'Type community', 'Types community', 2, 'wp-rijkshuisstijl' );
+	$community_types          = ictuwp_communityfilter_list( $args2 );
+	$args2['taxonomy']        = DO_COMMUNITYTOPICS_CT;
+	$args2['title']           = _n( 'Onderwerp community', 'Onderwerpen community', 2, 'wp-rijkshuisstijl' );
+	$community_topics         = ictuwp_communityfilter_list( $args2 );
+	$args2['taxonomy']        = DO_COMMUNITYAUDIENCE_CT;
+	$args2['title']           = _n( 'Doelgroep', 'Doelgroepen', 2, 'wp-rijkshuisstijl' );
+	$community_audiences      = ictuwp_communityfilter_list( $args2 );
+	$args2['taxonomy']        = DO_COMMUNITYBESTUURSLAAG_CT;
+	$args2['title']           = _n( 'Bestuurslaag', 'Overheidslagen', 2, 'wp-rijkshuisstijl' );
+	$community_overheidslagen = ictuwp_communityfilter_list( $args2 );
 
-	if ( $community_types || $community_topics || $community_audiences || $community_bestuurslagen ) {
+	if ( $community_types || $community_topics || $community_audiences || $community_overheidslagen ) {
 		$return .= '<div class="fieldsets">';
 		$return .= $community_topics;
 		$return .= $community_types;
 		$return .= $community_audiences;
-		$return .= $community_bestuurslagen;
+		$return .= $community_overheidslagen;
 		$return .= '</div>';
 	} else {
 		$return .= '<p>' . _x( 'We konden geen lijst met filters maken.', 'warning', 'wp-rijkshuisstijl' ) . '</p>';
@@ -1081,9 +1113,9 @@ function community_remove_body_classes( $classes ) {
  *
  * @return array with IDs, or false
  */
-function community_get_feed_ids_for_feed_type( $type_feed = 'event' ) {
+function community_get_feed_ids_for_feed_type( $type_feed = 'events' ) {
 
-	$type = ( $type_feed === 'event' ) ? 'event' : 'posts'; // should be either ( "event": "Agenda" OR 	"posts": "Berichten" )
+	$type = ( $type_feed === 'events' ) ? 'event' : 'posts'; // should be either ( "event": "Agenda" OR 	"posts": "Berichten" )
 
 	if ( $type_feed ) {
 
@@ -1121,19 +1153,25 @@ function community_get_feed_ids_for_feed_type( $type_feed = 'event' ) {
 function community_feed_items_get( $args = array() ) {
 
 	$defaults = array(
-		'event_type'     => 'event',
+		'event_type'     => 'events',
 		'post_types'     => 'wprss_feed_item',
 		'paging'         => false,
+		'source'         => null,
 		'posts_per_page' => - 1,
 		'echo'           => false
 	);
-
 	// set up arguments
 	$args = wp_parse_args( $args, $defaults );
 
 	// get the IDs for all feeds of whicht the type correspond to $args['event_type'] ('event' or 'posts')
-	$event_type = ( $args['event_type'] === 'event' ) ? 'event' : 'posts';
-	$feeds      = community_get_feed_ids_for_feed_type( $event_type );
+	$event_type = ( $args['event_type'] === 'events' ) ? 'events' : 'posts';
+	if ( $args['source'] ) {
+		// feed ID is given
+		$feeds = array( $args['source']->ID );
+	} else {
+		// retrieve correct feed IDs
+		$feeds = community_get_feed_ids_for_feed_type( $event_type );
+	}
 
 	$post_type = 'wprss_feed_item';
 
@@ -1252,4 +1290,109 @@ if ( 222 === 333 ) {
 		do_action( 'wprss_display_template', $args, $feed_items );
 	}
 
+}
+
+
+function community_feed_items_show( $items = array() ) {
+
+	$return = '';
+
+	$defaults     = array(
+		'ID'           => 0,
+		'title'        => '',
+		'type'         => 'events', // 'events' or 'posts'
+		'description'  => '',
+		'items'        => array(),
+		'before_title' => '<h2>',
+		'after_title'  => '</h2>',
+		'echo'         => false
+	);
+	$args         = wp_parse_args( $items, $defaults );
+	$tag_subtitle = 'h3';
+
+	if ( str_contains( strtolower( $args['before_title'] ), 'h3' ) ) {
+		$tag_subtitle = 'h4';
+	} elseif ( str_contains( strtolower( $args['before_title'] ), 'h4' ) ) {
+		$tag_subtitle = 'h5';
+	}
+
+//	Query to get all feed items for display
+//	$date_format_badge = get_option( 'date_format' );
+//	$time_format       = get_option( 'time_format' );
+//	$date_format_badge = 'j F';// get_option( 'date_format' ); // e.g. "F j, Y"
+	$date_format_badge = 'j M';// get_option( 'date_format' ); // e.g. "F j, Y"
+	$date_format_year  = 'Y';// get_option( 'date_format' ); // e.g. "F j, Y"
+	$date_format_month = 'F';// get_option( 'date_format' ); // e.g. "F j, Y"
+
+	if ( $args['type'] === 'events' ) {
+		// events
+		$cssclass = 'agenda';
+	} else {
+		// posts
+		$cssclass = 'posts';
+	}
+
+	if ( ! $args['items'] ) {
+		return false;
+	}
+	$items = $args['items'];
+
+	if ( $items->have_posts() ) {
+		$month_previous = date_i18n( $date_format_month, date( $date_format_month ) );
+		$year_previous  = date_i18n( $date_format_year, date( $date_format_year ) );
+		$postcounter    = 0;
+
+		if ( $args['title'] ) {
+			$return .= $args['before_title'] . $args['title'] . $args['after_title'];
+		}
+
+		$return .= '<ul class="' . $cssclass . '">';
+
+		while ( $items->have_posts() ) : $items->the_post();
+
+			$postcounter ++;
+			if ( $args['type'] === 'events' ) {
+				$post_meta          = get_post_meta( $items->post->ID, 'wprss_item_date', true );
+				$month_current_item = date_i18n( $date_format_month, strtotime( $post_meta ) );
+				$year_current_item  = date_i18n( $date_format_year, strtotime( $post_meta ) );
+
+				if ( $month_previous !== $month_current_item ) {
+					if ( $postcounter === 1 ) {
+					} else {
+						$return .= '</ul>';
+					}
+					if ( $year_previous !== $year_current_item ) {
+						$return .= '<' . $tag_subtitle . '>' . $year_current_item . ' - ' . $month_current_item . '</' . $tag_subtitle . '>';
+					} else {
+						$return .= '<' . $tag_subtitle . '>' . ucfirst( $month_current_item ) . '</' . $tag_subtitle . '>';
+					}
+					$return .= '<ul class="agenda"><li>';
+				} else {
+					$return .= '<li>';
+				}
+
+				$date     = date_i18n( $date_format_badge, strtotime( $post_meta ) );
+				$date_tag = '<time datetime="' . date_i18n( $date_format_badge, strtotime( $post_meta ) ) . '">' . $date . '</time>';
+
+				$return .= '<span>' . $date_tag . ' <a href="' . get_permalink() . '">' . get_the_title() . '</a></span>';
+
+				$return         .= '</li>';
+				$month_previous = $month_current_item;
+				$year_previous  = $year_current_item;
+
+			} else {
+				$return .= '<li>';
+				$return .= '<a href="' . get_permalink() . '">' . get_the_title() . '</a>';
+				$return .= '</li>';
+
+			}
+
+
+		endwhile;
+
+		$return .= '</ul>';
+
+	}
+
+	return $return;
 }
