@@ -180,6 +180,7 @@ function community_add_communities_grid( $doreturn = false ) {
 	$community_list_items         = '';
 	$community_list_items_start   = '';
 	$community_list_items_end     = '';
+	$thepage                      = get_theme_mod( 'customizer_community_pageid_overview' );
 
 
 	$result            = community_get_selection();
@@ -191,29 +192,6 @@ function community_add_communities_grid( $doreturn = false ) {
 	} else {
 		$show_terms_list = false;
 	}
-
-	/**
-	 * echo '<pre>';
-	 * var_dump( $community_layout_list );
-	 * echo '</pre>';
-	 * echo '<hr>';
-	 * echo '<pre>';
-	 * var_dump( $block_search_community_form );
-	 * echo '</pre>';
-	 * echo '<hr>';
-	 * echo '<pre>';
-	 * var_dump( $block_rss_agenda_items );
-	 * echo '</pre>';
-	 * echo '<hr>';
-	 * echo '<pre>';
-	 * var_dump( $block_rss_post_items );
-	 * echo '</pre>';
-	 * echo '<hr>';
-	 * echo '<pre>';
-	 * var_dump( $block_latest_communities );
-	 * echo '</pre>';
-	 *
-	 */
 
 	if ( $community_layout_list ) {
 
@@ -256,7 +234,7 @@ function community_add_communities_grid( $doreturn = false ) {
 
 		$arghs_for_filter = array(
 			'ID'           => $page_id,
-			'container_id' => 'community_filter',
+			'container_id' => 'community_searchform',
 			'input_label'  => $searchform_input_label,
 			'button_label' => $searchform_button_label,
 			'placeholder'  => $searchform_input_placeholder,
@@ -312,30 +290,22 @@ function community_add_communities_grid( $doreturn = false ) {
 	 *   2 (b) no grouping
 	 */
 
-	if ( $alphabet_list || $community_search_form ) {
-		$container_title .= "\n" . '<div id="search-and-alphabet">';
-	}
-	$container_title .= "\n" . '<h2 id="' . $id_header_sectionlabel . '">' . $title_for_list . '</h2>';
+	$container_title .= "\n" . '<div id="search-and-alphabet">';
+	$container_title .= "\n" . '<h2 id="' . $id_header_sectionlabel . '" class="title">' . $title_for_list . '</h2>';
 	if ( isset( $result['filter_explication'] ) ) {
 		$container_title .= "\n" . '<p id="filter_explication">' . $result['filter_explication'] . '</p>';
-	}
-	if ( $community_search_form ) {
-		$container_title .= "\n" . $community_search_form;
+		if ( $thepage ) {
+			$container_title .= "\n" . '<a href="' . get_permalink( $thepage ) . '" class="reset">' . _x( 'Toon alle community\'s', 'reset filter', 'wp-rijkshuisstijl' ) . '</a>';
+//			$container_title .= "\n" . '<button type="submit">' . _x( 'Toon alle community\'s', 'reset filter', 'wp-rijkshuisstijl' ) . '</button>';
+		}
 	}
 	if ( $alphabet_list ) {
 		$container_title .= "\n" . $alphabet_list;
 	}
-	if ( $alphabet_list || $community_search_form ) {
-		$container_title .= "\n" . '</div>'; // #search-and-alphabet
+	if ( isset( $result['is_filtered'] ) ) {
+		$container_title .= "\n" . $community_search_form;
 	}
-
-//	$container_title .= '<ul>';
-//	$container_title .= '<li>$show_alphabet_list? ' . ( $show_alphabet_list ? 'ja' : 'nee' ) . '</li>';
-//	$container_title .= '<li>community_layout_show_alphabet_list? ' . $community_layout_list['community_layout_show_alphabet_list'] . '</li>';
-//	$container_title .= '<li>$countertje? ' . $countertje . '</li>';
-//	$container_title .= '<li>$list_layout? ' . $list_layout . '</li>';
-//	$container_title .= '<li>Show searchform? ' . ( $block_search_community_form['community_layout_block_searchform_show'] !== 'show_false' ? 'ja' : 'nee' ) . '</li>';
-//	$container_title .= '</ul>';
+	$container_title .= "\n" . '</div>'; // #search-and-alphabet
 
 
 	$inner_css_class = 'inner-css archive-custom-loop no-list-style';
@@ -355,6 +325,11 @@ function community_add_communities_grid( $doreturn = false ) {
 		if ( $show_extra_blocks ) {
 			$inner_css_class .= "\n" . ' grid';
 		}
+	}
+
+	if ( isset( $result['is_filtered'] ) ) {
+		//   2 (a) each item shows only header (<details>), grouped by first letter
+		$inner_css_class .= ' search-results';
 	}
 
 	$container_start .= $container_title;
@@ -590,7 +565,7 @@ function community_add_communities_grid( $doreturn = false ) {
 				$show_counter = true;
 			}
 
-			$args2           = array(
+			$args2                    = array(
 				'echo'            => false,
 				'make_checkboxes' => false,
 				'taxonomy'        => DO_COMMUNITYTYPE_CT,
@@ -599,41 +574,23 @@ function community_add_communities_grid( $doreturn = false ) {
 				'hide_empty'      => true,
 				'title'           => _n( 'Type community', 'Types community', 2, 'wp-rijkshuisstijl' ),
 			);
-			$community_types = ictuwp_communityfilter_list( $args2 );
-
-			$args2['taxonomy'] = DO_COMMUNITYTOPICS_CT;
-			$args2['title']    = _n( 'Onderwerp community', 'Onderwerpen community', 2, 'wp-rijkshuisstijl' );
-			$community_topics  = ictuwp_communityfilter_list( $args2 );
-
-			$args2['taxonomy']   = DO_COMMUNITYAUDIENCE_CT;
-			$args2['title']      = _n( 'Doelgroep', 'Doelgroepen', 2, 'wp-rijkshuisstijl' );
-			$community_audiences = ictuwp_communityfilter_list( $args2 );
-
+			$community_types          = ictuwp_communityfilter_list( $args2 );
+			$args2['taxonomy']        = DO_COMMUNITYTOPICS_CT;
+			$args2['title']           = _n( 'Thema', 'Thema\'s', 2, 'wp-rijkshuisstijl' );
+			$community_topics         = ictuwp_communityfilter_list( $args2 );
+			$args2['taxonomy']        = DO_COMMUNITYAUDIENCE_CT;
+			$args2['title']           = _n( 'Doelgroep', 'Doelgroepen', 2, 'wp-rijkshuisstijl' );
+			$community_audiences      = ictuwp_communityfilter_list( $args2 );
 			$args2['taxonomy']        = DO_COMMUNITYBESTUURSLAAG_CT;
 			$args2['title']           = _n( 'Bestuurslaag', 'Overheidslagen', 2, 'wp-rijkshuisstijl' );
 			$community_overheidslagen = ictuwp_communityfilter_list( $args2 );
-
-			$terms_blocks      = '';
-			$itemcount_terms   = 0;
-			$columncount_terms = 0;
+			$terms_blocks             = '';
+			$itemcount_terms          = 0;
+			$columncount_terms        = 0;
 
 			if ( $community_types || $community_topics || $community_audiences || $community_overheidslagen ) {
 				$colspan = 1;
 
-				if ( $community_types ) {
-					$itemcount_terms ++;
-
-					$terms_blocks .= '<div class="griditem colspan-' . $colspan . '">';
-					$terms_blocks .= $community_types;
-					$terms_blocks .= '</div>'; // .griditem
-				}
-				if ( $community_overheidslagen ) {
-					$itemcount_terms ++;
-
-					$terms_blocks .= '<div class="griditem colspan-' . $colspan . '">';
-					$terms_blocks .= $community_overheidslagen;
-					$terms_blocks .= '</div>'; // .griditem
-				}
 				if ( $community_topics ) {
 					$itemcount_terms ++;
 
@@ -646,6 +603,20 @@ function community_add_communities_grid( $doreturn = false ) {
 
 					$terms_blocks .= '<div class="griditem colspan-' . $colspan . '">';
 					$terms_blocks .= $community_audiences;
+					$terms_blocks .= '</div>'; // .griditem
+				}
+				if ( $community_types ) {
+					$itemcount_terms ++;
+
+					$terms_blocks .= '<div class="griditem colspan-' . $colspan . '">';
+					$terms_blocks .= $community_types;
+					$terms_blocks .= '</div>'; // .griditem
+				}
+				if ( $community_overheidslagen ) {
+					$itemcount_terms ++;
+
+					$terms_blocks .= '<div class="griditem colspan-' . $colspan . '">';
+					$terms_blocks .= $community_overheidslagen;
 					$terms_blocks .= '</div>'; // .griditem
 				}
 
@@ -665,6 +636,10 @@ function community_add_communities_grid( $doreturn = false ) {
 		$title        = ( $community_layout_terms_group['community_layout_terms_title'] ) ?: _x( 'Onderwerpen, types en doelgroepen', 'label keyword veld', 'wp-rijkshuisstijl' );
 		$detailsblock .= '<details id="' . CONTAINER_ID . '_terms">';
 		$detailsblock .= '<summary><h2>' . $title . '</h2></summary>';
+		if ( $community_search_form ) {
+			$detailsblock .= "\n" . $community_search_form;
+		}
+
 		$detailsblock .= '<div class="grid itemcount-' . $itemcount_terms . ' columncount-' . $columncount_terms . '">';
 		$detailsblock .= $terms_blocks;
 		$detailsblock .= '</div>'; // .wrap
@@ -674,10 +649,10 @@ function community_add_communities_grid( $doreturn = false ) {
 
 
 	$return .= $container_start;
+	$return .= $detailsblock;
 	$return .= $community_list_items_start;
 	$return .= $community_list_items;
 	$return .= $community_list_items_end;
-	$return .= $detailsblock;
 	$return .= $container_footer;
 
 
