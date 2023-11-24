@@ -868,7 +868,7 @@ function ictuwp_community_get_latest_list( $argslist ) {
 		'max_items'     => 10,
 		'max_age'       => 180,
 		'overview_link' => '',
-		'css_class_ul'  => '',
+		'css_class_ul'  => 'communities communities-latest',
 		'date_format'   => 'j F'
 	);
 
@@ -1340,7 +1340,7 @@ function community_feed_items_show( $items = array() ) {
 					} else {
 						$return .= '<' . $tag_subtitle . '>' . ucfirst( $month_current_item ) . '</' . $tag_subtitle . '>';
 					}
-					$return .= '<ul class="agenda"><li>';
+					$return .= '<ul class="import-items agenda"><li>';
 				} else {
 					$return .= '<li>';
 				}
