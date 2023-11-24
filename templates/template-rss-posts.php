@@ -42,6 +42,7 @@ function community_add_posts_grid( $args = array() ) {
 
 	$args_selection = array(
 		'event_type'     => 'posts',
+		'sort_order'     => 'DESC',
 		'paging'         => false,
 		'posts_per_page' => - 1,
 		'echo'           => false

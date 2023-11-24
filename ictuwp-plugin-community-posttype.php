@@ -1133,6 +1133,7 @@ function community_feed_items_get( $args = array() ) {
 		'post_types'     => 'wprss_feed_item',
 		'paging'         => false,
 		'source'         => null,
+		'sort_order'     => 'ASC',
 		'posts_per_page' => - 1,
 		'echo'           => false
 	);
@@ -1157,7 +1158,7 @@ function community_feed_items_get( $args = array() ) {
 		'posts_per_page'      => $args['posts_per_page'],
 		'orderby'             => 'meta_value',
 		'meta_key'            => 'wprss_item_date',
-		'order'               => 'ASC',
+		'order'               => $args['sort_order'],
 		'suppress_filters'    => true,
 		'ignore_sticky_posts' => true,
 		'meta_query'          => array(
@@ -1293,9 +1294,6 @@ function community_feed_items_show( $items = array() ) {
 	}
 
 //	Query to get all feed items for display
-//	$date_format_badge = get_option( 'date_format' );
-//	$time_format       = get_option( 'time_format' );
-//	$date_format_badge = 'j F';// get_option( 'date_format' ); // e.g. "F j, Y"
 	$date_format_badge = 'j M';// get_option( 'date_format' ); // e.g. "F j, Y"
 	$date_format_year  = 'Y';// get_option( 'date_format' ); // e.g. "F j, Y"
 	$date_format_month = 'F';// get_option( 'date_format' ); // e.g. "F j, Y"
@@ -1322,7 +1320,7 @@ function community_feed_items_show( $items = array() ) {
 			$return .= $args['before_title'] . $args['title'] . $args['after_title'];
 		}
 
-		$return .= '<ul class="' . $cssclass . '">';
+		$return .= '<ul class="import-items ' . $cssclass . '">';
 
 		while ( $items->have_posts() ) : $items->the_post();
 
@@ -1350,15 +1348,16 @@ function community_feed_items_show( $items = array() ) {
 				$date     = date_i18n( $date_format_badge, strtotime( $post_meta ) );
 				$date_tag = '<time datetime="' . date_i18n( $date_format_badge, strtotime( $post_meta ) ) . '">' . $date . '</time>';
 
-				$return .= '<span>' . $date_tag . ' <a href="' . get_permalink() . '">' . get_the_title() . '</a></span>';
+				$return .= '<span class="date date-event">' . $date_tag . '</span> <a href="' . get_permalink() . '">' . get_the_title() . '</a>';
 
 				$return         .= '</li>';
 				$month_previous = $month_current_item;
 				$year_previous  = $year_current_item;
 
 			} else {
+				$date   = get_the_date( $date_format_badge );
 				$return .= '<li>';
-				$return .= '<a href="' . get_permalink() . '">' . get_the_title() . '</a>';
+				$return .= '<span class="date date-publish">' . $date . '</span> <a href="' . get_permalink() . '">' . get_the_title() . '</a>';
 				$return .= '</li>';
 
 			}
