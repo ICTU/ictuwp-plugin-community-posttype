@@ -500,6 +500,7 @@ function community_add_communities_grid( $doreturn = false ) {
 			$title_block                      = ( $block_rss_post_items['block_title'] ) ?: _x( 'Berichten', 'Header rss links', 'wp-rijkshuisstijl' );
 			$rss_content                      = '';
 			$args_selection['event_type']     = 'posts';
+			$args_selection['sort_order']     = 'DESC';
 			$args_selection['posts_per_page'] = $limit;
 			$community_items                  = community_feed_items_get( $args_selection );
 
