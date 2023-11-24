@@ -106,18 +106,18 @@ register_taxonomy( DO_COMMUNITYTYPE_CT, array( DO_COMMUNITY_CPT ), $args );
 
 // Community-onderwerpen
 $labels = array(
-	'name'              => esc_html_x( 'Community-onderwerpen', 'taxonomy', 'wp-rijkshuisstijl' ),
-	'singular_name'     => esc_html_x( 'Onderwerp', 'taxonomy singular name', 'wp-rijkshuisstijl' ),
-	'search_items'      => esc_html_x( 'Search onderwerpen', 'taxonomy', 'wp-rijkshuisstijl' ),
-	'all_items'         => esc_html_x( 'Alle onderwerpen', 'taxonomy', 'wp-rijkshuisstijl' ),
-	'parent_item'       => esc_html_x( 'Parent onderwerp', 'taxonomy', 'wp-rijkshuisstijl' ),
-	'parent_item_colon' => esc_html_x( 'Parent onderwerp:', 'taxonomy', 'wp-rijkshuisstijl' ),
-	'view_item'         => esc_html_x( 'Bekijk onderwerp', 'taxonomy', 'wp-rijkshuisstijl' ),
-	'edit_item'         => esc_html_x( 'Edit onderwerp', 'taxonomy', 'wp-rijkshuisstijl' ),
-	'update_item'       => esc_html_x( 'Update onderwerp', 'taxonomy', 'wp-rijkshuisstijl' ),
-	'add_new_item'      => esc_html_x( 'Add new onderwerp', 'taxonomy', 'wp-rijkshuisstijl' ),
-	'new_item_name'     => esc_html_x( 'New onderwerp name', 'taxonomy', 'wp-rijkshuisstijl' ),
-	'menu_name'         => esc_html_x( 'Onderwerpen', 'taxonomy', 'wp-rijkshuisstijl' ),
+	'name'              => esc_html_x( 'Thema\'s', 'taxonomy', 'wp-rijkshuisstijl' ),
+	'singular_name'     => esc_html_x( 'Thema', 'taxonomy singular name', 'wp-rijkshuisstijl' ),
+	'search_items'      => esc_html_x( 'Search thema\'s', 'taxonomy', 'wp-rijkshuisstijl' ),
+	'all_items'         => esc_html_x( 'Alle thema\'s', 'taxonomy', 'wp-rijkshuisstijl' ),
+	'parent_item'       => esc_html_x( 'Parent thema', 'taxonomy', 'wp-rijkshuisstijl' ),
+	'parent_item_colon' => esc_html_x( 'Parent thema:', 'taxonomy', 'wp-rijkshuisstijl' ),
+	'view_item'         => esc_html_x( 'Bekijk thema', 'taxonomy', 'wp-rijkshuisstijl' ),
+	'edit_item'         => esc_html_x( 'Edit thema', 'taxonomy', 'wp-rijkshuisstijl' ),
+	'update_item'       => esc_html_x( 'Update thema', 'taxonomy', 'wp-rijkshuisstijl' ),
+	'add_new_item'      => esc_html_x( 'Add new thema', 'taxonomy', 'wp-rijkshuisstijl' ),
+	'new_item_name'     => esc_html_x( 'New thema name', 'taxonomy', 'wp-rijkshuisstijl' ),
+	'menu_name'         => esc_html_x( 'Thema\'s', 'taxonomy', 'wp-rijkshuisstijl' ),
 );
 
 $args = array(

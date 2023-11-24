@@ -594,7 +594,7 @@ function rhswp_community_single_terms( $doreturn = false, $post_id = 0, $show_do
 		$labels .= '</dd>';
 
 		if ( $labels ) {
-			$values .= '<dt>' . _n( 'Onderwerp community', 'Onderwerpen community', count( $community_topics ), 'wp-rijkshuisstijl' ) . ': </dt>';
+			$values .= '<dt>' . _n( 'Thema', 'Thema\'s', count( $community_topics ), 'wp-rijkshuisstijl' ) . ': </dt>';
 			$values .= $labels;
 		}
 
@@ -705,36 +705,12 @@ function rhswp_community_single_terms( $doreturn = false, $post_id = 0, $show_do
 				$labels .= '</dd>';
 
 				if ( $labels ) {
-					$values .= '<dt>' . _x( 'Hoort bij', 'label dossiers bij een single community', 'wp-rijkshuisstijl' ) . ': </dt>';
+					$values .= '<dt>' . _n( 'Onderwerp', 'Onderwerpen', count( $terms ), 'wp-rijkshuisstijl' ) . ': </dt>';
 					$values .= $labels;
 				}
 			}
 		}
 	}
-	/*
-	 *
-		if ( $community_tags && ! is_wp_error( $community_tags ) ) {
-
-			$labels = '<dd>';
-
-			foreach ( $community_tags as $term ) {
-
-				$labels .= $term->name;
-
-				if ( next( $community_tags ) ) {
-					$labels .= ', ';
-				}
-			}
-
-			$labels .= '</dd>';
-
-			if ( $labels ) {
-				$values .= '<dt>' . _x( 'Trefwoord', 'label tags bij een single community', 'wp-rijkshuisstijl' ) . ': </dt>';
-				$values .= $labels;
-			}
-		}
-	 */
-
 
 	if ( $values ) {
 		$return = '<dl class="community">';
