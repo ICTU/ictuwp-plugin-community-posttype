@@ -4,7 +4,7 @@
  *
  * template-rss-posts.php
  *
- * @version 0.1.3 - Added page template for all RSS post items
+ * @version 1.0.1 - First version on live server
  */
 
 
