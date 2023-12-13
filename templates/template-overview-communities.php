@@ -15,10 +15,20 @@ add_action( 'wp_enqueue_scripts', 'community_set_id_for_openbuttons' );
 
 function community_set_id_for_openbuttons() {
 	if ( ! is_admin() ) {
+		$translation_array = array();
+
+		$openclose = _x( "Toon alle community's", 'Labels detailbuttons', 'wp-rijkshuisstijl' );
+		$openinit  = sprintf( _x( 'There are __NUMBER__ blocks with hidden text on this page. Use the button with \'%s\' to make the text available.', 'Labels detailbuttons', 'wp-rijkshuisstijl' ), $openclose );
+		// Localize the script with new data
 		$translation_array = array(
-			'id' => CONTAINER_ID,
+			'id'                        => CONTAINER_ID,
+			'detailsbutton_init'        => $openinit,
+			'detailsbutton_resultclose' => _x( 'All detail blocks are closed', 'Labels detailbuttons', 'wp-rijkshuisstijl' ),
+			'detailsbutton_resultopen'  => _x( 'All detail blocks are open', 'Labels detailbuttons', 'wp-rijkshuisstijl' ),
+			'open'                      => $openclose,
+			'close'                     => _x( "Verberg alle community's", 'Labels detailbuttons', 'wp-rijkshuisstijl' )
 		);
-		wp_localize_script( 'details-element', 'detailssummarycontainerid', $translation_array );
+		wp_localize_script( 'details-element', 'detailssummarytranslate', $translation_array );
 
 	}
 }
@@ -650,10 +660,10 @@ function community_add_communities_grid( $doreturn = false ) {
 
 
 	$return .= $container_start;
-	$return .= $detailsblock;
 	$return .= $community_list_items_start;
 	$return .= $community_list_items;
 	$return .= $community_list_items_end;
+	$return .= $detailsblock;
 	$return .= $container_footer;
 
 
