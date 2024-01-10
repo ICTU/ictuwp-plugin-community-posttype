@@ -1282,6 +1282,7 @@ function community_feed_items_show( $items = array() ) {
 		'items'        => array(),
 		'before_title' => '<h2>',
 		'after_title'  => '</h2>',
+		'extra_info'   => false,
 		'echo'         => false
 	);
 	$args         = wp_parse_args( $items, $defaults );
@@ -1293,10 +1294,10 @@ function community_feed_items_show( $items = array() ) {
 		$tag_subtitle = 'h5';
 	}
 
-//	Query to get all feed items for display
-	$date_format_badge = 'j M';// get_option( 'date_format' ); // e.g. "F j, Y"
-	$date_format_year  = 'Y';// get_option( 'date_format' ); // e.g. "F j, Y"
-	$date_format_month = 'F';// get_option( 'date_format' ); // e.g. "F j, Y"
+	//	Query to get all feed items for display
+	$date_format_badge = 'j M';
+	$date_format_year  = 'Y';
+	$date_format_month = 'F';
 
 	if ( $args['type'] === 'events' ) {
 		// events
@@ -1312,17 +1313,49 @@ function community_feed_items_show( $items = array() ) {
 	$items = $args['items'];
 
 	if ( $items->have_posts() ) {
-		$month_previous = date_i18n( $date_format_month, date( $date_format_month ) );
-		$year_previous  = date_i18n( $date_format_year, date( $date_format_year ) );
-		$postcounter    = 0;
+		$current_date  =
+		$month_previous = date_i18n( $date_format_month, time() );
+		$year_previous = date_i18n( $date_format_year, time() );
+		$postcounter   = 0;
+		$cssclass_a    = '';
+		$extra_info    = '';
 
 		if ( $args['title'] ) {
 			$return .= $args['before_title'] . $args['title'] . $args['after_title'];
 		}
 
-		$return .= '<ul class="import-items ' . $cssclass . '">';
 
 		while ( $items->have_posts() ) : $items->the_post();
+
+			if ( $postcounter < 1 ) {
+				$show_opening_tag = true;
+				// $postcounter = 0;
+				if ( $args['type'] === 'events' ) {
+
+					$post_meta          = get_post_meta( $items->post->ID, 'wprss_item_date', true );
+					$month_current_item = date_i18n( $date_format_month, strtotime( $post_meta ) );
+					$year_current_item  = date_i18n( $date_format_year, strtotime( $post_meta ) );
+
+					if ( ( $month_previous === $month_current_item ) || ( $year_previous === $year_current_item ) ) {
+					} else {
+						$show_opening_tag = false;
+					}
+				}
+				if ( $show_opening_tag ) {
+					$return .= '<ul class="import-items ' . $cssclass . '">';
+				}
+			}
+
+
+			$cssclass_a = 'class="no-info"';
+			$extra_info = '';
+
+			if ( $args['extra_info'] ) {
+//				$extra_info = 'jawelletjes';
+			} else {
+//				$cssclass_a = 'class="no-info"';
+//				$extra_info = '';
+			}
 
 			$postcounter ++;
 			if ( $args['type'] === 'events' ) {
@@ -1348,8 +1381,8 @@ function community_feed_items_show( $items = array() ) {
 				$date     = date_i18n( $date_format_badge, strtotime( $post_meta ) );
 				$date_tag = '<time datetime="' . date_i18n( $date_format_badge, strtotime( $post_meta ) ) . '">' . $date . '</time>';
 
-				$return .= '<span class="date date-event">' . $date_tag . '</span> <a href="' . get_permalink() . '">' . get_the_title() . '</a>';
-
+				$return         .= '<span class="date date-event">' . $date_tag . '</span> <a href="' . get_permalink() . '"' . $cssclass_a . '>' . get_the_title() . '</a>';
+				$return         .= $extra_info;
 				$return         .= '</li>';
 				$month_previous = $month_current_item;
 				$year_previous  = $year_current_item;
@@ -1357,7 +1390,8 @@ function community_feed_items_show( $items = array() ) {
 			} else {
 				$date   = get_the_date( $date_format_badge );
 				$return .= '<li>';
-				$return .= '<span class="date date-publish">' . $date . '</span> <a href="' . get_permalink() . '">' . get_the_title() . '</a>';
+				$return .= '<span class="date date-publish">' . $date . '</span> <a href="' . get_permalink() . '"' . $cssclass_a . '>' . get_the_title() . '</a>';
+				$return .= $extra_info;
 				$return .= '</li>';
 
 			}

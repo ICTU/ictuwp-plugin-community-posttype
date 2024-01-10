@@ -54,9 +54,10 @@ function community_add_posts_grid( $args = array() ) {
 		// no items
 	} else {
 		$args_in     = array(
-			'title' => _x( 'Berichten', 'Header rss links', 'wp-rijkshuisstijl' ),
-			'type'  => 'posts',
-			'items' => $rss_items
+			'extra_info' => true,
+			'title'      => _x( 'Berichten', 'Header rss links', 'wp-rijkshuisstijl' ),
+			'type'       => 'posts',
+			'items'      => $rss_items
 		);
 		$rss_content = community_feed_items_show( $args_in );
 		echo $rss_content;
