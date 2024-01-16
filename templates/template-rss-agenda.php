@@ -54,7 +54,8 @@ function community_add_agenda_grid( $args = array() ) {
 		$args_in     = array(
 			'extra_info' => true,
 			'title'      => _x( 'Agenda', 'Header rss links', 'wp-rijkshuisstijl' ),
-			'items'      => $rss_items
+			'items'      => $rss_items,
+			'cssclass'   => 'template-rss-agenda'
 		);
 		$rss_content = community_feed_items_show( $args_in );
 		echo $rss_content;

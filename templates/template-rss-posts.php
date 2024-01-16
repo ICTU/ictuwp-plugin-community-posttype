@@ -53,12 +53,13 @@ function community_add_posts_grid( $args = array() ) {
 	if ( ! $rss_items ) {
 		// no items
 	} else {
-		$args_in = array(
+		$args_in     = array(
 			'extra_info' => true,
 			'title'      => _x( 'Berichten', 'Header rss links', 'wp-rijkshuisstijl' ),
 			'type'       => 'posts',
 			'show_date'  => true,
-			'items'      => $rss_items
+			'items'      => $rss_items,
+			'cssclass'   => 'template-rss-posts'
 		);
 		$rss_content = community_feed_items_show( $args_in );
 		echo $rss_content;

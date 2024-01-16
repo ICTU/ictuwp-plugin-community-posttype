@@ -1287,6 +1287,7 @@ function community_feed_items_show( $items = array() ) {
 		'after_title'  => '</h2>',
 		'extra_info'   => false,
 		'show_date'    => false,
+		'cssclass'    => '',
 		'echo'         => false
 	);
 	$args         = wp_parse_args( $items, $defaults );
@@ -1311,6 +1312,10 @@ function community_feed_items_show( $items = array() ) {
 		$cssclass = 'posts links';
 	}
 
+	if ( $args['cssclass'] ) {
+		$cssclass .= ' ' . $args['cssclass'];
+	}
+
 	if ( ! $args['items'] ) {
 		return false;
 	}
@@ -1322,7 +1327,6 @@ function community_feed_items_show( $items = array() ) {
 		$year_previous = date_i18n( $date_format_year, time() );
 		$postcounter   = 0;
 		$cssclass_a    = '';
-		$extra_info    = '';
 
 		if ( $args['title'] ) {
 			$return .= $args['before_title'] . $args['title'] . $args['after_title'];
@@ -1334,7 +1338,6 @@ function community_feed_items_show( $items = array() ) {
 			$current_item_id = $items->post->ID;
 			$container_start = '';
 			$container_end   = '';
-//			$extra_info      = '!! ' . $current_item_id;
 			$extra_info = '';
 
 			if ( $postcounter < 1 ) {
@@ -1359,10 +1362,8 @@ function community_feed_items_show( $items = array() ) {
 
 			if ( $args['extra_info'] ) {
 
-				$feed_id        = '';
 				$community_id   = '';
 				$community_name = '';
-//				$source_name    = get_post_meta( $current_item_id, 'wprss_item_source_name' );
 				$feed_id    = get_post_meta( $current_item_id, 'wprss_feed_id', true );
 				$extra_info = 'events';
 
@@ -1378,19 +1379,11 @@ function community_feed_items_show( $items = array() ) {
 					$community_name = get_the_title( $community_id[0]->ID );
 				}
 
-
-//				echo '<div style="padding; 1rem; background: white; border: 1px solid black; overflow: hidden; margin; 1rem;">';
-//				echo '<h1>' . get_the_title( $items->post ) . '</h1>';
-//				echo '<pre>';
-//				var_dump( $community_id[0] );
-//				echo '</pre>';
-//				echo '</div>';
 				if ( $community_name ) {
-//					$extra_info = '<span class="source">(' . $current_item_id . ' / ' . $feed_id[0] . ' / ' . $community_id[0]->ID . ') ' . $community_name . '</span>';
 					$extra_info = '<span class="source">' . $community_name . '</span>';
 				}
-//				wprss_item_source_name
-				$container_start = '<span class="jemoeder">';
+
+				$container_start = '<span class="link-and-info">';
 				$container_end   = '</span>';
 			} else {
 				$cssclass_a = 'class="no-info"';
@@ -1401,6 +1394,7 @@ function community_feed_items_show( $items = array() ) {
 
 			if ( $args['type'] === 'events' ) {
 				$debug = false;
+				$cssclass = '';
 				if ( $community_name === 'iBestuur' ) {
 					$debug = true;
 				}
@@ -1419,7 +1413,11 @@ function community_feed_items_show( $items = array() ) {
 					} else {
 						$return .= '<' . $tag_subtitle . '>' . ucfirst( $month_current_item ) . '</' . $tag_subtitle . '>';
 					}
-					$return .= '<ul class="import-items agenda"><li>';
+					if ( $args['cssclass'] ) {
+						$cssclass .= ' ' . $args['cssclass'];
+					}
+
+					$return .= '<ul class="import-items agenda' . $cssclass . '"><li>';
 				} else {
 					$return .= '<li>';
 				}
