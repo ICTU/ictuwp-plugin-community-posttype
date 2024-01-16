@@ -421,6 +421,7 @@ function community_add_communities_grid( $doreturn = false ) {
 				}
 				$community_list .= '</li>';
 
+				$postcounter ++;
 			endforeach;
 
 			$community_list_items .= $community_list;
@@ -489,7 +490,7 @@ function community_add_communities_grid( $doreturn = false ) {
 
 			if ( $rss_content ) {
 
-				$blocks_row_rss_items .= '<div class="griditem border-top colspan-' . $colspan . '">';
+				$blocks_row_rss_items .= '<div class="griditem border-top colspan-' . $colspan . '" id="communities_agenda">';
 				$blocks_row_rss_items .= $title_tag_start . $title_block . $title_tag_end;
 				$blocks_row_rss_items .= $rss_content;
 				if ( isset( $overview_link['url'] ) && isset( $overview_link['title'] ) ) {
@@ -527,7 +528,7 @@ function community_add_communities_grid( $doreturn = false ) {
 
 			if ( $rss_content ) {
 
-				$blocks_row_rss_items .= '<div class="griditem border-top colspan-' . $colspan . '">';
+				$blocks_row_rss_items .= '<div class="griditem border-top colspan-' . $colspan . '" id="communities_news">';
 				$blocks_row_rss_items .= $title_tag_start . $title_block . $title_tag_end;
 				$blocks_row_rss_items .= $rss_content;
 				if ( isset( $overview_link['url'] ) && isset( $overview_link['title'] ) ) {
@@ -558,7 +559,7 @@ function community_add_communities_grid( $doreturn = false ) {
 			if ( $content ) {
 				$itemcount ++;
 
-				$blocks_row_rss_items .= '<div class="griditem border-top colspan-' . $colspan . '">';
+				$blocks_row_rss_items .= '<div class="griditem border-top colspan-' . $colspan . '" id="communities_latest">';
 				$blocks_row_rss_items .= $title_tag_start . $title_block . $title_tag_end;
 				$blocks_row_rss_items .= $content;
 				$blocks_row_rss_items .= '</div>'; // .griditem
