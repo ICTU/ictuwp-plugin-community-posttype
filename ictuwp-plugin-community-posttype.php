@@ -1128,6 +1128,8 @@ function community_get_feed_ids_for_feed_type( $type_feed = 'events' ) {
  */
 function community_feed_items_get( $args = array() ) {
 
+	global $wp_query;
+
 	$defaults = array(
 		'event_type'     => 'events',
 		'post_types'     => 'wprss_feed_item',
@@ -1135,8 +1137,11 @@ function community_feed_items_get( $args = array() ) {
 		'source'         => null,
 		'sort_order'     => 'ASC',
 		'posts_per_page' => - 1,
-		'echo'           => false
+		'echo'           => false,
+		'paging'         => 1,
+		'posts_per_page' => 20,
 	);
+
 	// set up arguments
 	$args = wp_parse_args( $args, $defaults );
 
@@ -1195,13 +1200,11 @@ function community_feed_items_get( $args = array() ) {
 			),
 		);
 	}
-	$feed_items = new WP_Query( $feed_items_args );
-//	echo '<pre>';
-//	var_dump( $feed_items_args );
-//	echo '</pre>';
 
-	if ( $feed_items->have_posts() ) {
-		return $feed_items;
+	$wp_query = new WP_Query( $feed_items_args );
+
+	if ( $wp_query->have_posts() ) {
+		return $wp_query;
 	} else {
 		return false;
 	}
@@ -1283,6 +1286,7 @@ function community_feed_items_show( $items = array() ) {
 		'before_title' => '<h2>',
 		'after_title'  => '</h2>',
 		'extra_info'   => false,
+		'show_date'    => false,
 		'echo'         => false
 	);
 	$args         = wp_parse_args( $items, $defaults );
@@ -1304,7 +1308,7 @@ function community_feed_items_show( $items = array() ) {
 		$cssclass = 'agenda';
 	} else {
 		// posts
-		$cssclass = 'posts';
+		$cssclass = 'posts links';
 	}
 
 	if ( ! $args['items'] ) {
@@ -1327,12 +1331,18 @@ function community_feed_items_show( $items = array() ) {
 
 		while ( $items->have_posts() ) : $items->the_post();
 
+			$current_item_id = $items->post->ID;
+			$container_start = '';
+			$container_end   = '';
+//			$extra_info      = '!! ' . $current_item_id;
+			$extra_info = '';
+
 			if ( $postcounter < 1 ) {
 				$show_opening_tag = true;
 				// $postcounter = 0;
 				if ( $args['type'] === 'events' ) {
 
-					$post_meta          = get_post_meta( $items->post->ID, 'wprss_item_date', true );
+					$post_meta          = get_post_meta( $current_item_id, 'wprss_item_date', true );
 					$month_current_item = date_i18n( $date_format_month, strtotime( $post_meta ) );
 					$year_current_item  = date_i18n( $date_format_year, strtotime( $post_meta ) );
 
@@ -1347,19 +1357,55 @@ function community_feed_items_show( $items = array() ) {
 			}
 
 
-			$cssclass_a = 'class="no-info"';
-			$extra_info = '';
-
 			if ( $args['extra_info'] ) {
-//				$extra_info = 'jawelletjes';
+
+				$feed_id        = '';
+				$community_id   = '';
+				$community_name = '';
+//				$source_name    = get_post_meta( $current_item_id, 'wprss_item_source_name' );
+				$feed_id    = get_post_meta( $current_item_id, 'wprss_feed_id', true );
+				$extra_info = 'events';
+
+				if ( $args['type'] === 'events' ) {
+					// different field for events feed
+					$community_id = get_field( 'community_rssfeed_relations_events', $feed_id );
+				} else {
+					// different field for posts feed
+					$extra_info   = 'posts';
+					$community_id = get_field( 'community_rssfeed_relations_post', $feed_id );
+				}
+				if ( $community_id[0]->ID ) {
+					$community_name = get_the_title( $community_id[0]->ID );
+				}
+
+
+//				echo '<div style="padding; 1rem; background: white; border: 1px solid black; overflow: hidden; margin; 1rem;">';
+//				echo '<h1>' . get_the_title( $items->post ) . '</h1>';
+//				echo '<pre>';
+//				var_dump( $community_id[0] );
+//				echo '</pre>';
+//				echo '</div>';
+				if ( $community_name ) {
+//					$extra_info = '<span class="source">(' . $current_item_id . ' / ' . $feed_id[0] . ' / ' . $community_id[0]->ID . ') ' . $community_name . '</span>';
+					$extra_info = '<span class="source">' . $community_name . '</span>';
+				}
+//				wprss_item_source_name
+				$container_start = '<span class="jemoeder">';
+				$container_end   = '</span>';
 			} else {
-//				$cssclass_a = 'class="no-info"';
-//				$extra_info = '';
+				$cssclass_a = 'class="no-info"';
 			}
 
 			$postcounter ++;
+
+
 			if ( $args['type'] === 'events' ) {
-				$post_meta          = get_post_meta( $items->post->ID, 'wprss_item_date', true );
+				$debug = false;
+				if ( $community_name === 'iBestuur' ) {
+					$debug = true;
+				}
+
+				$post_meta          = community_get_event_date( $current_item_id, $debug );
 				$month_current_item = date_i18n( $date_format_month, strtotime( $post_meta ) );
 				$year_current_item  = date_i18n( $date_format_year, strtotime( $post_meta ) );
 
@@ -1381,17 +1427,22 @@ function community_feed_items_show( $items = array() ) {
 				$date     = date_i18n( $date_format_badge, strtotime( $post_meta ) );
 				$date_tag = '<time datetime="' . date_i18n( $date_format_badge, strtotime( $post_meta ) ) . '">' . $date . '</time>';
 
-				$return         .= '<span class="date date-event">' . $date_tag . '</span> <a href="' . get_permalink() . '"' . $cssclass_a . '>' . get_the_title() . '</a>';
-				$return         .= $extra_info;
+				$return         .= '<span class="date date-event">' . $date_tag . '</span> ' . $container_start . '<a href="' . get_permalink() . '"' . $cssclass_a . '>' . get_the_title() . '</a>';
+				$return         .= $extra_info . $container_end;
 				$return         .= '</li>';
 				$month_previous = $month_current_item;
 				$year_previous  = $year_current_item;
 
 			} else {
-				$date   = get_the_date( $date_format_badge );
+				$date_string = '';
+				if ( $args['show_date'] ) {
+					$date        = get_the_date( $date_format_badge );
+					$date_string = '<span class="date date-publish">' . $date . '</span>';
+				}
+
 				$return .= '<li>';
-				$return .= '<span class="date date-publish">' . $date . '</span> <a href="' . get_permalink() . '"' . $cssclass_a . '>' . get_the_title() . '</a>';
-				$return .= $extra_info;
+				$return .= $date_string . ' ' . $container_start . '<a href="' . get_permalink() . '"' . $cssclass_a . '>' . get_the_title() . '</a>';
+				$return .= $extra_info . $container_end;
 				$return .= '</li>';
 
 			}
@@ -1404,4 +1455,27 @@ function community_feed_items_show( $items = array() ) {
 	}
 
 	return $return;
+}
+
+function community_get_event_date( $item_id = 0, $debug = false ) {
+	$date = 0;
+	if ( $item_id ) {
+		$item_date = get_post_meta( $item_id, 'wprss_item_date', true );
+		$post_meta = get_post_meta( $item_id );
+
+//		if ( $debug ) {
+//			echo '<h1>ID: ' . $item_id . '</h1>';
+//			echo '<pre>';
+//			var_dump( $post_meta );
+//			echo '</pre>';
+//		}
+
+		if ( $item_date ) {
+			return $item_date;
+		} else {
+		}
+	}
+
+	return $date;
+
 }
