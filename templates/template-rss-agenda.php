@@ -41,8 +41,8 @@ function community_add_agenda_grid( $args = array() ) {
 
 	$args_selection = array(
 		'event_type'     => 'events',
-		'paging'         => false,
-		'posts_per_page' => - 1,
+		'paging'         => 1,
+		'posts_per_page' => 20,
 		'echo'           => false
 	);
 
@@ -60,11 +60,9 @@ function community_add_agenda_grid( $args = array() ) {
 		echo $rss_content;
 	}
 
+	genesis_posts_nav();
 	wp_reset_query();
 	wp_reset_postdata();
 
 }
 
-function sort_by_date( $a, $b ) {
-	return strcmp( $a["date"], $b["date"] );
-}

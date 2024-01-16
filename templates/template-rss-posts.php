@@ -43,8 +43,8 @@ function community_add_posts_grid( $args = array() ) {
 	$args_selection = array(
 		'event_type'     => 'posts',
 		'sort_order'     => 'DESC',
-		'paging'         => false,
-		'posts_per_page' => - 1,
+		'paging'         => 1,
+		'posts_per_page' => 20,
 		'echo'           => false
 	);
 
@@ -53,21 +53,19 @@ function community_add_posts_grid( $args = array() ) {
 	if ( ! $rss_items ) {
 		// no items
 	} else {
-		$args_in     = array(
+		$args_in = array(
 			'extra_info' => true,
 			'title'      => _x( 'Berichten', 'Header rss links', 'wp-rijkshuisstijl' ),
 			'type'       => 'posts',
+			'show_date'  => true,
 			'items'      => $rss_items
 		);
 		$rss_content = community_feed_items_show( $args_in );
 		echo $rss_content;
 	}
-
+	genesis_posts_nav();
 	wp_reset_query();
 	wp_reset_postdata();
 
 }
 
-function sort_by_date( $a, $b ) {
-	return strcmp( $a["date"], $b["date"] );
-}
