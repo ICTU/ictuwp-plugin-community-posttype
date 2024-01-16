@@ -50,7 +50,7 @@ function ictuwp_community_term_archive_list( $doreturn = false ) {
 //		$itemcount = found_posts();
 //		$itemcount = 3;
 		$itemcount   = $wp_query->post_count;
-		$columncount = 2;
+		$columncount = 1;
 		$postcounter = 0;
 		if ( $itemcount < $columncount ) {
 			$columncount = $itemcount;
@@ -63,7 +63,9 @@ function ictuwp_community_term_archive_list( $doreturn = false ) {
 			$postcounter ++;
 			$contentblock_post_id = get_the_ID();
 			$args2                = array(
-				'ID' => $contentblock_post_id,
+				'ID'                      => $contentblock_post_id,
+				'contentblock_label_show' => false,
+				'itemclass'               => 'griditem griditem--post colspan-2',
 			);
 
 
