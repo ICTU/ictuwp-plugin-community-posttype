@@ -482,7 +482,8 @@ function community_add_communities_grid( $doreturn = false ) {
 				// no items
 			} else {
 				$args_in     = array(
-					'items' => $community_items
+					'items'      => $community_items,
+					'extra_info' => true,
 				);
 				$rss_content = community_feed_items_show( $args_in );
 			}
@@ -519,8 +520,9 @@ function community_add_communities_grid( $doreturn = false ) {
 				// no items
 			} else {
 				$args_in     = array(
-					'type'  => 'posts',
-					'items' => $community_items
+					'type'       => 'posts',
+					'extra_info' => true,
+					'items'      => $community_items
 				);
 				$rss_content = community_feed_items_show( $args_in );
 			}
