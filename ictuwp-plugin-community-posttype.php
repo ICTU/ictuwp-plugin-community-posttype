@@ -54,6 +54,12 @@ defined( 'DO_COMMUNITY_DETAIL_TEMPLATE' ) or define( 'DO_COMMUNITY_DETAIL_TEMPLA
 //	define( 'RHSWP_WIDGET_AREA_COMMUNITY_OVERVIEW', 'sidebar-community-overview' );
 //}
 
+define( 'DO_COMMUNITYTYPE_CT_VAR', 'communitytype' );
+define( 'DO_COMMUNITYTOPICS_CT_VAR', 'communitytopic' );
+define( 'DO_COMMUNITYAUDIENCE_CT_VAR', 'communityaudience' );
+define( 'DO_COMMUNITYBESTUURSLAAG_CT_VAR', 'communitygov' );
+
+
 //========================================================================================================
 add_action( 'plugins_loaded', array( 'DO_COMMUNITY_CPT', 'init' ), 10 );
 
@@ -1126,6 +1132,284 @@ function community_get_feed_ids_for_feed_type( $type_feed = 'events' ) {
  *
  * @return false|WP_Query
  */
+function community_select_list( $args = array() ) {
+	$defaults = array(
+		'terms_list' => array(),
+		'name'       => '',
+		'id'         => '',
+		'default'    => '',
+		'label'      => 'label',
+		'type'       => 'select',
+		'echo'       => false,
+	);
+
+	// set up arguments
+	$args   = wp_parse_args( $args, $defaults );
+	$return = '';
+
+	if ( count( $args['terms_list'] ) && $args['id'] && $args['name'] ) {
+
+		$selectid = $args['type'] . '_' . $args['id'];
+
+		$return .= '<label for="' . $selectid . '">' . $args['label'] . '</label>';
+		$return .= '<select id="' . $selectid . '" name="' . $args['name'] . '">';
+
+		if ( ! $args['default'] ) {
+			$return .= '<option value="">' . _x( '-selecteer-', 'asd', 'dad' ) . '</option> ';
+
+		}
+
+		foreach ( $args['terms_list'] as $term ) {
+			$selected = '';
+			if ( strval( $term->term_id ) === strval( $args['default'] ) ) {
+				$selected = ' selected ';
+			}
+//				echo '<li><a href="' . get_term_link( $term->term_id ) . '">' . $term->name . '</a> ';
+
+			$return .= '<option value="' . $term->term_id . '"' . $selected . '>' . $term->name . '</option> ';
+
+			/*
+			 *
+							$args2          = array(
+								'post_type' => DO_COMMUNITY_CPT,
+								'tax_query' => array(
+									array(
+										'taxonomy' => DO_COMMUNITYTYPE_CT,
+										'field'    => 'slug',
+										'terms'    => $term->slug
+									)
+								)
+							);
+							$community_list = get_posts( $args2 );
+
+							if ( $community_list && ! is_wp_error( $community_list ) ) {
+								echo '<br> communities: ';
+								foreach ( $community_list as $key => $post1 ) {
+									echo '<a href="' . get_permalink( $post1->ID ) . '">' . get_the_title( $post1->ID ) . '</a> ';
+								}
+								echo ' ';
+							}
+
+			 */
+
+		}
+		$return .= '</select>';
+	}
+
+	if ( $args['echo'] ) {
+		echo $return;
+	} else {
+		return $return;
+	}
+
+}
+
+//========================================================================================================
+
+add_filter( 'query_vars', 'community_add_query_vars' );
+
+function community_add_query_vars( $query_vars ) {
+
+	$query_vars[] = DO_COMMUNITYTYPE_CT_VAR;
+	$query_vars[] = DO_COMMUNITYTOPICS_CT_VAR;
+	$query_vars[] = DO_COMMUNITYAUDIENCE_CT_VAR;
+	$query_vars[] = DO_COMMUNITYAUDIENCE_CT_VAR;
+
+	return $query_vars;
+}
+
+//========================================================================================================
+
+/**
+ * Returns a collection of RSS items for a selection (feed type; number of items etc).
+ *
+ * @param $args
+ *
+ * @return false|WP_Query
+ */
+function community_feed_sources_get( $args = array() ) {
+
+	global $wpdb;
+
+	$return   = '';
+	$defaults = array(
+		'form_name'      => '',
+		'title_tag'      => 'h2',
+		'form_id'        => 'form_id',
+		'button_label'   => _x( 'Filter berichten', 'button label default', 'wp-rijkshuisstijl' ),
+		'method'         => 'get',
+		'action'         => $_SERVER['REQUEST_URI'],
+		'event_type'     => 'posts',
+		'post_types'     => 'wprss_feed_item',
+		'paging'         => false,
+		'source'         => null,
+		'sort_order'     => 'ASC',
+		'posts_per_page' => - 1,
+		'echo'           => false,
+		'debug'          => false,
+	);
+
+	// set up arguments
+	$args = wp_parse_args( $args, $defaults );
+	$type = ( $args['event_type'] === 'events' ) ? 'rss_feed_source_events' : 'rss_feed_source_posts'; // should be either ( "event": "Agenda" OR 	"posts": "Berichten" )
+
+	if ( $type ) {
+
+		wp_reset_postdata();
+
+		/*
+		 * Query explanation:
+		 *
+		 * --- feed item ---> feed source ---> community ---> taxonomy terms ---> filter
+		 *
+		 * A single Communities CPT may have value(s) for ACF field 'rss_feed_source_events'
+		 * and / or 'rss_feed_source_posts'. These ACF fields point to an RSS feed source (post type: 'wprss_feed_id')
+		 * that may have RSS items (post type: 'wprss_feed_item') available.
+		 * If RSS items exist in {$wpdb->prefix}posts, they are linked to a feed source. So if we have feed
+		 * sources in {$wpdb->prefix}postmeta, we have a feed with actual posts. For a feed with posts we get the
+		 * attached Community CPT, via either 'rss_feed_source_events' or 'rss_feed_source_posts'. For these
+		 * Community CPTs we retrieve the relevant custom taxonomy terms. These terms are offered as a filter.
+		 * 
+		 */
+		$community_post_ids = $wpdb->get_results( "SELECT DISTINCT post_id FROM {$wpdb->prefix}postmeta where meta_key = '" . $type . "' and  meta_value in (SELECT DISTINCT meta_value as feedID FROM {$wpdb->prefix}postmeta WHERE meta_key = 'wprss_feed_id')" );
+
+		if ( is_array( $community_post_ids ) ) {
+			$valid_feeds       = array();
+			$last_community_id = end( $community_post_ids );
+			if ( $args['debug'] ) {
+				$return .= '<p>Dit zijn de ' . ( ( $args['event_type'] === 'events' ) ? 'agenda-items' : 'berichten' ) . ' die horen bij ';
+			}
+
+			foreach ( $community_post_ids as $key => $value ) {
+				$valid_feeds[] = $value->post_id;
+
+				if ( $args['debug'] ) {
+					$return .= '<a href="' . get_permalink( $value->post_id ) . '">' . get_the_title( $value->post_id ) . '</a>';
+					if ( $value->post_id === $last_community_id->post_id ) {
+						$return .= '.</p>';
+					} else {
+						$return .= ', ';
+					}
+				}
+			}
+		}
+
+		if ( $valid_feeds ) {
+
+			$args_select = array(
+				'type' => 'select',
+				'echo' => false
+			);
+
+			$return .= '<form id="' . $args['form_id'] . '" method="' . $args['method'] . '" action="' . $args['action'] . '">';
+			if ( $args['form_name'] ) {
+				$return .= '<' . $args['title_tag'] . '>' . $args['form_name'] . '</' . $args['title_tag'] . '>';
+			}
+			$community_types = get_terms(
+				array(
+					'taxonomy'   => DO_COMMUNITYTYPE_CT,
+					'object_ids' => $valid_feeds,
+				)
+			);
+
+			if ( $community_types ) {
+
+				$default = get_query_var( DO_COMMUNITYTYPE_CT_VAR );
+				if ( $default ) {
+					$args_select['default'] = $default;
+				}
+				$args_select['name']       = DO_COMMUNITYTYPE_CT_VAR;
+				$args_select['id']         = DO_COMMUNITYTYPE_CT_VAR . '_id';
+				$args_select['terms_list'] = $community_types;
+				$args_select['label']      = DO_COMMUNITYTYPE_CT;
+				$return                    .= community_select_list( $args_select );
+			}
+
+			$community_topics = get_terms(
+				array(
+					'taxonomy'   => DO_COMMUNITYTOPICS_CT,
+					'object_ids' => $valid_feeds,
+				)
+			);
+
+			if ( $community_topics ) {
+
+				$default = get_query_var( DO_COMMUNITYTOPICS_CT_VAR );
+				if ( $default ) {
+					$args_select['default'] = $default;
+				}
+				$args_select['name']       = DO_COMMUNITYTOPICS_CT_VAR;
+				$args_select['id']         = DO_COMMUNITYTOPICS_CT_VAR . '_id';
+				$args_select['terms_list'] = $community_topics;
+				$args_select['label']      = DO_COMMUNITYTOPICS_CT;
+				$return                    .= community_select_list( $args_select );
+			}
+
+
+			$community_audiences = get_terms(
+				array(
+					'taxonomy'   => DO_COMMUNITYAUDIENCE_CT,
+					'object_ids' => $valid_feeds,
+				)
+			);
+
+			if ( $community_audiences ) {
+
+				$default = get_query_var( DO_COMMUNITYAUDIENCE_CT_VAR );
+				if ( $default ) {
+					$args_select['default'] = $default;
+				}
+				$args_select['name']       = DO_COMMUNITYAUDIENCE_CT_VAR;
+				$args_select['id']         = DO_COMMUNITYAUDIENCE_CT_VAR;
+				$args_select['terms_list'] = $community_audiences;
+				$args_select['label']      = DO_COMMUNITYAUDIENCE_CT;
+				$return                    .= community_select_list( $args_select );
+			}
+
+			$community_strata = get_terms(
+				array(
+					'taxonomy'   => DO_COMMUNITYBESTUURSLAAG_CT,
+					'object_ids' => $valid_feeds,
+				)
+			);
+
+			if ( $community_strata ) {
+
+				$default = get_query_var( DO_COMMUNITYBESTUURSLAAG_CT_VAR );
+				if ( $default ) {
+					$args_select['default'] = $default;
+				}
+				$args_select['name']       = DO_COMMUNITYBESTUURSLAAG_CT_VAR;
+				$args_select['id']         = DO_COMMUNITYBESTUURSLAAG_CT_VAR;
+				$args_select['terms_list'] = $community_strata;
+				$args_select['label']      = DO_COMMUNITYBESTUURSLAAG_CT;
+				$return                    .= community_select_list( $args_select );
+			}
+
+			$return .= '<button type="submit" id="widget_community_filter-submit">' . $args['button_label'] . '</button>';
+			$return .= '</form>';
+
+		}
+
+	}
+
+	if ( $args['echo'] ) {
+		echo $return;
+	} else {
+		return $return;
+	}
+
+}
+
+//========================================================================================================
+
+/**
+ * Returns a collection of RSS items for a selection (feed type; number of items etc).
+ *
+ * @param $args
+ *
+ * @return false|WP_Query
+ */
 function community_feed_items_get( $args = array() ) {
 
 	global $wp_query;
@@ -1138,8 +1422,6 @@ function community_feed_items_get( $args = array() ) {
 		'sort_order'     => 'ASC',
 		'posts_per_page' => - 1,
 		'echo'           => false,
-		'paging'         => 1,
-		'posts_per_page' => 20,
 	);
 
 	// set up arguments
@@ -1155,7 +1437,7 @@ function community_feed_items_get( $args = array() ) {
 		$feeds = community_get_feed_ids_for_feed_type( $event_type );
 	}
 
-	$post_type = 'wprss_feed_item';
+	$post_type = $args['post_types'];
 
 	// query the feed items
 	$feed_items_args = array(
@@ -1287,7 +1569,7 @@ function community_feed_items_show( $items = array() ) {
 		'after_title'  => '</h2>',
 		'extra_info'   => false,
 		'show_date'    => false,
-		'cssclass'    => '',
+		'cssclass'     => '',
 		'echo'         => false
 	);
 	$args         = wp_parse_args( $items, $defaults );
@@ -1338,7 +1620,7 @@ function community_feed_items_show( $items = array() ) {
 			$current_item_id = $items->post->ID;
 			$container_start = '';
 			$container_end   = '';
-			$extra_info = '';
+			$extra_info      = '';
 
 			if ( $postcounter < 1 ) {
 				$show_opening_tag = true;
@@ -1364,8 +1646,8 @@ function community_feed_items_show( $items = array() ) {
 
 				$community_id   = '';
 				$community_name = '';
-				$feed_id    = get_post_meta( $current_item_id, 'wprss_feed_id', true );
-				$extra_info = 'events';
+				$feed_id        = get_post_meta( $current_item_id, 'wprss_feed_id', true );
+				$extra_info     = 'events';
 
 				if ( $args['type'] === 'events' ) {
 					// different field for events feed
@@ -1393,11 +1675,11 @@ function community_feed_items_show( $items = array() ) {
 
 
 			if ( $args['type'] === 'events' ) {
-				$debug = false;
+				$debug    = false;
 				$cssclass = '';
-				if ( $community_name === 'iBestuur' ) {
-					$debug = true;
-				}
+//				if ( $community_name === 'iBestuur' ) {
+//					$debug = true;
+//				}
 
 				$post_meta          = community_get_event_date( $current_item_id, $debug );
 				$month_current_item = date_i18n( $date_format_month, strtotime( $post_meta ) );
