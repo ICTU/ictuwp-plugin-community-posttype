@@ -54,7 +54,7 @@ class ICTUWP_community_filter extends WP_Widget {
 
 		extract( $args, EXTR_SKIP );
 
-		$form = rhswp_community_get_filter_form( array(
+		$form_communities = rhswp_community_get_filter_form( array(
 			'ID'           => get_queried_object_id(),
 			'title'        => $instance['title'],
 			'description'  => $instance['widget_description'],
@@ -62,9 +62,10 @@ class ICTUWP_community_filter extends WP_Widget {
 			'before_title' => $before_title
 		) );
 
-		if ( $form ) {
+		if ( $form_communities ) {
 			echo $before_widget;
-			echo $form;
+			echo $form_communities;
+//			echo community_feed_sources_get();
 			echo $after_widget;
 		}
 
