@@ -1269,7 +1269,7 @@ function community_feed_sources_get( $args = array() ) {
 		 * sources in {$wpdb->prefix}postmeta, we have a feed with actual posts. For a feed with posts we get the
 		 * attached Community CPT, via either 'rss_feed_source_events' or 'rss_feed_source_posts'. For these
 		 * Community CPTs we retrieve the relevant custom taxonomy terms. These terms are offered as a filter.
-		 * 
+		 *
 		 */
 		$community_post_ids = $wpdb->get_results( "SELECT DISTINCT post_id FROM {$wpdb->prefix}postmeta where meta_key = '" . $type . "' and  meta_value in (SELECT DISTINCT meta_value as feedID FROM {$wpdb->prefix}postmeta WHERE meta_key = 'wprss_feed_id')" );
 
@@ -1602,7 +1602,7 @@ function community_feed_items_show( $items = array() ) {
 		return false;
 	}
 	$items = $args['items'];
-
+	
 	if ( $items->have_posts() ) {
 		$current_date  =
 		$month_previous = date_i18n( $date_format_month, time() );
