@@ -1305,67 +1305,75 @@ function community_feed_sources_get( $args = array() ) {
 			if ( $args['form_name'] ) {
 				$return .= '<' . $args['title_tag'] . '>' . $args['form_name'] . '</' . $args['title_tag'] . '>';
 			}
-			$community_types = get_terms(
-				array(
-					'taxonomy'   => DO_COMMUNITYTYPE_CT,
-					'object_ids' => $valid_feeds,
-				)
-			);
 
-			if ( $community_types ) {
-
-				$default = get_query_var( DO_COMMUNITYTYPE_CT_VAR );
-				if ( $default ) {
-					$args_select['default'] = $default;
-				}
-				$args_select['name']       = DO_COMMUNITYTYPE_CT_VAR;
-				$args_select['id']         = DO_COMMUNITYTYPE_CT_VAR . '_id';
-				$args_select['terms_list'] = $community_types;
-				$args_select['label']      = DO_COMMUNITYTYPE_CT;
-				$return                    .= community_select_list( $args_select );
-			}
-
+			// --------------------------------------------------------
+			// Onderwerpen
 			$community_topics = get_terms(
 				array(
 					'taxonomy'   => DO_COMMUNITYTOPICS_CT,
 					'object_ids' => $valid_feeds,
 				)
 			);
-
 			if ( $community_topics ) {
 
 				$default = get_query_var( DO_COMMUNITYTOPICS_CT_VAR );
 				if ( $default ) {
 					$args_select['default'] = $default;
 				}
+				$obj                       = get_taxonomy( DO_COMMUNITYTOPICS_CT );
 				$args_select['name']       = DO_COMMUNITYTOPICS_CT_VAR;
 				$args_select['id']         = DO_COMMUNITYTOPICS_CT_VAR . '_id';
 				$args_select['terms_list'] = $community_topics;
-				$args_select['label']      = DO_COMMUNITYTOPICS_CT;
+				$args_select['label']      = $obj->labels->name;
 				$return                    .= community_select_list( $args_select );
 			}
 
+			// --------------------------------------------------------
+			// Type community
+			$community_types = get_terms(
+				array(
+					'taxonomy'   => DO_COMMUNITYTYPE_CT,
+					'object_ids' => $valid_feeds,
+				)
+			);
+			if ( $community_types ) {
 
+				$default = get_query_var( DO_COMMUNITYTYPE_CT_VAR );
+				if ( $default ) {
+					$args_select['default'] = $default;
+				}
+				$obj                       = get_taxonomy( DO_COMMUNITYTYPE_CT );
+				$args_select['name']       = DO_COMMUNITYTYPE_CT_VAR;
+				$args_select['id']         = DO_COMMUNITYTYPE_CT_VAR . '_id';
+				$args_select['terms_list'] = $community_types;
+				$args_select['label']      = $obj->labels->name;
+				$return                    .= community_select_list( $args_select );
+			}
+
+			// --------------------------------------------------------
+			// Doelgroep
 			$community_audiences = get_terms(
 				array(
 					'taxonomy'   => DO_COMMUNITYAUDIENCE_CT,
 					'object_ids' => $valid_feeds,
 				)
 			);
-
 			if ( $community_audiences ) {
 
 				$default = get_query_var( DO_COMMUNITYAUDIENCE_CT_VAR );
 				if ( $default ) {
 					$args_select['default'] = $default;
 				}
+				$obj                       = get_taxonomy( DO_COMMUNITYAUDIENCE_CT );
 				$args_select['name']       = DO_COMMUNITYAUDIENCE_CT_VAR;
 				$args_select['id']         = DO_COMMUNITYAUDIENCE_CT_VAR;
 				$args_select['terms_list'] = $community_audiences;
-				$args_select['label']      = DO_COMMUNITYAUDIENCE_CT;
+				$args_select['label']      = $obj->labels->name;
 				$return                    .= community_select_list( $args_select );
 			}
 
+			// --------------------------------------------------------
+			// Bestuurslagen
 			$community_strata = get_terms(
 				array(
 					'taxonomy'   => DO_COMMUNITYBESTUURSLAAG_CT,
@@ -1379,10 +1387,11 @@ function community_feed_sources_get( $args = array() ) {
 				if ( $default ) {
 					$args_select['default'] = $default;
 				}
+				$obj                       = get_taxonomy( DO_COMMUNITYBESTUURSLAAG_CT );
 				$args_select['name']       = DO_COMMUNITYBESTUURSLAAG_CT_VAR;
 				$args_select['id']         = DO_COMMUNITYBESTUURSLAAG_CT_VAR;
 				$args_select['terms_list'] = $community_strata;
-				$args_select['label']      = DO_COMMUNITYBESTUURSLAAG_CT;
+				$args_select['label']      = $obj->labels->name;
 				$return                    .= community_select_list( $args_select );
 			}
 
@@ -1602,7 +1611,7 @@ function community_feed_items_show( $items = array() ) {
 		return false;
 	}
 	$items = $args['items'];
-	
+
 	if ( $items->have_posts() ) {
 		$current_date  =
 		$month_previous = date_i18n( $date_format_month, time() );
