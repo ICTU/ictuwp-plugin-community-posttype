@@ -45,7 +45,7 @@ function community_add_agenda_grid( $args = array() ) {
 		'echo'       => true
 	);
 
-	echo community_feed_sources_get( $args_selection );
+	echo community_feed_add_filter_form( $args_selection );
 
 	$args_selection = array(
 		'event_type'     => 'events',

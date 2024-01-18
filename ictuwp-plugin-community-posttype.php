@@ -1227,7 +1227,7 @@ function community_add_query_vars( $query_vars ) {
  *
  * @return false|WP_Query
  */
-function community_feed_sources_get( $args = array() ) {
+function community_feed_add_filter_form( $args = array() ) {
 
 	global $wpdb;
 
