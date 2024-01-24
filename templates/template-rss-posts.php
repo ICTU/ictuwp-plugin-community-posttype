@@ -38,8 +38,10 @@ function community_add_posts_grid( $args = array() ) {
 
 	$args_selection = array(
 		'event_type'   => 'posts',
+		'form_id'      => 'community_posts_filter',
 		'echo'         => true,
-		'button_label' => _x( 'Filter berichten', 'button label berichten', 'wp-rijkshuisstijl' ),
+		'form_name'    => _x( 'Filter de berichten', 'button label berichten', 'wp-rijkshuisstijl' ),
+		'button_label' => _x( 'Filter', 'button label berichten', 'wp-rijkshuisstijl' ),
 		'debug'        => true
 	);
 
