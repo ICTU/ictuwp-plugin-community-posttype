@@ -42,11 +42,13 @@ function community_add_agenda_grid( $args = array() ) {
 	$args_selection = array(
 		'event_type'   => 'events',
 		'form_id'      => 'community_events_filter',
-		'button_label' => _x( 'Filter agenda', 'button label agenda', 'wp-rijkshuisstijl' ),
-		'echo'         => true
+		'echo'         => false,
+		'form_name'    => _x( 'Filter op thema', 'button label berichten', 'wp-rijkshuisstijl' ),
+		'button_label' => _x( 'Filter', 'button label berichten', 'wp-rijkshuisstijl' ),
+		'debug'        => true
 	);
 
-	echo community_feed_add_filter_form( $args_selection );
+	$filter_form = community_feed_add_filter_form( $args_selection );
 
 	$args_selection = array(
 		'event_type'     => 'events',
@@ -71,6 +73,9 @@ function community_add_agenda_grid( $args = array() ) {
 	}
 
 	genesis_posts_nav();
+
+	echo $filter_form;
+	
 	wp_reset_query();
 	wp_reset_postdata();
 

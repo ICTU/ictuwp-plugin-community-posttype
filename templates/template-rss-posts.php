@@ -39,13 +39,13 @@ function community_add_posts_grid( $args = array() ) {
 	$args_selection = array(
 		'event_type'   => 'posts',
 		'form_id'      => 'community_posts_filter',
-		'echo'         => true,
-		'form_name'    => _x( 'Filter de berichten', 'button label berichten', 'wp-rijkshuisstijl' ),
+		'echo'         => false,
+		'form_name'    => _x( 'Filter op thema', 'button label berichten', 'wp-rijkshuisstijl' ),
 		'button_label' => _x( 'Filter', 'button label berichten', 'wp-rijkshuisstijl' ),
 		'debug'        => true
 	);
 
-	echo community_feed_add_filter_form( $args_selection );
+	$filter_form = community_feed_add_filter_form( $args_selection );
 
 	$args_selection = array(
 		'event_type'     => 'posts',
@@ -72,6 +72,9 @@ function community_add_posts_grid( $args = array() ) {
 		echo $rss_content;
 	}
 	genesis_posts_nav();
+
+	echo $filter_form;
+
 	wp_reset_query();
 	wp_reset_postdata();
 
