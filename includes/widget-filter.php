@@ -65,7 +65,7 @@ class ICTUWP_community_filter extends WP_Widget {
 		if ( $form_communities ) {
 			echo $before_widget;
 			echo $form_communities;
-//			echo community_feed_sources_get();
+//			echo community_feed_add_filter_form();
 			echo $after_widget;
 		}
 

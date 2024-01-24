@@ -11,10 +11,6 @@
 if ( function_exists( 'genesis' ) ) {
 	// Genesis wordt gebruikt als framework
 
-	//* Force full-width-content layout
-//	add_filter( 'genesis_pre_get_option_site_layout', '__genesis_return_full_width_content' );
-
-
 	// append grid to entry_content
 	add_action( 'genesis_entry_content', 'community_add_posts_grid', 20 );
 
@@ -41,10 +37,21 @@ if ( function_exists( 'genesis' ) ) {
 function community_add_posts_grid( $args = array() ) {
 
 	$args_selection = array(
+		'event_type'   => 'posts',
+		'form_id'      => 'community_posts_filter',
+		'echo'         => true,
+		'form_name'    => _x( 'Filter de berichten', 'button label berichten', 'wp-rijkshuisstijl' ),
+		'button_label' => _x( 'Filter', 'button label berichten', 'wp-rijkshuisstijl' ),
+		'debug'        => true
+	);
+
+	echo community_feed_add_filter_form( $args_selection );
+
+	$args_selection = array(
 		'event_type'     => 'posts',
 		'sort_order'     => 'DESC',
 		'paging'         => 1,
-		'posts_per_page' => 20,
+		'posts_per_page' => 20, // perhaps: get_option( 'posts_per_page' )?
 		'echo'           => false
 	);
 

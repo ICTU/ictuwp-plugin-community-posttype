@@ -8,8 +8,8 @@
  * Plugin Name:         ICTU / Digitale Overheid / Community
  * Plugin URI:          https://github.com/ICTU/ictuwp-plugin-community-posttype
  * Description:         Plugin voor het aanmaken van posttype 'community' en bijbehorende taxonomieen.
- * Version:             1.0.1
- * Version description: First version on live server
+ * Version:             1.1.1
+ * Version description: Changes after user research.
  * Author:              Paul van Buuren
  * Author URI:          https://github.com/ICTU/ictuwp-plugin-community-posttype/
  * License:             GPL-2.0+
@@ -197,6 +197,7 @@ if ( ! class_exists( 'DO_COMMUNITY_CPT' ) ) :
 				if ( is_post_type_archive( DO_COMMUNITY_CPT ) ||
 				     ( is_tax( DO_COMMUNITYTYPE_CT ) ) ||
 				     ( is_tax( DO_COMMUNITYTOPICS_CT ) ) ||
+				     ( is_tax( DO_COMMUNITYBESTUURSLAAG_CT ) ) ||
 				     ( is_tax( DO_COMMUNITYAUDIENCE_CT ) ) ) {
 					// geen pagination voor overzichten van:
 					// - community types
@@ -235,7 +236,7 @@ if ( ! class_exists( 'DO_COMMUNITY_CPT' ) ) :
 			if ( is_singular( DO_COMMUNITY_CPT ) ) {
 //				// het is een single voor CPT = DO_COMMUNITY_CPT
 //				$archive_template = dirname( __FILE__ ) . '/templates/single-initiatief.php';
-			} elseif ( is_tax( DO_COMMUNITYTYPE_CT ) || is_tax( DO_COMMUNITYTOPICS_CT ) || is_tax( DO_COMMUNITYAUDIENCE_CT ) ) {
+			} elseif ( is_tax( DO_COMMUNITYTYPE_CT ) || is_tax( DO_COMMUNITYTOPICS_CT ) || is_tax( DO_COMMUNITYBESTUURSLAAG_CT ) || is_tax( DO_COMMUNITYAUDIENCE_CT ) ) {
 
 				$archive_template = dirname( __FILE__ ) . '/templates/archive-communities.php';
 
@@ -481,6 +482,7 @@ function communitys_filter_breadcrumb( $crumb = '', $args = '' ) {
 		is_singular( DO_COMMUNITY_CPT ) ||
 		is_tax( DO_COMMUNITYTYPE_CT ) ||
 		is_tax( DO_COMMUNITYTOPICS_CT ) ||
+		is_tax( DO_COMMUNITYBESTUURSLAAG_CT ) ||
 		is_tax( DO_COMMUNITYAUDIENCE_CT ) ) ) {
 		// hier niks doen, omdat we niet met een initiatief bezig zijn
 		return $crumb;
@@ -1110,6 +1112,38 @@ function community_get_feed_ids_for_feed_type( $type_feed = 'events' ) {
 			'posts_per_page' => - 1,
 		);
 
+
+		if ( ( get_query_var( DO_COMMUNITYTYPE_CT_VAR ) || get_query_var( DO_COMMUNITYTOPICS_CT_VAR ) || get_query_var( DO_COMMUNITYAUDIENCE_CT_VAR ) || get_query_var( DO_COMMUNITYBESTUURSLAAG_CT_VAR ) ) ) {
+			// filter even more, by getting the community IDs for communities that are classified with a taxonomy
+			$feed_ids = array();
+
+			// for community audience
+			if ( get_query_var( DO_COMMUNITYTYPE_CT_VAR ) && ( (int) get_query_var( DO_COMMUNITYTYPE_CT_VAR ) > 0 ) ) {
+				$feed_ids = get_feed_ids_for_tax( $feed_ids, DO_COMMUNITYTYPE_CT, get_query_var( DO_COMMUNITYTYPE_CT_VAR ), $type );
+			}
+
+			// for community audience
+			if ( get_query_var( DO_COMMUNITYTOPICS_CT_VAR ) && ( (int) get_query_var( DO_COMMUNITYTOPICS_CT_VAR ) > 0 ) ) {
+				$feed_ids = get_feed_ids_for_tax( $feed_ids, DO_COMMUNITYTOPICS_CT, get_query_var( DO_COMMUNITYTOPICS_CT_VAR ), $type );
+			}
+
+			// for community audience
+			if ( get_query_var( DO_COMMUNITYAUDIENCE_CT_VAR ) && ( (int) get_query_var( DO_COMMUNITYAUDIENCE_CT_VAR ) > 0 ) ) {
+				$feed_ids = get_feed_ids_for_tax( $feed_ids, DO_COMMUNITYAUDIENCE_CT, get_query_var( DO_COMMUNITYAUDIENCE_CT_VAR ), $type );
+			}
+
+			// for community audience
+			if ( get_query_var( DO_COMMUNITYBESTUURSLAAG_CT_VAR ) && ( (int) get_query_var( DO_COMMUNITYBESTUURSLAAG_CT_VAR ) > 0 ) ) {
+				$feed_ids = get_feed_ids_for_tax( $feed_ids, DO_COMMUNITYBESTUURSLAAG_CT, get_query_var( DO_COMMUNITYBESTUURSLAAG_CT_VAR ), $type );
+			}
+
+			if ( count( $feed_ids ) ) {
+				// ids added to list
+				$args_feeds['post__in'] = array_keys( $feed_ids );
+			}
+
+		}
+
 		$result_query = new WP_Query( $args_feeds );
 		$feeds        = $result_query->posts;
 		wp_reset_postdata();
@@ -1151,49 +1185,22 @@ function community_select_list( $args = array() ) {
 
 		$selectid = $args['type'] . '_' . $args['id'];
 
+		$return .= '<div class="select-list">';
 		$return .= '<label for="' . $selectid . '">' . $args['label'] . '</label>';
 		$return .= '<select id="' . $selectid . '" name="' . $args['name'] . '">';
-
-		if ( ! $args['default'] ) {
-			$return .= '<option value="">' . _x( '-selecteer-', 'asd', 'dad' ) . '</option> ';
-
-		}
+		$return .= '<option value="">' . _x( '-selecteer-', 'asd', 'dad' ) . '</option> ';
 
 		foreach ( $args['terms_list'] as $term ) {
 			$selected = '';
 			if ( strval( $term->term_id ) === strval( $args['default'] ) ) {
 				$selected = ' selected ';
 			}
-//				echo '<li><a href="' . get_term_link( $term->term_id ) . '">' . $term->name . '</a> ';
 
 			$return .= '<option value="' . $term->term_id . '"' . $selected . '>' . $term->name . '</option> ';
 
-			/*
-			 *
-							$args2          = array(
-								'post_type' => DO_COMMUNITY_CPT,
-								'tax_query' => array(
-									array(
-										'taxonomy' => DO_COMMUNITYTYPE_CT,
-										'field'    => 'slug',
-										'terms'    => $term->slug
-									)
-								)
-							);
-							$community_list = get_posts( $args2 );
-
-							if ( $community_list && ! is_wp_error( $community_list ) ) {
-								echo '<br> communities: ';
-								foreach ( $community_list as $key => $post1 ) {
-									echo '<a href="' . get_permalink( $post1->ID ) . '">' . get_the_title( $post1->ID ) . '</a> ';
-								}
-								echo ' ';
-							}
-
-			 */
-
 		}
 		$return .= '</select>';
+		$return .= '</div>';
 	}
 
 	if ( $args['echo'] ) {
@@ -1213,7 +1220,11 @@ function community_add_query_vars( $query_vars ) {
 	$query_vars[] = DO_COMMUNITYTYPE_CT_VAR;
 	$query_vars[] = DO_COMMUNITYTOPICS_CT_VAR;
 	$query_vars[] = DO_COMMUNITYAUDIENCE_CT_VAR;
-	$query_vars[] = DO_COMMUNITYAUDIENCE_CT_VAR;
+	$query_vars[] = DO_COMMUNITYBESTUURSLAAG_CT_VAR;
+//	echo '<h1>woeiii</h1>';
+//	echo '<pre>';
+//	var_dump( $query_vars );
+//	echo '</pre>';
 
 	return $query_vars;
 }
@@ -1221,21 +1232,85 @@ function community_add_query_vars( $query_vars ) {
 //========================================================================================================
 
 /**
- * Returns a collection of RSS items for a selection (feed type; number of items etc).
+ * Return a list of feed IDs tha.
  *
  * @param $args
  *
  * @return false|WP_Query
  */
-function community_feed_sources_get( $args = array() ) {
+function community_feed_get_valid_feeds( $args = array() ) {
 
 	global $wpdb;
+
+	$defaults = array(
+		'echo'       => false,
+		'debug'      => false,
+		'event_type' => 'posts',
+	);
+
+	// set up arguments
+	$args = wp_parse_args( $args, $defaults );
+	$type = ( $args['event_type'] === 'events' ) ? 'rss_feed_source_events' : 'rss_feed_source_posts'; // should be either ( "event": "Agenda" OR 	"posts": "Berichten" )
+
+	/*
+	 * Query explanation:
+	 *
+	 * --- feed item ---> feed source ---> community ---> taxonomy terms ---> filter
+	 *
+	 * A single Communities CPT may have value(s) for ACF field 'rss_feed_source_events'
+	 * and / or 'rss_feed_source_posts'. These ACF fields point to an RSS feed source (post type: 'wprss_feed_id')
+	 * that may have RSS items (post type: 'wprss_feed_item') available.
+	 * If RSS items exist in {$wpdb->prefix}posts, they are linked to a feed source. So if we have feed
+	 * sources in {$wpdb->prefix}postmeta, we have a feed with actual posts. For a feed with posts we get the
+	 * attached Community CPT, via either 'rss_feed_source_events' or 'rss_feed_source_posts'. For these
+	 * Community CPTs we retrieve the relevant custom taxonomy terms. These terms are offered as a filter.
+	 *
+	 */
+	$return             = '';
+	$community_post_ids = $wpdb->get_results( "SELECT DISTINCT post_id FROM {$wpdb->prefix}postmeta where meta_key = '" . $type . "' and  meta_value in (SELECT DISTINCT meta_value as feedID FROM {$wpdb->prefix}postmeta WHERE meta_key = 'wprss_feed_id')" );
+
+	if ( is_array( $community_post_ids ) ) {
+		$return            = array();
+		$last_community_id = end( $community_post_ids );
+		if ( $args['debug'] ) {
+			$return .= '<p>Dit zijn de ' . ( ( $args['event_type'] === 'events' ) ? 'agenda-items' : 'berichten' ) . ' die horen bij ';
+		}
+
+		foreach ( $community_post_ids as $key => $value ) {
+			$return[] = $value->post_id;
+
+			if ( $args['debug'] ) {
+				$return .= '<a href="' . get_permalink( $value->post_id ) . '">' . get_the_title( $value->post_id ) . '</a>';
+				if ( $value->post_id === $last_community_id->post_id ) {
+					$return .= '.</p>';
+				} else {
+					$return .= ', ';
+				}
+			}
+		}
+	}
+
+	return $return;
+
+}
+
+//========================================================================================================
+
+/**
+ * Append a filter for the RSS items overview pages.
+ *
+ * @param $args
+ *
+ * @return false|WP_Query
+ */
+function community_feed_add_filter_form( $args = array() ) {
 
 	$return   = '';
 	$defaults = array(
 		'form_name'      => '',
 		'title_tag'      => 'h2',
 		'form_id'        => 'form_id',
+		'cssclass'       => 'filter-form',
 		'button_label'   => _x( 'Filter berichten', 'button label default', 'wp-rijkshuisstijl' ),
 		'method'         => 'get',
 		'action'         => $_SERVER['REQUEST_URI'],
@@ -1251,147 +1326,130 @@ function community_feed_sources_get( $args = array() ) {
 
 	// set up arguments
 	$args = wp_parse_args( $args, $defaults );
-	$type = ( $args['event_type'] === 'events' ) ? 'rss_feed_source_events' : 'rss_feed_source_posts'; // should be either ( "event": "Agenda" OR 	"posts": "Berichten" )
 
-	if ( $type ) {
+	wp_reset_postdata();
+	$feed_args = array(
+		'event_type' => $args['event_type'],
+		'debug'      => false,
+	);
 
-		wp_reset_postdata();
+	$valid_feeds = community_feed_get_valid_feeds( $feed_args );
 
-		/*
-		 * Query explanation:
-		 *
-		 * --- feed item ---> feed source ---> community ---> taxonomy terms ---> filter
-		 *
-		 * A single Communities CPT may have value(s) for ACF field 'rss_feed_source_events'
-		 * and / or 'rss_feed_source_posts'. These ACF fields point to an RSS feed source (post type: 'wprss_feed_id')
-		 * that may have RSS items (post type: 'wprss_feed_item') available.
-		 * If RSS items exist in {$wpdb->prefix}posts, they are linked to a feed source. So if we have feed
-		 * sources in {$wpdb->prefix}postmeta, we have a feed with actual posts. For a feed with posts we get the
-		 * attached Community CPT, via either 'rss_feed_source_events' or 'rss_feed_source_posts'. For these
-		 * Community CPTs we retrieve the relevant custom taxonomy terms. These terms are offered as a filter.
-		 *
-		 */
-		$community_post_ids = $wpdb->get_results( "SELECT DISTINCT post_id FROM {$wpdb->prefix}postmeta where meta_key = '" . $type . "' and  meta_value in (SELECT DISTINCT meta_value as feedID FROM {$wpdb->prefix}postmeta WHERE meta_key = 'wprss_feed_id')" );
+	if ( $valid_feeds ) {
 
-		if ( is_array( $community_post_ids ) ) {
-			$valid_feeds       = array();
-			$last_community_id = end( $community_post_ids );
-			if ( $args['debug'] ) {
-				$return .= '<p>Dit zijn de ' . ( ( $args['event_type'] === 'events' ) ? 'agenda-items' : 'berichten' ) . ' die horen bij ';
-			}
+		$args_select = array(
+			'type' => 'select',
+			'echo' => false
+		);
 
-			foreach ( $community_post_ids as $key => $value ) {
-				$valid_feeds[] = $value->post_id;
-
-				if ( $args['debug'] ) {
-					$return .= '<a href="' . get_permalink( $value->post_id ) . '">' . get_the_title( $value->post_id ) . '</a>';
-					if ( $value->post_id === $last_community_id->post_id ) {
-						$return .= '.</p>';
-					} else {
-						$return .= ', ';
-					}
-				}
-			}
+		$return .= '<form id="' . $args['form_id'] . '" method="' . $args['method'] . '" class="' . $args['cssclass'] . '" action="' . $args['action'] . '">';
+		if ( $args['form_name'] ) {
+			$return .= '<' . $args['title_tag'] . ' class="form-title">' . $args['form_name'] . '</' . $args['title_tag'] . '>';
 		}
 
-		if ( $valid_feeds ) {
+		// --------------------------------------------------------
+		// Onderwerpen
+		$community_topics = get_terms(
+			array(
+				'taxonomy'   => DO_COMMUNITYTOPICS_CT,
+				'object_ids' => $valid_feeds,
+			)
+		);
+		if ( $community_topics ) {
 
-			$args_select = array(
-				'type' => 'select',
-				'echo' => false
-			);
-
-			$return .= '<form id="' . $args['form_id'] . '" method="' . $args['method'] . '" action="' . $args['action'] . '">';
-			if ( $args['form_name'] ) {
-				$return .= '<' . $args['title_tag'] . '>' . $args['form_name'] . '</' . $args['title_tag'] . '>';
+			$default = get_query_var( DO_COMMUNITYTOPICS_CT_VAR );
+			if ( $default ) {
+				$args_select['default'] = $default;
+			} else {
+				$args_select['default'] = '';
 			}
-			$community_types = get_terms(
-				array(
-					'taxonomy'   => DO_COMMUNITYTYPE_CT,
-					'object_ids' => $valid_feeds,
-				)
-			);
-
-			if ( $community_types ) {
-
-				$default = get_query_var( DO_COMMUNITYTYPE_CT_VAR );
-				if ( $default ) {
-					$args_select['default'] = $default;
-				}
-				$args_select['name']       = DO_COMMUNITYTYPE_CT_VAR;
-				$args_select['id']         = DO_COMMUNITYTYPE_CT_VAR . '_id';
-				$args_select['terms_list'] = $community_types;
-				$args_select['label']      = DO_COMMUNITYTYPE_CT;
-				$return                    .= community_select_list( $args_select );
-			}
-
-			$community_topics = get_terms(
-				array(
-					'taxonomy'   => DO_COMMUNITYTOPICS_CT,
-					'object_ids' => $valid_feeds,
-				)
-			);
-
-			if ( $community_topics ) {
-
-				$default = get_query_var( DO_COMMUNITYTOPICS_CT_VAR );
-				if ( $default ) {
-					$args_select['default'] = $default;
-				}
-				$args_select['name']       = DO_COMMUNITYTOPICS_CT_VAR;
-				$args_select['id']         = DO_COMMUNITYTOPICS_CT_VAR . '_id';
-				$args_select['terms_list'] = $community_topics;
-				$args_select['label']      = DO_COMMUNITYTOPICS_CT;
-				$return                    .= community_select_list( $args_select );
-			}
-
-
-			$community_audiences = get_terms(
-				array(
-					'taxonomy'   => DO_COMMUNITYAUDIENCE_CT,
-					'object_ids' => $valid_feeds,
-				)
-			);
-
-			if ( $community_audiences ) {
-
-				$default = get_query_var( DO_COMMUNITYAUDIENCE_CT_VAR );
-				if ( $default ) {
-					$args_select['default'] = $default;
-				}
-				$args_select['name']       = DO_COMMUNITYAUDIENCE_CT_VAR;
-				$args_select['id']         = DO_COMMUNITYAUDIENCE_CT_VAR;
-				$args_select['terms_list'] = $community_audiences;
-				$args_select['label']      = DO_COMMUNITYAUDIENCE_CT;
-				$return                    .= community_select_list( $args_select );
-			}
-
-			$community_strata = get_terms(
-				array(
-					'taxonomy'   => DO_COMMUNITYBESTUURSLAAG_CT,
-					'object_ids' => $valid_feeds,
-				)
-			);
-
-			if ( $community_strata ) {
-
-				$default = get_query_var( DO_COMMUNITYBESTUURSLAAG_CT_VAR );
-				if ( $default ) {
-					$args_select['default'] = $default;
-				}
-				$args_select['name']       = DO_COMMUNITYBESTUURSLAAG_CT_VAR;
-				$args_select['id']         = DO_COMMUNITYBESTUURSLAAG_CT_VAR;
-				$args_select['terms_list'] = $community_strata;
-				$args_select['label']      = DO_COMMUNITYBESTUURSLAAG_CT;
-				$return                    .= community_select_list( $args_select );
-			}
-
-			$return .= '<button type="submit" id="widget_community_filter-submit">' . $args['button_label'] . '</button>';
-			$return .= '</form>';
-
+			$obj                       = get_taxonomy( DO_COMMUNITYTOPICS_CT );
+			$args_select['name']       = DO_COMMUNITYTOPICS_CT_VAR;
+			$args_select['id']         = DO_COMMUNITYTOPICS_CT_VAR . '_id';
+			$args_select['terms_list'] = $community_topics;
+			$args_select['label']      = $obj->labels->name;
+			$return                    .= community_select_list( $args_select );
 		}
+
+		// --------------------------------------------------------
+		// Type community
+		$community_types = get_terms(
+			array(
+				'taxonomy'   => DO_COMMUNITYTYPE_CT,
+				'object_ids' => $valid_feeds,
+			)
+		);
+		if ( $community_types ) {
+
+			$default = get_query_var( DO_COMMUNITYTYPE_CT_VAR );
+			if ( $default ) {
+				$args_select['default'] = $default;
+			} else {
+				$args_select['default'] = '';
+			}
+			$obj                       = get_taxonomy( DO_COMMUNITYTYPE_CT );
+			$args_select['name']       = DO_COMMUNITYTYPE_CT_VAR;
+			$args_select['id']         = DO_COMMUNITYTYPE_CT_VAR . '_id';
+			$args_select['terms_list'] = $community_types;
+			$args_select['label']      = $obj->labels->name;
+			$return                    .= community_select_list( $args_select );
+		}
+
+		// --------------------------------------------------------
+		// Doelgroep
+		$community_audiences = get_terms(
+			array(
+				'taxonomy'   => DO_COMMUNITYAUDIENCE_CT,
+				'object_ids' => $valid_feeds,
+			)
+		);
+		if ( $community_audiences ) {
+
+			$default = get_query_var( DO_COMMUNITYAUDIENCE_CT_VAR );
+			if ( $default ) {
+				$args_select['default'] = $default;
+			} else {
+				$args_select['default'] = '';
+			}
+			$obj                       = get_taxonomy( DO_COMMUNITYAUDIENCE_CT );
+			$args_select['name']       = DO_COMMUNITYAUDIENCE_CT_VAR;
+			$args_select['id']         = DO_COMMUNITYAUDIENCE_CT_VAR;
+			$args_select['terms_list'] = $community_audiences;
+			$args_select['label']      = $obj->labels->name;
+			$return                    .= community_select_list( $args_select );
+		}
+
+		// --------------------------------------------------------
+		// Bestuurslagen
+		$community_strata = get_terms(
+			array(
+				'taxonomy'   => DO_COMMUNITYBESTUURSLAAG_CT,
+				'object_ids' => $valid_feeds,
+			)
+		);
+
+		if ( $community_strata ) {
+
+			$default = get_query_var( DO_COMMUNITYBESTUURSLAAG_CT_VAR );
+			if ( $default ) {
+				$args_select['default'] = $default;
+			} else {
+				$args_select['default'] = '';
+			}
+			$obj                       = get_taxonomy( DO_COMMUNITYBESTUURSLAAG_CT );
+			$args_select['name']       = DO_COMMUNITYBESTUURSLAAG_CT_VAR;
+			$args_select['id']         = DO_COMMUNITYBESTUURSLAAG_CT_VAR;
+			$args_select['terms_list'] = $community_strata;
+			$args_select['label']      = $obj->labels->name;
+			$return                    .= community_select_list( $args_select );
+		}
+
+		$return .= '<div class="button-list"><button type="submit" id="widget_community_filter-submit">' . $args['button_label'] . '</button></div>';
+		$return .= '</form>';
 
 	}
+
+//	}
 
 	if ( $args['echo'] ) {
 		echo $return;
@@ -1554,6 +1612,7 @@ if ( 222 === 333 ) {
 
 }
 
+//========================================================================================================
 
 function community_feed_items_show( $items = array() ) {
 
@@ -1602,7 +1661,7 @@ function community_feed_items_show( $items = array() ) {
 		return false;
 	}
 	$items = $args['items'];
-	
+
 	if ( $items->have_posts() ) {
 		$current_date  =
 		$month_previous = date_i18n( $date_format_month, time() );
@@ -1648,18 +1707,22 @@ function community_feed_items_show( $items = array() ) {
 				$community_name = '';
 				$feed_id        = get_post_meta( $current_item_id, 'wprss_feed_id', true );
 				$extra_info     = 'events';
-
 				if ( $args['type'] === 'events' ) {
 					// different field for events feed
 					$community_id = get_field( 'community_rssfeed_relations_events', $feed_id );
+					$extra_info   = 'community_rssfeed_relations_events';
 				} else {
 					// different field for posts feed
-					$extra_info   = 'posts';
 					$community_id = get_field( 'community_rssfeed_relations_post', $feed_id );
+					$extra_info   = 'community_rssfeed_relations_post';
 				}
-				if ( $community_id[0]->ID ) {
+				if ( $community_id && $community_id[0]->ID ) {
 					$community_name = get_the_title( $community_id[0]->ID );
 				}
+//				echo '<h2>$current_item_id: ' . $current_item_id . ' (' . get_the_title( $current_item_id ) . ')</h2>';
+//				echo '<pre>';
+//				var_dump( $community_id );
+//				echo '</pre>';
 
 				if ( $community_name ) {
 					$extra_info = '<span class="source">' . $community_name . '</span>';
@@ -1737,6 +1800,8 @@ function community_feed_items_show( $items = array() ) {
 	return $return;
 }
 
+//========================================================================================================
+
 function community_get_event_date( $item_id = 0, $debug = false ) {
 	$date = 0;
 	if ( $item_id ) {
@@ -1759,3 +1824,44 @@ function community_get_event_date( $item_id = 0, $debug = false ) {
 	return $date;
 
 }
+
+//========================================================================================================
+
+function get_feed_ids_for_tax( $existing_feedids = array(), $taxonomy = null, $taxonomy_id = null, $type = string ) {
+	$return = array();
+	if ( $taxonomy && $taxonomy_id ) {
+
+		if ( is_array( $existing_feedids ) ) {
+			$return = $existing_feedids;
+		}
+		$args2          = array(
+			'post_type'      => DO_COMMUNITY_CPT,
+			'post_status'    => 'publish',
+			'fields'         => 'ids',
+			'posts_per_page' => - 1,
+			'tax_query'      => array(
+				array(
+					'taxonomy' => $taxonomy,
+					'field'    => 'id',
+					'terms'    => $taxonomy_id
+				)
+			)
+		);
+		$community_list = get_posts( $args2 );
+		if ( $community_list ) {
+			foreach ( $community_list as $communityid ) {
+				$field  = ( $type === 'event' ) ? 'rss_feed_source_events' : 'rss_feed_source_posts'; // should be either ( "event": "Agenda" OR 	"posts": "Berichten" )
+				$feedid = get_field( $field, $communityid );
+				if ( $feedid ) {
+					$return[ $feedid->ID ] = $feedid->ID;
+				} else {
+					// NO feed id found for ' . $communityid . ' (' . get_the_title( $communityid ) . ')
+				}
+			}
+		}
+
+	}
+
+	return $return;
+}
+

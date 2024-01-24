@@ -40,9 +40,18 @@ if ( function_exists( 'genesis' ) ) {
 function community_add_agenda_grid( $args = array() ) {
 
 	$args_selection = array(
+		'event_type'   => 'events',
+		'form_id'      => 'community_events_filter',
+		'button_label' => _x( 'Filter agenda', 'button label agenda', 'wp-rijkshuisstijl' ),
+		'echo'         => true
+	);
+
+	echo community_feed_add_filter_form( $args_selection );
+
+	$args_selection = array(
 		'event_type'     => 'events',
 		'paging'         => 1,
-		'posts_per_page' => 20,
+		'posts_per_page' => 20, // perhaps: get_option( 'posts_per_page' )?
 		'echo'           => false
 	);
 
