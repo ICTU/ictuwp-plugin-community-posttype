@@ -1342,10 +1342,18 @@ function community_feed_add_filter_form( $args = array() ) {
 			'echo' => false
 		);
 
-		$return .= '<form id="' . $args['form_id'] . '" method="' . $args['method'] . '" class="' . $args['cssclass'] . '" action="' . $args['action'] . '">';
+//		$return .= '<details>';
 		if ( $args['form_name'] ) {
-			$return .= '<' . $args['title_tag'] . ' class="form-title">' . $args['form_name'] . '</' . $args['title_tag'] . '>';
+			$title = $args['form_name'];
+		} else {
+			$title = 'Toon filter';
 		}
+
+
+		$return .= '<form id="' . $args['form_id'] . '" method="' . $args['method'] . '" class="' . $args['cssclass'] . '" action="' . $args['action'] . '">';
+//		$return .= '<summary>';
+		$return .= '<' . $args['title_tag'] . ' class="form-title">' . $args['form_name'] . '</' . $args['title_tag'] . '>';
+//		$return .= '</summary>';
 
 		// --------------------------------------------------------
 		// Onderwerpen
@@ -1372,80 +1380,84 @@ function community_feed_add_filter_form( $args = array() ) {
 		}
 
 		// --------------------------------------------------------
-		// Type community
-		$community_types = get_terms(
-			array(
-				'taxonomy'   => DO_COMMUNITYTYPE_CT,
-				'object_ids' => $valid_feeds,
-			)
-		);
-		if ( $community_types ) {
+		if ( 222 === 333 ) {
 
-			$default = get_query_var( DO_COMMUNITYTYPE_CT_VAR );
-			if ( $default ) {
-				$args_select['default'] = $default;
-			} else {
-				$args_select['default'] = '';
+			// Type community
+			$community_types = get_terms(
+				array(
+					'taxonomy'   => DO_COMMUNITYTYPE_CT,
+					'object_ids' => $valid_feeds,
+				)
+			);
+			if ( $community_types ) {
+
+				$default = get_query_var( DO_COMMUNITYTYPE_CT_VAR );
+				if ( $default ) {
+					$args_select['default'] = $default;
+				} else {
+					$args_select['default'] = '';
+				}
+				$obj                       = get_taxonomy( DO_COMMUNITYTYPE_CT );
+				$args_select['name']       = DO_COMMUNITYTYPE_CT_VAR;
+				$args_select['id']         = DO_COMMUNITYTYPE_CT_VAR . '_id';
+				$args_select['terms_list'] = $community_types;
+				$args_select['label']      = $obj->labels->name;
+				$return                    .= community_select_list( $args_select );
 			}
-			$obj                       = get_taxonomy( DO_COMMUNITYTYPE_CT );
-			$args_select['name']       = DO_COMMUNITYTYPE_CT_VAR;
-			$args_select['id']         = DO_COMMUNITYTYPE_CT_VAR . '_id';
-			$args_select['terms_list'] = $community_types;
-			$args_select['label']      = $obj->labels->name;
-			$return                    .= community_select_list( $args_select );
-		}
 
-		// --------------------------------------------------------
-		// Doelgroep
-		$community_audiences = get_terms(
-			array(
-				'taxonomy'   => DO_COMMUNITYAUDIENCE_CT,
-				'object_ids' => $valid_feeds,
-			)
-		);
-		if ( $community_audiences ) {
+			// --------------------------------------------------------
+			// Doelgroep
+			$community_audiences = get_terms(
+				array(
+					'taxonomy'   => DO_COMMUNITYAUDIENCE_CT,
+					'object_ids' => $valid_feeds,
+				)
+			);
+			if ( $community_audiences ) {
 
-			$default = get_query_var( DO_COMMUNITYAUDIENCE_CT_VAR );
-			if ( $default ) {
-				$args_select['default'] = $default;
-			} else {
-				$args_select['default'] = '';
+				$default = get_query_var( DO_COMMUNITYAUDIENCE_CT_VAR );
+				if ( $default ) {
+					$args_select['default'] = $default;
+				} else {
+					$args_select['default'] = '';
+				}
+				$obj                       = get_taxonomy( DO_COMMUNITYAUDIENCE_CT );
+				$args_select['name']       = DO_COMMUNITYAUDIENCE_CT_VAR;
+				$args_select['id']         = DO_COMMUNITYAUDIENCE_CT_VAR;
+				$args_select['terms_list'] = $community_audiences;
+				$args_select['label']      = $obj->labels->name;
+				$return                    .= community_select_list( $args_select );
 			}
-			$obj                       = get_taxonomy( DO_COMMUNITYAUDIENCE_CT );
-			$args_select['name']       = DO_COMMUNITYAUDIENCE_CT_VAR;
-			$args_select['id']         = DO_COMMUNITYAUDIENCE_CT_VAR;
-			$args_select['terms_list'] = $community_audiences;
-			$args_select['label']      = $obj->labels->name;
-			$return                    .= community_select_list( $args_select );
-		}
 
-		// --------------------------------------------------------
-		// Bestuurslagen
-		$community_strata = get_terms(
-			array(
-				'taxonomy'   => DO_COMMUNITYBESTUURSLAAG_CT,
-				'object_ids' => $valid_feeds,
-			)
-		);
+			// --------------------------------------------------------
+			// Bestuurslagen
+			$community_strata = get_terms(
+				array(
+					'taxonomy'   => DO_COMMUNITYBESTUURSLAAG_CT,
+					'object_ids' => $valid_feeds,
+				)
+			);
 
-		if ( $community_strata ) {
+			if ( $community_strata ) {
 
-			$default = get_query_var( DO_COMMUNITYBESTUURSLAAG_CT_VAR );
-			if ( $default ) {
-				$args_select['default'] = $default;
-			} else {
-				$args_select['default'] = '';
+				$default = get_query_var( DO_COMMUNITYBESTUURSLAAG_CT_VAR );
+				if ( $default ) {
+					$args_select['default'] = $default;
+				} else {
+					$args_select['default'] = '';
+				}
+				$obj                       = get_taxonomy( DO_COMMUNITYBESTUURSLAAG_CT );
+				$args_select['name']       = DO_COMMUNITYBESTUURSLAAG_CT_VAR;
+				$args_select['id']         = DO_COMMUNITYBESTUURSLAAG_CT_VAR;
+				$args_select['terms_list'] = $community_strata;
+				$args_select['label']      = $obj->labels->name;
+				$return                    .= community_select_list( $args_select );
 			}
-			$obj                       = get_taxonomy( DO_COMMUNITYBESTUURSLAAG_CT );
-			$args_select['name']       = DO_COMMUNITYBESTUURSLAAG_CT_VAR;
-			$args_select['id']         = DO_COMMUNITYBESTUURSLAAG_CT_VAR;
-			$args_select['terms_list'] = $community_strata;
-			$args_select['label']      = $obj->labels->name;
-			$return                    .= community_select_list( $args_select );
 		}
 
 		$return .= '<div class="button-list"><button type="submit" id="widget_community_filter-submit">' . $args['button_label'] . '</button></div>';
 		$return .= '</form>';
+//		$return .= '</details>';
 
 	}
 
