@@ -61,7 +61,7 @@ $args = array(
 	'show_in_admin_bar'   => true,
 	'show_in_nav_menus'   => true,
 	'can_export'          => true,
-	'has_archive'         => false, 
+	'has_archive'         => false,
 	'exclude_from_search' => false,
 	'publicly_queryable'  => true,
 	'rewrite'             => array( 'slug' => $slug_of_posttype ),
@@ -136,18 +136,18 @@ register_taxonomy( DO_COMMUNITYTOPICS_CT, array( DO_COMMUNITY_CPT ), $args );
 
 // Community-onderwerpen
 $labels = array(
-	'name'              => esc_html_x( 'Overheidslagen', 'taxonomy', 'wp-rijkshuisstijl' ),
-	'singular_name'     => esc_html_x( 'Overheidslaag', 'taxonomy singular name', 'wp-rijkshuisstijl' ),
-	'search_items'      => esc_html_x( 'Search overheidslagen', 'taxonomy', 'wp-rijkshuisstijl' ),
-	'all_items'         => esc_html_x( 'Alle overheidslagen', 'taxonomy', 'wp-rijkshuisstijl' ),
-	'parent_item'       => esc_html_x( 'Parent overheidslaag', 'taxonomy', 'wp-rijkshuisstijl' ),
-	'parent_item_colon' => esc_html_x( 'Parent overheidslaag:', 'taxonomy', 'wp-rijkshuisstijl' ),
-	'view_item'         => esc_html_x( 'Bekijk overheidslaag', 'taxonomy', 'wp-rijkshuisstijl' ),
-	'edit_item'         => esc_html_x( 'Edit overheidslaag', 'taxonomy', 'wp-rijkshuisstijl' ),
-	'update_item'       => esc_html_x( 'Update overheidslaag', 'taxonomy', 'wp-rijkshuisstijl' ),
-	'add_new_item'      => esc_html_x( 'Add new overheidslaag', 'taxonomy', 'wp-rijkshuisstijl' ),
-	'new_item_name'     => esc_html_x( 'New overheidslaag name', 'taxonomy', 'wp-rijkshuisstijl' ),
-	'menu_name'         => esc_html_x( 'Overheidslagen', 'taxonomy', 'wp-rijkshuisstijl' ),
+	'name'              => esc_html_x( 'Types organisatie', 'taxonomy', 'wp-rijkshuisstijl' ),
+	'singular_name'     => esc_html_x( 'Type organisatie', 'taxonomy singular name', 'wp-rijkshuisstijl' ),
+	'search_items'      => esc_html_x( 'Search organisatie-types', 'taxonomy', 'wp-rijkshuisstijl' ),
+	'all_items'         => esc_html_x( 'Alle organisatie-types', 'taxonomy', 'wp-rijkshuisstijl' ),
+	'parent_item'       => esc_html_x( 'Parent organisatie-type', 'taxonomy', 'wp-rijkshuisstijl' ),
+	'parent_item_colon' => esc_html_x( 'Parent organisatie-type:', 'taxonomy', 'wp-rijkshuisstijl' ),
+	'view_item'         => esc_html_x( 'Bekijk organisatie-type', 'taxonomy', 'wp-rijkshuisstijl' ),
+	'edit_item'         => esc_html_x( 'Edit organisatie-type', 'taxonomy', 'wp-rijkshuisstijl' ),
+	'update_item'       => esc_html_x( 'Update organisatie-type', 'taxonomy', 'wp-rijkshuisstijl' ),
+	'add_new_item'      => esc_html_x( 'Add new organisatie-type', 'taxonomy', 'wp-rijkshuisstijl' ),
+	'new_item_name'     => esc_html_x( 'New organisatie-type name', 'taxonomy', 'wp-rijkshuisstijl' ),
+	'menu_name'         => esc_html_x( 'Type organisatie', 'taxonomy', 'wp-rijkshuisstijl' ),
 );
 
 $args = array(
@@ -160,6 +160,7 @@ $args = array(
 	'rewrite'           => array( 'slug' => DO_COMMUNITYBESTUURSLAAG_CT ),
 );
 
+// TODO: change slug and replace values in database
 register_taxonomy( DO_COMMUNITYBESTUURSLAAG_CT, array( DO_COMMUNITY_CPT ), $args );
 
 //========================================================================================================
