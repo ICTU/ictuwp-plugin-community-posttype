@@ -69,11 +69,10 @@ function community_add_posts_grid( $args = array() ) {
 			'cssclass'   => 'template-rss-posts'
 		);
 		$rss_content = community_feed_items_show( $args_in );
+		echo $filter_form;
 		echo $rss_content;
 	}
 	genesis_posts_nav();
-
-	echo $filter_form;
 
 	wp_reset_query();
 	wp_reset_postdata();
