@@ -36,7 +36,7 @@ class ICTUWP_community_filter extends WP_Widget {
 			'classname'   => 'widget_community_filter',
 			'description' => __( "Widget community filter", 'wp-rijkshuisstijl' )
 		);
-		parent::__construct( 'widget-community_filter', _x( '(DO) community filter widget', 'widget name', 'wp-rijkshuisstijl' ), $widget_ops );
+		parent::__construct( 'widget-community_filter', _x( '(DO - community) filter widget', 'widget name', 'wp-rijkshuisstijl' ), $widget_ops );
 
 	}
 
