@@ -48,6 +48,7 @@ define( 'DO_COMMUNITYBESTUURSLAAG_CT', $slugoverheidslaag );
 
 defined( 'DO_COMMUNITY_OVERVIEW_TEMPLATE' ) or define( 'DO_COMMUNITY_OVERVIEW_TEMPLATE', 'template-overview-communities.php' );
 defined( 'DO_COMMUNITY_PAGE_RSS_AGENDA' ) or define( 'DO_COMMUNITY_PAGE_RSS_AGENDA', 'template-rss-agenda.php' );
+defined( 'DO_COMMUNITY_PAGE_RSS_POSTS' ) or define( 'DO_COMMUNITY_PAGE_RSS_POSTS', 'template-rss-posts.php' );
 defined( 'DO_COMMUNITY_DETAIL_TEMPLATE' ) or define( 'DO_COMMUNITY_DETAIL_TEMPLATE', 'template-community-detail.php' );
 
 //if ( ! defined( 'RHSWP_WIDGET_AREA_COMMUNITY_OVERVIEW' ) ) {
@@ -70,6 +71,8 @@ add_action( 'plugins_loaded', array( 'DO_COMMUNITY_CPT', 'init' ), 10 );
 require_once plugin_dir_path( __FILE__ ) . 'includes/widget-filter.php';
 
 require_once plugin_dir_path( __FILE__ ) . 'includes/widget-last-added.php';
+
+require_once plugin_dir_path( __FILE__ ) . 'includes/widget-communitys-with-feed.php';
 
 //========================================================================================================
 
@@ -105,8 +108,8 @@ if ( ! class_exists( 'DO_COMMUNITY_CPT' ) ) :
 		public function __construct() {
 
 			$this->template_overview_communities = 'template_overview_communities.php';
-			$this->template_page_agenda          = 'template-rss-agenda.php';
-			$this->template_page_posts           = 'template-rss-posts.php';
+			$this->template_page_agenda          = DO_COMMUNITY_PAGE_RSS_AGENDA;
+			$this->template_page_posts           = DO_COMMUNITY_PAGE_RSS_POSTS;
 
 			$this->fn_ictu_community_setup_actions();
 
@@ -135,8 +138,9 @@ if ( ! class_exists( 'DO_COMMUNITY_CPT' ) ) :
 
 
 			// Register widgets
-			add_action( 'widgets_init', 'ictuwp_communityfilter_load_widgets' );
-			add_action( 'widgets_init', 'ictuwp_load_widget_last_added_communities' );
+			add_action( 'widgets_init', 'ictuwp_community_load_widget_filter' );
+			add_action( 'widgets_init', 'ictuwp_community_load_widget_latest_added' );
+			add_action( 'widgets_init', 'ictuwp_community_load_widget_valid_feeds' );
 
 			// sort alphabetically and list all communities for a single taxonomy term
 			add_action( 'pre_get_posts', array( $this, 'fn_ictu_community_modify_main_query' ), 999 );
@@ -242,11 +246,11 @@ if ( ! class_exists( 'DO_COMMUNITY_CPT' ) ) :
 
 				$archive_template = dirname( __FILE__ ) . '/templates/archive-communities.php';
 
-			} elseif ( 'template-rss-agenda.php' == $page_template ) {
+			} elseif ( DO_COMMUNITY_PAGE_RSS_AGENDA == $page_template ) {
 
 				$archive_template = dirname( __FILE__ ) . '/templates/template-rss-agenda.php';
 
-			} elseif ( 'template-rss-posts.php' == $page_template ) {
+			} elseif ( DO_COMMUNITY_PAGE_RSS_POSTS == $page_template ) {
 
 				$archive_template = dirname( __FILE__ ) . '/templates/template-rss-posts.php';
 
@@ -1722,23 +1726,24 @@ function community_feed_items_show( $items = array() ) {
 
 			if ( $args['extra_info'] ) {
 
-				$community_id   = '';
 				$community_name = '?';
 				$feed_id        = get_post_meta( $current_item_id, 'wprss_feed_id', true );
 				$extra_info     = '';
-//				$extra_info = '<span class="source">' . $community_name . '</span>';
+
 				if ( $args['type'] === 'events' ) {
 					// different field for events feed
-					$community_id = get_field( 'community_rssfeed_relations_events', $feed_id );
-//					$extra_info   = 'community_rssfeed_relations_events';
+					$community_cpt = get_field( 'community_rssfeed_relations_events', $feed_id );
 				} else {
 					// different field for posts feed
-					$community_id = get_field( 'community_rssfeed_relations_post', $feed_id );
-//					$extra_info   = 'community_rssfeed_relations_post';
+					$community_cpt = get_field( 'community_rssfeed_relations_post', $feed_id );
 				}
-				if ( $community_id && $community_id[0]->ID ) {
-					$alt_name     = rhswp_filter_alternative_title( $community_id[0]->ID, $default_name );
-					$default_name = get_the_title( $community_id[0]->ID );
+
+
+				if ( is_object( $community_cpt[0] ) ) {
+
+					$community    = $community_cpt[0];
+					$default_name = $community->post_title;
+					$alt_name     = rhswp_filter_alternative_title( $community->ID, $default_name );
 					if ( $alt_name && ( $alt_name !== $default_name ) ) {
 						// first check if a short name is available
 						$community_name = $alt_name;
@@ -1746,11 +1751,14 @@ function community_feed_items_show( $items = array() ) {
 						// if not, just the normal community title
 						$community_name = $default_name;
 					}
-				} else {
-					$community_name = '';
 				}
 
+
 				if ( $community_name ) {
+//					$community_name .= ' <a href="' . get_edit_post_link( $feed_id ) . '">';
+//					$community_name .= get_the_title( $feed_id ) . '</a>';
+//					$community_name .= ' hoort bij community: ' . $community->ID;
+
 					$extra_info = '<span class="source">' . $community_name . '</span>';
 				}
 
