@@ -58,7 +58,6 @@ class ICTUWP_widget_last_added_communities extends WP_Widget {
 		$args        = array(
 			'max_items'     => $maxnr_posts,
 			'max_age'       => $max_age,
-			'overview_link' => $overview_link
 		);
 
 		$content = ictuwp_community_get_latest_list( $args );

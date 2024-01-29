@@ -895,7 +895,7 @@ function ictuwp_community_get_latest_list( $argslist ) {
 
 	if ( $community_list->have_posts() ) {
 
-		if ( $args['css_class_ul'] ) {
+		if ( isset( $args['css_class_ul'] ) ) {
 			$return .= '<ul class="' . $args['css_class_ul'] . '">';
 		} else {
 			$return .= '<ul>';

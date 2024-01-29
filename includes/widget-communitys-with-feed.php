@@ -70,8 +70,11 @@ class community_widget_communities_with_feeds extends WP_Widget {
 			$feed_ids = community_get_feed_ids_for_feed_type( $type );
 
 			if ( $feed_ids ) {
-				$array_alala    = array();
-				$cssclasses     = array( 'import-items', $args['css_class_ul'] );
+				$array_alala = array();
+				if ( isset( $args['css_class_ul'] ) ) {
+					$cssclasses[] = $args['css_class_ul'];
+				}
+				$cssclasses[]   = 'import-items';
 				$community_list = '<ul class="' . implode( ' ', $cssclasses ) . '">';
 
 				foreach ( $feed_ids as $current_feed_id ) {
@@ -87,7 +90,7 @@ class community_widget_communities_with_feeds extends WP_Widget {
 							// different field for posts feed
 							$community_cpt = get_field( 'community_rssfeed_relations_post', $current_feed_id );
 						}
-						if ( is_object( $community_cpt[0] ) ) {
+						if ( $community_cpt && is_object( $community_cpt[0] ) ) {
 							$community    = $community_cpt[0];
 							$default_name = $community->post_title;
 //							$alt_name     = rhswp_filter_alternative_title( $community->ID, $community->post_title );
