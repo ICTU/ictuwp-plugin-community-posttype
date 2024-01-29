@@ -9,7 +9,7 @@ Description: Add widget showing last added communities
  * Register Widget
  *
  */
-function ictuwp_load_widget_last_added_communities() {
+function ictuwp_community_load_widget_latest_added() {
 
 	register_widget( 'ICTUWP_widget_last_added_communities' );
 
@@ -33,7 +33,7 @@ class ICTUWP_widget_last_added_communities extends WP_Widget {
 			'classname'   => 'widget_community_recent_additions',
 			'description' => __( "Widget last added communities", 'wp-rijkshuisstijl' )
 		);
-		parent::__construct( 'widget-community_recent_additions', _x( '(DO) community recent toegevoegd widget', 'widget name', 'wp-rijkshuisstijl' ), $widget_ops );
+		parent::__construct( 'widget-community_recent_additions', _x( '(DO - community)  recent toegevoegd', 'widget name', 'wp-rijkshuisstijl' ), $widget_ops );
 
 	}
 

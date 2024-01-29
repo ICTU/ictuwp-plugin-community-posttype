@@ -9,7 +9,7 @@ Description: Add form with filter actions for community overview page
  * Register Widget
  *
  */
-function ictuwp_communityfilter_load_widgets() {
+function ictuwp_community_load_widget_filter() {
 
 	register_widget( 'ICTUWP_community_filter' );
 
