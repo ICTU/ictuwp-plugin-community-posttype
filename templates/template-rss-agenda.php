@@ -59,10 +59,10 @@ function community_add_agenda_grid( $args = array() ) {
 		$filter_form    = community_feed_add_filter_form( $args_selection );
 	}
 
-	if ( in_array( (int)get_query_var( DO_COMMUNITY_MAX_VAR ), DO_COMMUNITY_MAX_OPTIONS)) {
-		$maxnr	= get_query_var( DO_COMMUNITY_MAX_VAR );
+	if ( in_array( (int) get_query_var( DO_COMMUNITY_MAX_VAR ), DO_COMMUNITY_MAX_OPTIONS ) ) {
+		$maxnr = get_query_var( DO_COMMUNITY_MAX_VAR );
 	} else {
-		$maxnr	= DO_COMMUNITY_MAX_DEFAULT;
+		$maxnr = DO_COMMUNITY_MAX_DEFAULT;
 	}
 
 	$args_selection = array(
