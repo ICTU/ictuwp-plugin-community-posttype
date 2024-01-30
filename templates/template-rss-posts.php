@@ -87,6 +87,7 @@ function community_add_posts_grid( $args = array() ) {
 		echo $rss_content;
 	}
 	genesis_posts_nav();
+
 	wp_reset_query();
 	wp_reset_postdata();
 

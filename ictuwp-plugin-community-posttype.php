@@ -1347,10 +1347,15 @@ function community_feed_add_filter_form( $args = array() ) {
 			'echo' => false
 		);
 
-		$return .= '<form id="' . $args['form_id'] . '" method="' . $args['method'] . '" class="' . $args['cssclass'] . '" action="' . $args['action'] . '">';
 		if ( $args['form_name'] ) {
-			$return .= '<' . $args['title_tag'] . ' class="form-title">' . $args['form_name'] . '</' . $args['title_tag'] . '>';
+			$title = $args['form_name'];
+		} else {
+			$title = 'Toon filter';
 		}
+
+
+		$return .= '<form id="' . $args['form_id'] . '" method="' . $args['method'] . '" class="' . $args['cssclass'] . '" action="' . $args['action'] . '">';
+		$return .= '<' . $args['title_tag'] . ' class="form-title">' . $title . '</' . $args['title_tag'] . '>';
 
 		// --------------------------------------------------------
 		// Onderwerpen
@@ -1391,9 +1396,9 @@ function community_feed_add_filter_form( $args = array() ) {
 		$args_select['label'] = _x( 'Aantal', 'button label default', 'wp-rijkshuisstijl' );
 		$return               .= community_select_list( $args_select );
 
+		// --------------------------------------------------------
 		if ( 222 === 333 ) {
 
-			// --------------------------------------------------------
 			// Type community
 			$community_types = get_terms(
 				array(
@@ -1471,8 +1476,6 @@ function community_feed_add_filter_form( $args = array() ) {
 		$return .= '</form>';
 
 	}
-
-//	}
 
 	if ( $args['echo'] ) {
 		echo $return;
