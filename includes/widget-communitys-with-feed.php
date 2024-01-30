@@ -59,6 +59,7 @@ class community_widget_communities_with_feeds extends WP_Widget {
 		$community_list        = '';
 		$current_page_template = get_post_meta( get_the_id(), '_wp_page_template', true );
 		$widget_title          = esc_attr( $instance['title'] );
+		$feed_ids_description  = esc_attr( $instance['description'] );
 		$template_type         = esc_attr( $instance['template_type'] );
 
 
