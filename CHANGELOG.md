@@ -1,6 +1,7 @@
 # Changelog
 
 ## Version history
+* 1.2.1 - Added filter to feeds overview pages.
 * 1.1.1 - Changes after user research.
 * 0.1.3 - Added page template for all RSS post items
 * 0.1.2 - Renamed DO_COMMUNITYBESTUURSLAAG_CT to overheidslaag
