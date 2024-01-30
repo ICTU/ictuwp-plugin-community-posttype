@@ -92,16 +92,22 @@ class community_widget_communities_with_feeds extends WP_Widget {
 							$community_cpt = get_field( 'community_rssfeed_relations_post', $current_feed_id );
 						}
 						if ( $community_cpt && is_object( $community_cpt[0] ) ) {
-							$community    = $community_cpt[0];
-							$default_name = $community->post_title;
-//							$alt_name     = rhswp_filter_alternative_title( $community->ID, $community->post_title );
-//							if ( $alt_name && ( $alt_name !== $default_name ) ) {
-//								// check if a short name is available
-//								$extra_info = '<span class="source">' . $alt_name . '</span>';
-//							}
-//							$extra_info .= ' id: ' . $current_feed_cpt->ID;
+							$community = $community_cpt[0];
 
-							$array_alala[ sanitize_title( $default_name ) ] = '<li><a href="' . get_permalink( $community->ID ) . '">' . $default_name . '</a> ' . $extra_info . '</li>';
+							if ( $community->post_status === 'publish' ) {
+								// only published communities please.
+
+								$default_name = $community->post_title;
+	//							$alt_name     = rhswp_filter_alternative_title( $community->ID, $community->post_title );
+	//							if ( $alt_name && ( $alt_name !== $default_name ) ) {
+	//								// check if a short name is available
+	//								$extra_info = '<span class="source">' . $alt_name . '</span>';
+	//							}
+	//							$extra_info .= ' id: ' . $current_feed_cpt->ID;
+
+								$array_alala[ sanitize_title( $default_name ) ] = '<li><a href="' . get_permalink( $community->ID ) . '">' . $default_name . '</a> ' . $extra_info . '</li>';
+							}
+
 						}
 					}
 				}
