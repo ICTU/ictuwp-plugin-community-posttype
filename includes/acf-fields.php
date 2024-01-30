@@ -870,13 +870,66 @@ if ( ! function_exists( 'acf_add_local_field_group' ) ) {
 				),
 				'ui'                   => 1,
 			),
+			array(
+				'key'               => 'field_65b26343ceac4',
+				'label'             => 'Korte naam toevoegen voor de community?',
+				'name'              => 'alternatieve_paginatitel_gebruiken',
+				'aria-label'        => '',
+				'type'              => 'radio',
+				'instructions'      => 'De paginatitel wordt standaard gebruikt voor ondermeer verwijzingen in menu\'s en in de &lt;title&gt;. Het kan zijn dat je voor de duidelijkheid een andere tekst wilt tonen in de &lt;H1&gt;. Als je hier \'ja\' kiest, kun je een alternatieve paginatitel invoeren.',
+				'required'          => 1,
+				'conditional_logic' => 0,
+				'wrapper'           => array(
+					'width' => '',
+					'class' => '',
+					'id'    => '',
+				),
+				'choices'           => array(
+					'nee' => 'nee',
+					'ja'  => 'ja',
+				),
+				'default_value'     => 'nee',
+				'return_format'     => 'value',
+				'allow_null'        => 0,
+				'other_choice'      => 0,
+				'layout'            => 'horizontal',
+				'save_other_choice' => 0,
+			),
+			array(
+				'key'               => 'field_65b26343ceae7',
+				'label'             => 'Korte naam voor deze community',
+				'name'              => 'alternatieve_paginatitel',
+				'aria-label'        => '',
+				'type'              => 'text',
+				'instructions'      => '',
+				'required'          => 0,
+				'conditional_logic' => array(
+					array(
+						array(
+							'field'    => 'field_65b26343ceac4',
+							'operator' => '==',
+							'value'    => 'ja',
+						),
+					),
+				),
+				'wrapper'           => array(
+					'width' => '',
+					'class' => '',
+					'id'    => '',
+				),
+				'default_value'     => '',
+				'maxlength'         => '',
+				'placeholder'       => '',
+				'prepend'           => '',
+				'append'            => '',
+			),
 		),
 		'location'              => array(
 			array(
 				array(
 					'param'    => 'post_type',
 					'operator' => '==',
-					'value'    => DO_COMMUNITY_CPT,
+					'value'    => 'community',
 				),
 			),
 		),
@@ -1019,5 +1072,118 @@ if ( ! function_exists( 'acf_add_local_field_group' ) ) {
 		'show_in_rest'          => 0,
 	) );
 
+	acf_add_local_field_group( array(
+		'key'                   => 'group_65b2c712557ce',
+		'title'                 => '(community) Berichten en agenda',
+		'fields'                => array(
+			array(
+				'key'               => 'field_65b2c76caa525',
+				'label'             => 'Filter tonen op deze pagina?',
+				'name'              => 'posts_overview_filterform_show',
+				'aria-label'        => '',
+				'type'              => 'radio',
+				'instructions'      => '',
+				'required'          => 0,
+				'conditional_logic' => 0,
+				'wrapper'           => array(
+					'width' => '',
+					'class' => '',
+					'id'    => '',
+				),
+				'choices'           => array(
+					'posts_overview_filterform_show_yes' => 'Ja, tonen',
+					'posts_overview_filterform_show_no'  => 'Nee, verbergen',
+				),
+				'default_value'     => 'posts_overview_filterform_show_no',
+				'return_format'     => 'value',
+				'allow_null'        => 0,
+				'other_choice'      => 0,
+				'layout'            => 'vertical',
+				'save_other_choice' => 0,
+			),
+			array(
+				'key'               => 'field_65b2c713aa523',
+				'label'             => 'Titel boven filter',
+				'name'              => 'posts_overview_filterform_title',
+				'aria-label'        => '',
+				'type'              => 'text',
+				'instructions'      => '',
+				'required'          => 0,
+				'conditional_logic' => array(
+					array(
+						array(
+							'field'    => 'field_65b2c76caa525',
+							'operator' => '==',
+							'value'    => 'posts_overview_filterform_show_yes',
+						),
+					),
+				),
+				'wrapper'           => array(
+					'width' => '',
+					'class' => '',
+					'id'    => '',
+				),
+				'default_value'     => 'Filter op thema',
+				'maxlength'         => '',
+				'placeholder'       => '',
+				'prepend'           => '',
+				'append'            => '',
+			),
+			array(
+				'key'               => 'field_65b2c9d90bc13',
+				'label'             => 'Tekst op knop',
+				'name'              => 'posts_overview_filterform_submit_label',
+				'aria-label'        => '',
+				'type'              => 'text',
+				'instructions'      => '',
+				'required'          => 0,
+				'conditional_logic' => array(
+					array(
+						array(
+							'field'    => 'field_65b2c76caa525',
+							'operator' => '==',
+							'value'    => 'posts_overview_filterform_show_yes',
+						),
+					),
+				),
+				'wrapper'           => array(
+					'width' => '',
+					'class' => '',
+					'id'    => '',
+				),
+				'default_value'     => 'Filter',
+				'maxlength'         => '',
+				'placeholder'       => '',
+				'prepend'           => '',
+				'append'            => '',
+			),
+		),
+		'location'              => array(
+			array(
+				array(
+					'param'    => 'page_template',
+					'operator' => '==',
+					'value'    => 'template-rss-agenda.php',
+				),
+			),
+			array(
+				array(
+					'param'    => 'page_template',
+					'operator' => '==',
+					'value'    => 'template-rss-posts.php',
+				),
+			),
+		),
+		'menu_order'            => 0,
+		'position'              => 'acf_after_title',
+		'style'                 => 'default',
+		'label_placement'       => 'top',
+		'instruction_placement' => 'label',
+		'hide_on_screen'        => '',
+		'active'                => true,
+		'description'           => '',
+		'show_in_rest'          => 0,
+		'modified'              => 1706216388,
+	) );
 
 }

@@ -8,8 +8,8 @@
  * Plugin Name:         ICTU / Digitale Overheid / Community
  * Plugin URI:          https://github.com/ICTU/ictuwp-plugin-community-posttype
  * Description:         Plugin voor het aanmaken van posttype 'community' en bijbehorende taxonomieen.
- * Version:             1.1.1
- * Version description: Changes after user research.
+ * Version:             1.2.1
+ * Version description: Added filter to feeds overview pages.
  * Author:              Paul van Buuren
  * Author URI:          https://github.com/ICTU/ictuwp-plugin-community-posttype/
  * License:             GPL-2.0+
@@ -48,6 +48,7 @@ define( 'DO_COMMUNITYBESTUURSLAAG_CT', $slugoverheidslaag );
 
 defined( 'DO_COMMUNITY_OVERVIEW_TEMPLATE' ) or define( 'DO_COMMUNITY_OVERVIEW_TEMPLATE', 'template-overview-communities.php' );
 defined( 'DO_COMMUNITY_PAGE_RSS_AGENDA' ) or define( 'DO_COMMUNITY_PAGE_RSS_AGENDA', 'template-rss-agenda.php' );
+defined( 'DO_COMMUNITY_PAGE_RSS_POSTS' ) or define( 'DO_COMMUNITY_PAGE_RSS_POSTS', 'template-rss-posts.php' );
 defined( 'DO_COMMUNITY_DETAIL_TEMPLATE' ) or define( 'DO_COMMUNITY_DETAIL_TEMPLATE', 'template-community-detail.php' );
 
 //if ( ! defined( 'RHSWP_WIDGET_AREA_COMMUNITY_OVERVIEW' ) ) {
@@ -58,7 +59,9 @@ define( 'DO_COMMUNITYTYPE_CT_VAR', 'communitytype' );
 define( 'DO_COMMUNITYTOPICS_CT_VAR', 'communitytopic' );
 define( 'DO_COMMUNITYAUDIENCE_CT_VAR', 'communityaudience' );
 define( 'DO_COMMUNITYBESTUURSLAAG_CT_VAR', 'communitygov' );
-
+define( 'DO_COMMUNITY_MAX_VAR', 'communitymaxnr' );
+define( 'DO_COMMUNITY_MAX_DEFAULT', 20 );
+define( 'DO_COMMUNITY_MAX_OPTIONS', array( 10, 20, 50, 100 ) );
 
 //========================================================================================================
 add_action( 'plugins_loaded', array( 'DO_COMMUNITY_CPT', 'init' ), 10 );
@@ -68,6 +71,8 @@ add_action( 'plugins_loaded', array( 'DO_COMMUNITY_CPT', 'init' ), 10 );
 require_once plugin_dir_path( __FILE__ ) . 'includes/widget-filter.php';
 
 require_once plugin_dir_path( __FILE__ ) . 'includes/widget-last-added.php';
+
+require_once plugin_dir_path( __FILE__ ) . 'includes/widget-communitys-with-feed.php';
 
 //========================================================================================================
 
@@ -103,8 +108,8 @@ if ( ! class_exists( 'DO_COMMUNITY_CPT' ) ) :
 		public function __construct() {
 
 			$this->template_overview_communities = 'template_overview_communities.php';
-			$this->template_page_agenda          = 'template-rss-agenda.php';
-			$this->template_page_posts           = 'template-rss-posts.php';
+			$this->template_page_agenda          = DO_COMMUNITY_PAGE_RSS_AGENDA;
+			$this->template_page_posts           = DO_COMMUNITY_PAGE_RSS_POSTS;
 
 			$this->fn_ictu_community_setup_actions();
 
@@ -133,8 +138,9 @@ if ( ! class_exists( 'DO_COMMUNITY_CPT' ) ) :
 
 
 			// Register widgets
-			add_action( 'widgets_init', 'ictuwp_communityfilter_load_widgets' );
-			add_action( 'widgets_init', 'ictuwp_load_widget_last_added_communities' );
+			add_action( 'widgets_init', 'ictuwp_community_load_widget_filter' );
+			add_action( 'widgets_init', 'ictuwp_community_load_widget_latest_added' );
+			add_action( 'widgets_init', 'ictuwp_community_load_widget_valid_feeds' );
 
 			// sort alphabetically and list all communities for a single taxonomy term
 			add_action( 'pre_get_posts', array( $this, 'fn_ictu_community_modify_main_query' ), 999 );
@@ -240,11 +246,11 @@ if ( ! class_exists( 'DO_COMMUNITY_CPT' ) ) :
 
 				$archive_template = dirname( __FILE__ ) . '/templates/archive-communities.php';
 
-			} elseif ( 'template-rss-agenda.php' == $page_template ) {
+			} elseif ( DO_COMMUNITY_PAGE_RSS_AGENDA == $page_template ) {
 
 				$archive_template = dirname( __FILE__ ) . '/templates/template-rss-agenda.php';
 
-			} elseif ( 'template-rss-posts.php' == $page_template ) {
+			} elseif ( DO_COMMUNITY_PAGE_RSS_POSTS == $page_template ) {
 
 				$archive_template = dirname( __FILE__ ) . '/templates/template-rss-posts.php';
 
@@ -451,17 +457,7 @@ function community_sanitize_initiatief_pagina( $page_id, $setting ) {
 			// alleen geubliceerde pagina's accepteren
 			return $value;
 		} else {
-// TODO zorg ervoor dat de slug van de pagina gebruikt wordt in de slug van de commmunity CPT
-//			$page_initatieven = get_theme_mod( 'customizer_community_pageid_overview' );
-//			if ( $page_id === $page_initatieven ) {
-//				// no change
-//			} else {
-//				$theline = 'Community page is changed';
-//				error_log( $theline );
-//				flush_rewrite_rules();
-//
-//			}
-
+			// TODO zorg ervoor dat de slug van de pagina gebruikt wordt in de slug van de commmunity CPT
 		}
 
 		$value = $page_id;
@@ -899,8 +895,7 @@ function ictuwp_community_get_latest_list( $argslist ) {
 
 	if ( $community_list->have_posts() ) {
 
-//			$return .= '<p>alles na ' . date( $date_format, strtotime( $date_after ) ) . '</p>';
-		if ( $args['css_class_ul'] ) {
+		if ( isset( $args['css_class_ul'] ) ) {
 			$return .= '<ul class="' . $args['css_class_ul'] . '">';
 		} else {
 			$return .= '<ul>';
@@ -908,7 +903,6 @@ function ictuwp_community_get_latest_list( $argslist ) {
 
 		while ( $community_list->have_posts() ) : $community_list->the_post();
 			$the_id = get_the_id();
-//			$post_date = get_the_date( $args['date_format'], $the_id );
 			$return .= '<li><a href="' . get_permalink( $the_id ) . '">' . get_the_title( $the_id ) . '</a></li>';
 		endwhile;
 		$return        .= '</ul>';
@@ -917,6 +911,8 @@ function ictuwp_community_get_latest_list( $argslist ) {
 			$return .= '<p class="more"><a href="' . $overview_link['url'] . '">' . $overview_link['title'] . '</a></p>';
 		}
 	}
+
+	wp_reset_query();
 
 	return $return;
 }
@@ -1178,8 +1174,9 @@ function community_select_list( $args = array() ) {
 	);
 
 	// set up arguments
-	$args   = wp_parse_args( $args, $defaults );
-	$return = '';
+	$args    = wp_parse_args( $args, $defaults );
+	$return  = '';
+	$counter = 0;
 
 	if ( count( $args['terms_list'] ) && $args['id'] && $args['name'] ) {
 
@@ -1188,15 +1185,26 @@ function community_select_list( $args = array() ) {
 		$return .= '<div class="select-list">';
 		$return .= '<label for="' . $selectid . '">' . $args['label'] . '</label>';
 		$return .= '<select id="' . $selectid . '" name="' . $args['name'] . '">';
-		$return .= '<option value="">' . _x( '-selecteer-', 'asd', 'dad' ) . '</option> ';
+		$return .= '<option value="">' . _x( '-selecteer-', '1st option value select', 'wp-rijkshuisstijl' ) . '</option> ';
 
-		foreach ( $args['terms_list'] as $term ) {
+		foreach ( $args['terms_list'] as $key => $term ) {
+			$counter ++;
 			$selected = '';
-			if ( strval( $term->term_id ) === strval( $args['default'] ) ) {
+			$value    = '';
+			$label    = '';
+
+			if ( is_object( $term ) && ( $term->term_id && $term->name ) ) {
+				$value = $term->term_id;
+				$label = $term->name;
+			} else {
+				$value = $key;
+				$label = $term;
+			}
+			if ( strval( $value ) === strval( $args['default'] ) ) {
 				$selected = ' selected ';
 			}
 
-			$return .= '<option value="' . $term->term_id . '"' . $selected . '>' . $term->name . '</option> ';
+			$return .= '<option value="' . $value . '"' . $selected . '>' . $label . '</option> ';
 
 		}
 		$return .= '</select>';
@@ -1221,10 +1229,7 @@ function community_add_query_vars( $query_vars ) {
 	$query_vars[] = DO_COMMUNITYTOPICS_CT_VAR;
 	$query_vars[] = DO_COMMUNITYAUDIENCE_CT_VAR;
 	$query_vars[] = DO_COMMUNITYBESTUURSLAAG_CT_VAR;
-//	echo '<h1>woeiii</h1>';
-//	echo '<pre>';
-//	var_dump( $query_vars );
-//	echo '</pre>';
+	$query_vars[] = DO_COMMUNITY_MAX_VAR;
 
 	return $query_vars;
 }
@@ -1342,7 +1347,6 @@ function community_feed_add_filter_form( $args = array() ) {
 			'echo' => false
 		);
 
-//		$return .= '<details>';
 		if ( $args['form_name'] ) {
 			$title = $args['form_name'];
 		} else {
@@ -1351,9 +1355,7 @@ function community_feed_add_filter_form( $args = array() ) {
 
 
 		$return .= '<form id="' . $args['form_id'] . '" method="' . $args['method'] . '" class="' . $args['cssclass'] . '" action="' . $args['action'] . '">';
-//		$return .= '<summary>';
-		$return .= '<' . $args['title_tag'] . ' class="form-title">' . $args['form_name'] . '</' . $args['title_tag'] . '>';
-//		$return .= '</summary>';
+		$return .= '<' . $args['title_tag'] . ' class="form-title">' . $title . '</' . $args['title_tag'] . '>';
 
 		// --------------------------------------------------------
 		// Onderwerpen
@@ -1378,6 +1380,21 @@ function community_feed_add_filter_form( $args = array() ) {
 			$args_select['label']      = $obj->labels->name;
 			$return                    .= community_select_list( $args_select );
 		}
+
+		if ( in_array( (int) get_query_var( DO_COMMUNITY_MAX_VAR ), DO_COMMUNITY_MAX_OPTIONS ) ) {
+			$args_select['default'] = get_query_var( DO_COMMUNITY_MAX_VAR );
+		} else {
+			$args_select['default'] = DO_COMMUNITY_MAX_DEFAULT;
+		}
+
+		$args_select['name']       = DO_COMMUNITY_MAX_VAR;
+		$args_select['id']         = DO_COMMUNITY_MAX_VAR . '_id';
+		$args_select['terms_list'] = array();
+		foreach ( DO_COMMUNITY_MAX_OPTIONS as $maxnr ) {
+			$args_select['terms_list'][ $maxnr ] = sprintf( _x( '%s per pagina', 'button label default', 'wp-rijkshuisstijl' ), $maxnr );
+		}
+		$args_select['label'] = _x( 'Aantal', 'button label default', 'wp-rijkshuisstijl' );
+		$return               .= community_select_list( $args_select );
 
 		// --------------------------------------------------------
 		if ( 222 === 333 ) {
@@ -1457,11 +1474,8 @@ function community_feed_add_filter_form( $args = array() ) {
 
 		$return .= '<div class="button-list"><button type="submit" id="widget_community_filter-submit">' . $args['button_label'] . '</button></div>';
 		$return .= '</form>';
-//		$return .= '</details>';
 
 	}
-
-//	}
 
 	if ( $args['echo'] ) {
 		echo $return;
@@ -1715,28 +1729,39 @@ function community_feed_items_show( $items = array() ) {
 
 			if ( $args['extra_info'] ) {
 
-				$community_id   = '';
-				$community_name = '';
+				$community_name = '?';
 				$feed_id        = get_post_meta( $current_item_id, 'wprss_feed_id', true );
-				$extra_info     = 'events';
+				$extra_info     = '';
+
 				if ( $args['type'] === 'events' ) {
 					// different field for events feed
-					$community_id = get_field( 'community_rssfeed_relations_events', $feed_id );
-					$extra_info   = 'community_rssfeed_relations_events';
+					$community_cpt = get_field( 'community_rssfeed_relations_events', $feed_id );
 				} else {
 					// different field for posts feed
-					$community_id = get_field( 'community_rssfeed_relations_post', $feed_id );
-					$extra_info   = 'community_rssfeed_relations_post';
+					$community_cpt = get_field( 'community_rssfeed_relations_post', $feed_id );
 				}
-				if ( $community_id && $community_id[0]->ID ) {
-					$community_name = get_the_title( $community_id[0]->ID );
+
+
+				if ( is_object( $community_cpt[0] ) ) {
+
+					$community    = $community_cpt[0];
+					$default_name = $community->post_title;
+					$alt_name     = rhswp_filter_alternative_title( $community->ID, $default_name );
+					if ( $alt_name && ( $alt_name !== $default_name ) ) {
+						// first check if a short name is available
+						$community_name = $alt_name;
+					} else {
+						// if not, just the normal community title
+						$community_name = $default_name;
+					}
 				}
-//				echo '<h2>$current_item_id: ' . $current_item_id . ' (' . get_the_title( $current_item_id ) . ')</h2>';
-//				echo '<pre>';
-//				var_dump( $community_id );
-//				echo '</pre>';
+
 
 				if ( $community_name ) {
+//					$community_name .= ' <a href="' . get_edit_post_link( $feed_id ) . '">';
+//					$community_name .= get_the_title( $feed_id ) . '</a>';
+//					$community_name .= ' hoort bij community: ' . $community->ID;
+
 					$extra_info = '<span class="source">' . $community_name . '</span>';
 				}
 

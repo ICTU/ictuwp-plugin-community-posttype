@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: ICTU / Digitale Overheid / Community\n"
-"POT-Creation-Date: 2023-11-17 16:53+0100\n"
-"PO-Revision-Date: 2023-11-17 16:53+0100\n"
+"POT-Creation-Date: 2024-01-26 23:38+0100\n"
+"PO-Revision-Date: 2024-01-26 23:38+0100\n"
 "Last-Translator: Paul van Buuren <poedit@wbvb.nl>\n"
 "Language-Team: Paul van Buuren <poedit@wbvb.nl>\n"
 "Language: nl_NL\n"
@@ -10,7 +10,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
-"X-Generator: Poedit 3.4.1\n"
+"X-Generator: Poedit 3.4.2\n"
 "X-Poedit-Basepath: ..\n"
 "X-Poedit-Flags-xgettext: --add-comments=translators:\n"
 "X-Poedit-WPHeader: ictuwp-plugin-community-posttype.php\n"
@@ -21,52 +21,52 @@ msgstr ""
 "X-Poedit-SearchPath-0: .\n"
 "X-Poedit-SearchPathExcluded-0: *.min.js\n"
 
-#: ictuwp-plugin-community-posttype.php:171
+#: ictuwp-plugin-community-posttype.php:179
 msgctxt "naam template"
 msgid "[community] overzicht"
 msgstr ""
 
-#: ictuwp-plugin-community-posttype.php:172
+#: ictuwp-plugin-community-posttype.php:180
 msgctxt "naam template"
 msgid "[community] toon agenda"
 msgstr ""
 
-#: ictuwp-plugin-community-posttype.php:173
+#: ictuwp-plugin-community-posttype.php:181
 msgctxt "naam template"
 msgid "[community] toon berichten"
 msgstr ""
 
-#: ictuwp-plugin-community-posttype.php:388
+#: ictuwp-plugin-community-posttype.php:397
 msgctxt "label page template"
 msgid "[Community] alle community's"
 msgstr ""
 
-#: ictuwp-plugin-community-posttype.php:389
+#: ictuwp-plugin-community-posttype.php:398
 msgctxt "label page template"
 msgid "[Community] community-detail"
 msgstr ""
 
-#: ictuwp-plugin-community-posttype.php:390
+#: ictuwp-plugin-community-posttype.php:399
 msgctxt "label page template"
 msgid "[Community] pagina agenda"
 msgstr ""
 
-#: ictuwp-plugin-community-posttype.php:409
+#: ictuwp-plugin-community-posttype.php:418
 msgctxt "customizer menu"
 msgid "Community's"
 msgstr ""
 
-#: ictuwp-plugin-community-posttype.php:411
+#: ictuwp-plugin-community-posttype.php:420
 msgctxt "customizer menu"
 msgid "Instellingen voor community's."
 msgstr ""
 
-#: ictuwp-plugin-community-posttype.php:422
+#: ictuwp-plugin-community-posttype.php:431
 msgctxt "customizer menu"
 msgid "Pagina met alle community's"
 msgstr ""
 
-#: ictuwp-plugin-community-posttype.php:423
+#: ictuwp-plugin-community-posttype.php:432
 msgctxt "customizer menu"
 msgid ""
 "In het kruimelpad en in de URL voor een initiatief zal deze pagina "
@@ -74,24 +74,20 @@ msgid ""
 msgstr ""
 
 #: ictuwp-plugin-community-posttype.php:597
-#: ictuwp-plugin-community-posttype.php:788
-#: templates/template-overview-communities.php:605
-msgid "Onderwerp community"
-msgid_plural "Onderwerpen community"
+msgid "Thema"
+msgid_plural "Thema's"
 msgstr[0] ""
 msgstr[1] ""
 
 #: ictuwp-plugin-community-posttype.php:621
-#: ictuwp-plugin-community-posttype.php:785
-#: templates/template-overview-communities.php:600
+#: ictuwp-plugin-community-posttype.php:761
 msgid "Type community"
 msgid_plural "Types community"
 msgstr[0] ""
 msgstr[1] ""
 
 #: ictuwp-plugin-community-posttype.php:645
-#: ictuwp-plugin-community-posttype.php:791
-#: templates/template-overview-communities.php:609
+#: ictuwp-plugin-community-posttype.php:767
 msgid "Doelgroep"
 msgid_plural "Doelgroepen"
 msgstr[0] ""
@@ -104,48 +100,75 @@ msgstr[0] ""
 msgstr[1] ""
 
 #: ictuwp-plugin-community-posttype.php:708
-msgctxt "label dossiers bij een single community"
-msgid "Hoort bij"
-msgstr ""
+msgid "Onderwerp"
+msgid_plural "Onderwerpen"
+msgstr[0] ""
+msgstr[1] ""
 
-#: ictuwp-plugin-community-posttype.php:794
-#: templates/template-overview-communities.php:613
+#: ictuwp-plugin-community-posttype.php:764
+msgid "Onderwerp community"
+msgid_plural "Onderwerpen community"
+msgstr[0] ""
+msgstr[1] ""
+
+#: ictuwp-plugin-community-posttype.php:770
 msgid "Bestuurslaag"
 msgid_plural "Overheidslagen"
 msgstr[0] ""
 msgstr[1] ""
 
-#: ictuwp-plugin-community-posttype.php:805
+#: ictuwp-plugin-community-posttype.php:781
 msgctxt "warning"
 msgid "We konden geen lijst met filters maken."
 msgstr ""
 
-#: ictuwp-plugin-community-posttype.php:824
+#: ictuwp-plugin-community-posttype.php:800
 msgctxt "label keyword veld"
 msgid "Zoek een community"
 msgstr ""
 
-#: ictuwp-plugin-community-posttype.php:825
+#: ictuwp-plugin-community-posttype.php:801
 msgctxt "label input"
 msgid "Zoeken"
 msgstr ""
 
-#: ictuwp-plugin-community-posttype.php:826
-#: templates/template-overview-communities.php:255
+#: ictuwp-plugin-community-posttype.php:802
+#: templates/template-overview-communities.php:243
 msgctxt "placeholder input"
 msgid "[zoekterm voor community]"
 msgstr ""
 
-#: ictuwp-plugin-community-posttype.php:1022
+#: ictuwp-plugin-community-posttype.php:998
 #: templates/archive-communities.php:59
 msgid "community"
 msgid_plural "community's"
 msgstr[0] ""
 msgstr[1] ""
 
-#: ictuwp-plugin-community-posttype.php:1058
+#: ictuwp-plugin-community-posttype.php:1034
 msgctxt "naam template"
 msgid "Overzicht community's"
+msgstr ""
+
+#: ictuwp-plugin-community-posttype.php:1184
+msgctxt "1st option value select"
+msgid "-selecteer-"
+msgstr ""
+
+#: ictuwp-plugin-community-posttype.php:1315
+msgctxt "button label default"
+msgid "Filter berichten"
+msgstr ""
+
+#: ictuwp-plugin-community-posttype.php:1393
+#, php-format
+msgctxt "button label default"
+msgid "%s per pagina"
+msgstr ""
+
+#: ictuwp-plugin-community-posttype.php:1395
+msgctxt "button label default"
+msgid "Aantal"
 msgstr ""
 
 #: includes/register-community-posttype.php:28
@@ -336,177 +359,177 @@ msgid "Types"
 msgstr ""
 
 #: includes/register-community-posttype.php:109
+#: includes/register-community-posttype.php:120
 msgctxt "taxonomy"
-msgid "Community-onderwerpen"
+msgid "Thema's"
 msgstr ""
 
 #: includes/register-community-posttype.php:110
 msgctxt "taxonomy singular name"
-msgid "Onderwerp"
+msgid "Thema"
 msgstr ""
 
 #: includes/register-community-posttype.php:111
 msgctxt "taxonomy"
-msgid "Search onderwerpen"
+msgid "Search thema's"
 msgstr ""
 
 #: includes/register-community-posttype.php:112
 msgctxt "taxonomy"
-msgid "Alle onderwerpen"
+msgid "Alle thema's"
 msgstr ""
 
 #: includes/register-community-posttype.php:113
 msgctxt "taxonomy"
-msgid "Parent onderwerp"
+msgid "Parent thema"
 msgstr ""
 
 #: includes/register-community-posttype.php:114
 msgctxt "taxonomy"
-msgid "Parent onderwerp:"
+msgid "Parent thema:"
 msgstr ""
 
 #: includes/register-community-posttype.php:115
 msgctxt "taxonomy"
-msgid "Bekijk onderwerp"
+msgid "Bekijk thema"
 msgstr ""
 
 #: includes/register-community-posttype.php:116
 msgctxt "taxonomy"
-msgid "Edit onderwerp"
+msgid "Edit thema"
 msgstr ""
 
 #: includes/register-community-posttype.php:117
 msgctxt "taxonomy"
-msgid "Update onderwerp"
+msgid "Update thema"
 msgstr ""
 
 #: includes/register-community-posttype.php:118
 msgctxt "taxonomy"
-msgid "Add new onderwerp"
+msgid "Add new thema"
 msgstr ""
 
 #: includes/register-community-posttype.php:119
 msgctxt "taxonomy"
-msgid "New onderwerp name"
-msgstr ""
-
-#: includes/register-community-posttype.php:120
-msgctxt "taxonomy"
-msgid "Onderwerpen"
+msgid "New thema name"
 msgstr ""
 
 #: includes/register-community-posttype.php:139
-#: includes/register-community-posttype.php:150
 msgctxt "taxonomy"
-msgid "Overheidslagen"
+msgid "Types organisatie"
 msgstr ""
 
 #: includes/register-community-posttype.php:140
 msgctxt "taxonomy singular name"
-msgid "Overheidslaag"
+msgid "Type organisatie"
 msgstr ""
 
 #: includes/register-community-posttype.php:141
 msgctxt "taxonomy"
-msgid "Search overheidslagen"
+msgid "Search organisatie-types"
 msgstr ""
 
 #: includes/register-community-posttype.php:142
 msgctxt "taxonomy"
-msgid "Alle overheidslagen"
+msgid "Alle organisatie-types"
 msgstr ""
 
 #: includes/register-community-posttype.php:143
 msgctxt "taxonomy"
-msgid "Parent overheidslaag"
+msgid "Parent organisatie-type"
 msgstr ""
 
 #: includes/register-community-posttype.php:144
 msgctxt "taxonomy"
-msgid "Parent overheidslaag:"
+msgid "Parent organisatie-type:"
 msgstr ""
 
 #: includes/register-community-posttype.php:145
 msgctxt "taxonomy"
-msgid "Bekijk overheidslaag"
+msgid "Bekijk organisatie-type"
 msgstr ""
 
 #: includes/register-community-posttype.php:146
 msgctxt "taxonomy"
-msgid "Edit overheidslaag"
+msgid "Edit organisatie-type"
 msgstr ""
 
 #: includes/register-community-posttype.php:147
 msgctxt "taxonomy"
-msgid "Update overheidslaag"
+msgid "Update organisatie-type"
 msgstr ""
 
 #: includes/register-community-posttype.php:148
 msgctxt "taxonomy"
-msgid "Add new overheidslaag"
+msgid "Add new organisatie-type"
 msgstr ""
 
 #: includes/register-community-posttype.php:149
 msgctxt "taxonomy"
-msgid "New overheidslaag name"
+msgid "New organisatie-type name"
 msgstr ""
 
-#: includes/register-community-posttype.php:169
+#: includes/register-community-posttype.php:150
+msgctxt "taxonomy"
+msgid "Type organisatie"
+msgstr ""
+
+#: includes/register-community-posttype.php:170
 msgctxt "taxonomy"
 msgid "Community-doelgroepen"
 msgstr ""
 
-#: includes/register-community-posttype.php:170
+#: includes/register-community-posttype.php:171
 msgctxt "taxonomy singular name"
 msgid "Doelgroep"
 msgstr ""
 
-#: includes/register-community-posttype.php:171
+#: includes/register-community-posttype.php:172
 msgctxt "taxonomy"
 msgid "Search doelgroepen"
 msgstr ""
 
-#: includes/register-community-posttype.php:172
+#: includes/register-community-posttype.php:173
 msgctxt "taxonomy"
 msgid "Alle doelgroepen"
 msgstr ""
 
-#: includes/register-community-posttype.php:173
+#: includes/register-community-posttype.php:174
 msgctxt "taxonomy"
 msgid "Parent doelgroep"
 msgstr ""
 
-#: includes/register-community-posttype.php:174
+#: includes/register-community-posttype.php:175
 msgctxt "taxonomy"
 msgid "Parent doelgroep:"
 msgstr ""
 
-#: includes/register-community-posttype.php:175
+#: includes/register-community-posttype.php:176
 msgctxt "taxonomy"
 msgid "Edit doelgroep"
 msgstr ""
 
-#: includes/register-community-posttype.php:176
+#: includes/register-community-posttype.php:177
 msgctxt "taxonomy"
 msgid "Bekijk doelgroep"
 msgstr ""
 
-#: includes/register-community-posttype.php:177
+#: includes/register-community-posttype.php:178
 msgctxt "taxonomy"
 msgid "Update doelgroep"
 msgstr ""
 
-#: includes/register-community-posttype.php:178
+#: includes/register-community-posttype.php:179
 msgctxt "taxonomy"
 msgid "Add new doelgroep"
 msgstr ""
 
-#: includes/register-community-posttype.php:179
+#: includes/register-community-posttype.php:180
 msgctxt "taxonomy"
 msgid "New doelgroep name"
 msgstr ""
 
-#: includes/register-community-posttype.php:180
+#: includes/register-community-posttype.php:181
 msgctxt "taxonomy"
 msgid "Doelgroepen"
 msgstr ""
@@ -517,10 +540,10 @@ msgstr ""
 
 #: includes/widget-filter.php:39
 msgctxt "widget name"
-msgid "(DO) community filter widget"
+msgid "(DO - community) filter widget"
 msgstr ""
 
-#: includes/widget-filter.php:113
+#: includes/widget-filter.php:114
 msgctxt "warning"
 msgid ""
 "Er is nog geen overzichtspagina ingesteld voor het overzicht van "
@@ -528,11 +551,11 @@ msgid ""
 "\"Community's\"."
 msgstr ""
 
-#: includes/widget-filter.php:121 includes/widget-last-added.php:127
+#: includes/widget-filter.php:122 includes/widget-last-added.php:192
 msgid "Titel"
 msgstr ""
 
-#: includes/widget-filter.php:129 includes/widget-last-added.php:136
+#: includes/widget-filter.php:130 includes/widget-last-added.php:201
 msgid "Beschrijving"
 msgstr ""
 
@@ -542,102 +565,157 @@ msgstr ""
 
 #: includes/widget-last-added.php:36
 msgctxt "widget name"
-msgid "(DO) community recent toegevoegd widget"
+msgid "(DO - community) recent toegevoegd widget"
 msgstr ""
 
-#: includes/widget-last-added.php:115
+#: includes/widget-last-added.php:180
 msgctxt "default title"
 msgid "Recent toegevoegde community's"
 msgstr ""
 
-#: includes/widget-last-added.php:144
+#: includes/widget-last-added.php:209
 msgctxt "label"
 msgid "Maximum aantal community's"
 msgstr ""
 
-#: includes/widget-last-added.php:164
+#: includes/widget-last-added.php:229
 msgctxt "label"
 msgid "Niet ouder dan hoeveel dagen?"
 msgstr ""
 
-#: templates/template-overview-communities.php:172
+#: templates/template-overview-communities.php:20
+msgctxt "Labels detailbuttons"
+msgid "Toon alle community's"
+msgstr ""
+
+#: templates/template-overview-communities.php:21
+#, php-format
+msgctxt "Labels detailbuttons"
+msgid ""
+"There are __NUMBER__ blocks with hidden text on this page. Use the button "
+"with '%s' to make the text available."
+msgstr ""
+
+#: templates/template-overview-communities.php:26
+msgctxt "Labels detailbuttons"
+msgid "All detail blocks are closed"
+msgstr ""
+
+#: templates/template-overview-communities.php:27
+msgctxt "Labels detailbuttons"
+msgid "All detail blocks are open"
+msgstr ""
+
+#: templates/template-overview-communities.php:29
+msgctxt "Labels detailbuttons"
+msgid "Verberg alle community's"
+msgstr ""
+
+#: templates/template-overview-communities.php:182
 msgctxt "community lijst titel"
 msgid "Alle community's"
 msgstr ""
 
-#: templates/template-overview-communities.php:233
+#: templates/template-overview-communities.php:221
 #, php-format
 msgid "%s community gevonden"
 msgid_plural "%s community's gevonden"
 msgstr[0] ""
 msgstr[1] ""
 
-#: templates/template-overview-communities.php:253
+#: templates/template-overview-communities.php:241
 msgctxt "label keyword veld"
 msgid "Zoek community"
 msgstr ""
 
-#: templates/template-overview-communities.php:254
+#: templates/template-overview-communities.php:242
 msgctxt "Zoek community input label"
 msgid "Zoek"
 msgstr ""
 
-#: templates/template-overview-communities.php:426
+#: templates/template-overview-communities.php:308
+msgctxt "reset filter"
+msgid "Toon alle community's"
+msgstr ""
+
+#: templates/template-overview-communities.php:411
 msgctxt "read more visible link text"
 msgid "Lees meer"
 msgstr ""
 
-#: templates/template-overview-communities.php:426
+#: templates/template-overview-communities.php:411
 #, php-format
 msgctxt "read more invisible link text"
 msgid "over de community %s"
 msgstr ""
 
-#: templates/template-overview-communities.php:473
+#: templates/template-overview-communities.php:459
 msgctxt "no results"
 msgid "Geen community's gevonden"
 msgstr ""
 
-#: templates/template-overview-communities.php:485
-msgctxt "title"
+#: templates/template-overview-communities.php:471
+#: templates/template-rss-agenda.php:82
+msgctxt "Header rss links"
 msgid "Agenda"
 msgstr ""
 
-#: templates/template-overview-communities.php:525
-msgctxt "title"
+#: templates/template-overview-communities.php:512
+#: templates/template-rss-posts.php:79
+msgctxt "Header rss links"
 msgid "Berichten"
 msgstr ""
 
-#: templates/template-overview-communities.php:561
+#: templates/template-overview-communities.php:550
 msgctxt "label keyword veld"
 msgid "Laatst toegevoegd"
 msgstr ""
 
-#: templates/template-overview-communities.php:665
+#: templates/template-overview-communities.php:589
+msgctxt "Titel in filter"
+msgid "Type community"
+msgstr ""
+
+#: templates/template-overview-communities.php:593
+msgctxt "Titel in filter"
+msgid "Thema"
+msgstr ""
+
+#: templates/template-overview-communities.php:596
+msgctxt "Titel in filter"
+msgid "Type professional"
+msgstr ""
+
+#: templates/template-overview-communities.php:599
+msgctxt "Titel in filter"
+msgid "Type organisatie"
+msgstr ""
+
+#: templates/template-overview-communities.php:650
 msgctxt "label keyword veld"
 msgid "Onderwerpen, types en doelgroepen"
 msgstr ""
 
-#: templates/template-overview-communities.php:798
+#: templates/template-overview-communities.php:787
 msgid "Types"
 msgstr ""
 
-#: templates/template-overview-communities.php:799
+#: templates/template-overview-communities.php:788
 msgid "Onderwerpen"
 msgstr ""
 
-#: templates/template-overview-communities.php:800
+#: templates/template-overview-communities.php:789
 msgid "Doelgroepen"
 msgstr ""
 
-#: templates/template-rss-agenda.php:50
-msgctxt "Header rss links"
-msgid "Agenda"
+#: templates/template-rss-agenda.php:49 templates/template-rss-posts.php:45
+msgctxt "button label berichten"
+msgid "Filter op thema"
 msgstr ""
 
-#: templates/template-rss-posts.php:50
-msgctxt "Header rss links"
-msgid "Berichten"
+#: templates/template-rss-agenda.php:50 templates/template-rss-posts.php:46
+msgctxt "button label berichten"
+msgid "Filter"
 msgstr ""
 
 #. Plugin Name of the plugin/theme

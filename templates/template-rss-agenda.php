@@ -39,21 +39,36 @@ if ( function_exists( 'genesis' ) ) {
 
 function community_add_agenda_grid( $args = array() ) {
 
-	$args_selection = array(
-		'event_type'   => 'events',
-		'form_id'      => 'community_events_filter',
-		'echo'         => false,
-		'form_name'    => _x( 'Filter op thema', 'button label berichten', 'wp-rijkshuisstijl' ),
-		'button_label' => _x( 'Filter', 'button label berichten', 'wp-rijkshuisstijl' ),
-		'debug'        => true
-	);
+	global $post;
 
-	$filter_form = community_feed_add_filter_form( $args_selection );
+
+	$showform    = ( get_field( 'posts_overview_filterform_show', $post->ID ) === 'posts_overview_filterform_show_yes' ) ? true : false;
+	$filter_form = '';
+	if ( $showform ) {
+
+		$formname       = ( get_field( 'posts_overview_filterform_title', $post->ID ) ) ?: _x( 'Filter op thema', 'button label berichten', 'wp-rijkshuisstijl' );
+		$button_label   = ( get_field( 'posts_overview_filterform_submit_label', $post->ID ) ) ?: _x( 'Filter', 'button label berichten', 'wp-rijkshuisstijl' );
+		$args_selection = array(
+			'event_type'   => 'events',
+			'form_id'      => 'community_events_filter',
+			'echo'         => false,
+			'form_name'    => esc_html( $formname ),
+			'button_label' => esc_html( $button_label ),
+			'debug'        => true
+		);
+		$filter_form    = community_feed_add_filter_form( $args_selection );
+	}
+
+	if ( in_array( (int) get_query_var( DO_COMMUNITY_MAX_VAR ), DO_COMMUNITY_MAX_OPTIONS ) ) {
+		$maxnr = get_query_var( DO_COMMUNITY_MAX_VAR );
+	} else {
+		$maxnr = DO_COMMUNITY_MAX_DEFAULT;
+	}
 
 	$args_selection = array(
 		'event_type'     => 'events',
 		'paging'         => 1,
-		'posts_per_page' => 20, // perhaps: get_option( 'posts_per_page' )?
+		'posts_per_page' => $maxnr,
 		'echo'           => false
 	);
 
