@@ -1,6 +1,7 @@
 # Changelog
 
 ## Version history
+* 1.2.4 - Synced labels for taxonomies on single community.
 * 1.2.3 - Bugfix: only show published communities on widget-communitys-with-feed list.
 * 1.2.2 - Bugfix: show description on widget-communitys-with-feed
 * 1.2.1 - Added filter to feeds overview pages.
