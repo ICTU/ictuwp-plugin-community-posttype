@@ -987,7 +987,7 @@ function ictuwp_communityfilter_list( $args_in = array() ) {
 
 				$return .= '<div class="taxonomy ' . $args['taxonomy'] . '">';
 				if ( $args['title'] ) {
-					$return .= '<' . $args['header_tag'] . '>' . $args['title'] . ':</' . $args['header_tag'] . '>';
+					$return .= '<' . $args['header_tag'] . '>' . $args['title'] . '</' . $args['header_tag'] . '>';
 				}
 
 				if ( $args['css_class_ul'] ) {
