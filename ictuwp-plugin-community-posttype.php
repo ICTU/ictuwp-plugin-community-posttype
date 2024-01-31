@@ -598,7 +598,7 @@ function rhswp_community_single_terms( $doreturn = false, $post_id = 0, $show_do
 		$labels .= '</dd>';
 
 		if ( $labels ) {
-			$values .= '<dt>' . _n( 'Thema', 'Thema\'s', count( $community_topics ), 'wp-rijkshuisstijl' ) . ': </dt>';
+			$values .= '<dt>' . _x( 'Thema', 'Titel in filter', 'wp-rijkshuisstijl' ) . ': </dt>';
 			$values .= $labels;
 		}
 
@@ -622,7 +622,7 @@ function rhswp_community_single_terms( $doreturn = false, $post_id = 0, $show_do
 		$labels .= '</dd>';
 
 		if ( $labels ) {
-			$values .= '<dt>' . _n( 'Type community', 'Types community', count( $community_types ), 'wp-rijkshuisstijl' ) . ': </dt>';
+			$values .= '<dt>' . _x( 'Type community', 'Titel in filter', 'wp-rijkshuisstijl' ) . ': </dt>';
 			$values .= $labels;
 		}
 
@@ -646,7 +646,7 @@ function rhswp_community_single_terms( $doreturn = false, $post_id = 0, $show_do
 		$labels .= '</dd>';
 
 		if ( $labels ) {
-			$values .= '<dt>' . _n( 'Doelgroep', 'Doelgroepen', count( $community_audiences ), 'wp-rijkshuisstijl' ) . ': </dt>';
+			$values .= '<dt>' . _x( 'Type professional', 'Titel in filter', 'wp-rijkshuisstijl' ) . ': </dt>';
 			$values .= $labels;
 		}
 
@@ -670,7 +670,7 @@ function rhswp_community_single_terms( $doreturn = false, $post_id = 0, $show_do
 		$labels .= '</dd>';
 
 		if ( $labels ) {
-			$values .= '<dt>' . _n( 'Overheidslaag', 'Overheidslagen', count( $community_overheidslagen ), 'wp-rijkshuisstijl' ) . ': </dt>';
+			$values .= '<dt>' . _x( 'Type organisatie', 'Titel in filter', 'wp-rijkshuisstijl' ) . ': </dt>';
 			$values .= $labels;
 		}
 
@@ -987,7 +987,7 @@ function ictuwp_communityfilter_list( $args_in = array() ) {
 
 				$return .= '<div class="taxonomy ' . $args['taxonomy'] . '">';
 				if ( $args['title'] ) {
-					$return .= '<' . $args['header_tag'] . '>' . $args['title'] . '</' . $args['header_tag'] . '>';
+					$return .= '<' . $args['header_tag'] . '>' . $args['title'] . ':</' . $args['header_tag'] . '>';
 				}
 
 				if ( $args['css_class_ul'] ) {
