@@ -1,9 +1,10 @@
 <?php
 /**
  *
- * template-overview-communities.php
+ * template-overview-communities.php / template_overview_communities.php
  *
- * @version 1.0.1 - First version on live server
+ * Version:             1.2.5
+ * Version description: Added share options to community pages.
  */
 
 //========================================================================================================
@@ -40,12 +41,20 @@ if ( function_exists( 'genesis' ) ) {
 	//* Force full-width-content layout
 	add_filter( 'genesis_pre_get_option_site_layout', '__genesis_return_full_width_content' );
 
-
-	// append grid to entry_content
-	add_action( 'genesis_entry_content', 'community_add_communities_grid', 20 );
-
 	// remove 'page' class from body
 	add_filter( 'body_class', 'community_remove_body_classes' );
+
+	// append grid to entry_content
+	add_action( 'genesis_entry_content', 'community_add_container_open', 8 );
+
+	// append grid to entry_content
+	add_action( 'genesis_entry_content', 'community_add_container_close', 12 );
+
+	// append grid to entry_content
+	add_action( 'genesis_entry_content', 'community_add_communities_grid', 22 );
+
+	// social media share buttons
+	add_action( 'genesis_entry_content', 'rhswp_append_socialbuttons', 24 );
 
 	// append content blocks
 	if ( function_exists( 'rhswp_extra_contentblokken_checker' ) && function_exists( 'rhswp_write_extra_contentblokken' ) ) {
@@ -961,3 +970,16 @@ function NOT_USED_community_get_selection_with_filters( $args = array() ) {
 }
 
 //========================================================================================================
+
+function community_add_container_open( $args = array() ) {
+	echo '<div class="inleiding columns"> ';
+}
+
+//========================================================================================================
+
+function community_add_container_close( $args = array() ) {
+	echo ' </div>';
+}
+
+//========================================================================================================
+
