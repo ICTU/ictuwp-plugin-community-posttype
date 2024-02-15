@@ -10,9 +10,8 @@
 if ( function_exists( 'genesis' ) ) {
 	// Genesis wordt gebruikt als framework
 
-	//* Force full-width-content layout
-//	add_filter( 'genesis_pre_get_option_site_layout', '__genesis_return_full_width_content' );
-
+	// social media share buttons
+	add_action( 'genesis_entry_content', 'rhswp_append_socialbuttons', 24 );
 
 	// append grid to entry_content
 	add_action( 'genesis_entry_content', 'community_add_agenda_grid', 20 );

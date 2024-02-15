@@ -11,6 +11,9 @@
 if ( function_exists( 'genesis' ) ) {
 	// Genesis wordt gebruikt als framework
 
+	// social media share buttons
+	add_action( 'genesis_entry_content', 'rhswp_append_socialbuttons', 24 );
+
 	// append grid to entry_content
 	add_action( 'genesis_entry_content', 'community_add_posts_grid', 20 );
 
