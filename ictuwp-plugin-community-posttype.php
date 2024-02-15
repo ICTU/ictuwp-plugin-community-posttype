@@ -1690,7 +1690,7 @@ function community_feed_items_show( $items = array() ) {
 
 	if ( $items->have_posts() ) {
 		$current_date  =
-		$month_previous = date_i18n( $date_format_month, time() );
+		$month_previous = '';
 		$year_previous = date_i18n( $date_format_year, time() );
 		$postcounter   = 0;
 		$cssclass_a    = '';
