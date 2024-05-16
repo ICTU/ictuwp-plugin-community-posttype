@@ -92,6 +92,7 @@ if ( ! class_exists( 'DO_COMMUNITY_CPT' ) ) :
 	class DO_COMMUNITY_CPT {
 
 		protected $template_overview_communities;
+		protected $template_calendar_view;
 
 		/** ----------------------------------------------------------------------------------------------------
 		 * Init
@@ -108,6 +109,7 @@ if ( ! class_exists( 'DO_COMMUNITY_CPT' ) ) :
 		public function __construct() {
 
 			$this->template_overview_communities = 'template_overview_communities.php';
+			$this->template_calendar_view        = 'template-calendar-view.php';
 			$this->template_page_agenda          = DO_COMMUNITY_PAGE_RSS_AGENDA;
 			$this->template_page_posts           = DO_COMMUNITY_PAGE_RSS_POSTS;
 
@@ -183,6 +185,7 @@ if ( ! class_exists( 'DO_COMMUNITY_CPT' ) ) :
 			$post_templates[ $this->template_overview_communities ] = _x( "[community] overzicht", "naam template", "wp-rijkshuisstijl" );
 			$post_templates[ $this->template_page_agenda ]          = _x( "[community] toon agenda", "naam template", "wp-rijkshuisstijl" );
 			$post_templates[ $this->template_page_posts ]           = _x( "[community] toon berichten", "naam template", "wp-rijkshuisstijl" );
+			$post_templates[ $this->template_calendar_view ]        = _x( "[community] eventoverzicht in tabelvorm", "naam template", "wp-rijkshuisstijl" );
 
 			return $post_templates;
 
@@ -258,6 +261,11 @@ if ( ! class_exists( 'DO_COMMUNITY_CPT' ) ) :
 
 				// het is een overzicht van community's
 				$archive_template = dirname( __FILE__ ) . '/templates/template-overview-communities.php';
+
+			} elseif ( 'template-calendar-view.php' == $page_template ) {
+
+				// overzicht van alle events in tabelvorm
+				$archive_template = dirname( __FILE__ ) . '/templates/template-calendar-view.php';
 
 			}
 
