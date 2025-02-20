@@ -1,6 +1,7 @@
 # Changelog
 
 ## Version history
+* 1.2.6 - Bug fix for empty lists; nofollow attribute for external links.
 * 1.2.5 - Added share options to community pages.
 * 1.2.4 - Synced labels for taxonomies on single community.
 * 1.2.3 - Bugfix: only show published communities on widget-communitys-with-feed list.

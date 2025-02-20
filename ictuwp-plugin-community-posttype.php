@@ -8,8 +8,8 @@
  * Plugin Name:         ICTU / Digitale Overheid / Community
  * Plugin URI:          https://github.com/ICTU/ictuwp-plugin-community-posttype
  * Description:         Plugin voor het aanmaken van posttype 'community' en bijbehorende taxonomieen.
- * Version:             1.2.5
- * Version description: Added share options to community pages.
+ * Version:             1.2.6
+ * Version description: Bug fix for empty lists; nofollow attribute for external links.
  * Author:              Paul van Buuren
  * Author URI:          https://github.com/ICTU/ictuwp-plugin-community-posttype/
  * License:             GPL-2.0+
@@ -1697,11 +1697,10 @@ function community_feed_items_show( $items = array() ) {
 	$items = $args['items'];
 
 	if ( $items->have_posts() ) {
-		$current_date  =
 		$month_previous = '';
-		$year_previous = date_i18n( $date_format_year, time() );
-		$postcounter   = 0;
-		$cssclass_a    = '';
+		$year_previous  = date_i18n( $date_format_year, time() );
+		$postcounter    = 0;
+		$cssclass_a     = '';
 
 		if ( $args['title'] ) {
 			$return .= $args['before_title'] . $args['title'] . $args['after_title'];
@@ -1717,9 +1716,9 @@ function community_feed_items_show( $items = array() ) {
 
 			if ( $postcounter < 1 ) {
 				$show_opening_tag = true;
-				// $postcounter = 0;
-				if ( $args['type'] === 'events' ) {
 
+				if ( $args['type'] === 'events' ) {
+					// get the date for events
 					$post_meta          = get_post_meta( $current_item_id, 'wprss_item_date', true );
 					$month_current_item = date_i18n( $date_format_month, strtotime( $post_meta ) );
 					$year_current_item  = date_i18n( $date_format_year, strtotime( $post_meta ) );
@@ -1728,8 +1727,11 @@ function community_feed_items_show( $items = array() ) {
 					} else {
 						$show_opening_tag = false;
 					}
+				} else {
+					// no event
+					$postcounter = 1;
 				}
-				if ( $show_opening_tag ) {
+				if ( $show_opening_tag && $postcounter > 0 ) {
 					$return .= '<ul class="import-items ' . $cssclass . '">';
 				}
 			}
@@ -1766,10 +1768,6 @@ function community_feed_items_show( $items = array() ) {
 
 
 				if ( $community_name ) {
-//					$community_name .= ' <a href="' . get_edit_post_link( $feed_id ) . '">';
-//					$community_name .= get_the_title( $feed_id ) . '</a>';
-//					$community_name .= ' hoort bij community: ' . $community->ID;
-
 					$extra_info = '<span class="source">' . $community_name . '</span>';
 				}
 
@@ -1783,12 +1781,8 @@ function community_feed_items_show( $items = array() ) {
 
 
 			if ( $args['type'] === 'events' ) {
-				$debug    = false;
-				$cssclass = '';
-//				if ( $community_name === 'iBestuur' ) {
-//					$debug = true;
-//				}
-
+				$debug              = false;
+				$cssclass           = '';
 				$post_meta          = community_get_event_date( $current_item_id, $debug );
 				$month_current_item = date_i18n( $date_format_month, strtotime( $post_meta ) );
 				$year_current_item  = date_i18n( $date_format_year, strtotime( $post_meta ) );
@@ -1815,7 +1809,7 @@ function community_feed_items_show( $items = array() ) {
 				$date     = date_i18n( $date_format_badge, strtotime( $post_meta ) );
 				$date_tag = '<time datetime="' . date_i18n( $date_format_badge, strtotime( $post_meta ) ) . '">' . $date . '</time>';
 
-				$return         .= '<span class="date date-event">' . $date_tag . '</span> ' . $container_start . '<a href="' . get_permalink() . '"' . $cssclass_a . '>' . get_the_title() . '</a>';
+				$return         .= '<span class="date date-event">' . $date_tag . '</span> ' . $container_start . '<a rel="nofollow" href="' . get_permalink() . '"' . $cssclass_a . '>' . get_the_title() . '</a>';
 				$return         .= $extra_info . $container_end;
 				$return         .= '</li>';
 				$month_previous = $month_current_item;
@@ -1829,7 +1823,7 @@ function community_feed_items_show( $items = array() ) {
 				}
 
 				$return .= '<li>';
-				$return .= $date_string . ' ' . $container_start . '<a href="' . get_permalink() . '"' . $cssclass_a . '>' . get_the_title() . '</a>';
+				$return .= $date_string . ' ' . $container_start . '<a rel="nofollow" href="' . get_permalink() . '"' . $cssclass_a . '>' . get_the_title() . '</a>';
 				$return .= $extra_info . $container_end;
 				$return .= '</li>';
 
@@ -1852,13 +1846,6 @@ function community_get_event_date( $item_id = 0, $debug = false ) {
 	if ( $item_id ) {
 		$item_date = get_post_meta( $item_id, 'wprss_item_date', true );
 		$post_meta = get_post_meta( $item_id );
-
-//		if ( $debug ) {
-//			echo '<h1>ID: ' . $item_id . '</h1>';
-//			echo '<pre>';
-//			var_dump( $post_meta );
-//			echo '</pre>';
-//		}
 
 		if ( $item_date ) {
 			return $item_date;
