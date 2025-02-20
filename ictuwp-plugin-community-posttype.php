@@ -735,6 +735,7 @@ function rhswp_community_single_terms( $doreturn = false, $post_id = 0, $show_do
 	} else {
 		echo $return;
 	}
+	
 }
 
 //========================================================================================================
