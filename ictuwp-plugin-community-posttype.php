@@ -735,7 +735,7 @@ function rhswp_community_single_terms( $doreturn = false, $post_id = 0, $show_do
 	} else {
 		echo $return;
 	}
-	
+
 }
 
 //========================================================================================================
@@ -1700,6 +1700,7 @@ function community_feed_items_show( $items = array() ) {
 	if ( $items->have_posts() ) {
 		$month_previous = '';
 		$year_previous  = date_i18n( $date_format_year, time() );
+		$year_present   = date_i18n( $date_format_year, time() );
 		$postcounter    = 0;
 		$cssclass_a     = '';
 
@@ -1790,14 +1791,12 @@ function community_feed_items_show( $items = array() ) {
 
 				if ( $month_previous !== $month_current_item ) {
 					if ( $postcounter === 1 ) {
+						// skip
 					} else {
 						$return .= '</ul>';
 					}
-					if ( $year_previous !== $year_current_item ) {
-						$return .= '<' . $tag_subtitle . '>' . $year_current_item . ' - ' . $month_current_item . '</' . $tag_subtitle . '>';
-					} else {
-						$return .= '<' . $tag_subtitle . '>' . ucfirst( $month_current_item ) . '</' . $tag_subtitle . '>';
-					}
+					$return .= '<' . $tag_subtitle . '>' . ucfirst( $month_current_item ) . ' ' . $year_current_item . '</' . $tag_subtitle . '>';
+
 					if ( $args['cssclass'] ) {
 						$cssclass .= ' ' . $args['cssclass'];
 					}
@@ -1810,25 +1809,42 @@ function community_feed_items_show( $items = array() ) {
 				$date     = date_i18n( $date_format_badge, strtotime( $post_meta ) );
 				$date_tag = '<time datetime="' . date_i18n( $date_format_badge, strtotime( $post_meta ) ) . '">' . $date . '</time>';
 
-				$return         .= '<span class="date date-event">' . $date_tag . '</span> ' . $container_start . '<a rel="nofollow" href="' . get_permalink() . '"' . $cssclass_a . '>' . get_the_title() . '</a>';
-				$return         .= $extra_info . $container_end;
-				$return         .= '</li>';
-				$month_previous = $month_current_item;
-				$year_previous  = $year_current_item;
+				$return .= '<span class="date date-event">' . $date_tag . '</span> ' . $container_start . '<a rel="nofollow" href="' . get_permalink() . '"' . $cssclass_a . '>' . get_the_title() . '</a>';
+				$return .= $extra_info . $container_end;
+				$return .= '</li>';
 
 			} else {
 				$date_string = '';
+				$date        = get_the_date( 'c', $current_item_id );
 				if ( $args['show_date'] ) {
-					$date        = get_the_date( $date_format_badge );
-					$date_string = '<span class="date date-publish">' . $date . '</span>';
+					$date_string = '<span class="date date-publish">' . date_i18n( $date_format_badge, strtotime( $date ) ) . '</span>';
+				}
+				$month_current_item = date_i18n( $date_format_month, strtotime( $date ) );
+				$year_current_item  = date_i18n( $date_format_year, strtotime( $date ) );
+
+				if ( $month_previous !== $month_current_item ) {
+					if ( $postcounter === 1 ) {
+					} else {
+						$return .= '</ul>';
+					}
+					$return .= '<' . $tag_subtitle . '>' . ucfirst( $month_current_item ) . ' ' . $year_current_item . '</' . $tag_subtitle . '>';
+
+					if ( $args['cssclass'] ) {
+						$cssclass .= ' ' . $args['cssclass'];
+					}
+
+					$return .= '<ul class="import-items agenda' . $cssclass . '"><li>';
+				} else {
+					$return .= '<li>';
 				}
 
-				$return .= '<li>';
 				$return .= $date_string . ' ' . $container_start . '<a rel="nofollow" href="' . get_permalink() . '"' . $cssclass_a . '>' . get_the_title() . '</a>';
 				$return .= $extra_info . $container_end;
 				$return .= '</li>';
 
 			}
+			$month_previous = $month_current_item;
+			$year_previous  = $year_current_item;
 
 
 		endwhile;
