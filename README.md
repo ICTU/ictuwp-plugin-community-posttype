@@ -4,7 +4,7 @@ Plugin voor het aanmaken van posttype 'community' en bijbehorende taxonomieen.
 
 
 ## Current version:
-* 1.2.6 - Bug fix for empty lists; nofollow attribute for external links.
+* 1.2.7 - Show months for all posts, and show year.
 
 ## To do
 [ ] - translate all strings to English from Dutch
