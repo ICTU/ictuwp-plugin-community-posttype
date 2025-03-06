@@ -8,7 +8,7 @@
  * Plugin Name:         ICTU / Digitale Overheid / Community
  * Plugin URI:          https://github.com/ICTU/ictuwp-plugin-community-posttype
  * Description:         Plugin voor het aanmaken van posttype 'community' en bijbehorende taxonomieen.
- * Version:             1.2.7
+ * Version:             1.2.8
  * Version description: Show months for all posts, and show year.
  * Author:              Paul van Buuren
  * Author URI:          https://github.com/ICTU/ictuwp-plugin-community-posttype/

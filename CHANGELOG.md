@@ -1,7 +1,7 @@
 # Changelog
 
 ## Version history
-* 1.2.7 - Show months for all posts, and show year.
+* 1.2.8 - Show months for all posts, and show year.
 * 1.2.6 - Bug fix for empty lists; nofollow attribute for external links.
 * 1.2.5 - Added share options to community pages.
 * 1.2.4 - Synced labels for taxonomies on single community.
