@@ -1717,7 +1717,7 @@ function community_feed_items_show( $items = array() ) {
 			$extra_info      = '';
 
 			if ( $postcounter < 1 ) {
-				$show_opening_tag = true;
+				$show_opening_tag = false;
 
 				if ( $args['type'] === 'events' ) {
 					// get the date for events
@@ -1726,8 +1726,7 @@ function community_feed_items_show( $items = array() ) {
 					$year_current_item  = date_i18n( $date_format_year, strtotime( $post_meta ) );
 
 					if ( ( $month_previous === $month_current_item ) || ( $year_previous === $year_current_item ) ) {
-					} else {
-						$show_opening_tag = false;
+						$show_opening_tag = true;
 					}
 				} else {
 					// no event
