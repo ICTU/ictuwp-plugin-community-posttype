@@ -93,6 +93,8 @@ if ( ! class_exists( 'DO_COMMUNITY_CPT' ) ) :
 
 		protected $template_overview_communities;
 		protected $template_calendar_view;
+		protected $template_page_agenda;
+		protected $template_page_posts;
 
 		/** ----------------------------------------------------------------------------------------------------
 		 * Init
