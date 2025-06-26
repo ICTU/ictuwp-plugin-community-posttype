@@ -1915,3 +1915,12 @@ function get_feed_ids_for_tax( $existing_feedids = array(), $taxonomy = null, $t
 	return $return;
 }
 
+if ( function_exists( 'rhswp_append_widgets_before_socmed_footer' ) ) {
+
+} else {
+	function rhswp_append_widgets_before_socmed_footer() {
+		echo '<h1>Update theme to version >  2.44.2</h1>';
+		echo '<p>missing function : rhswp_append_widgets_before_socmed_footer</p>';
+
+	}
+}
