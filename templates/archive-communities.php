@@ -20,6 +20,12 @@ if ( function_exists( 'genesis' ) ) {
 	// titel toevoegen
 	add_action( 'genesis_before_loop', 'ictuwp_community_archive_title', 8 );
 
+	// social media share buttons
+	add_action( 'genesis_loop', 'rhswp_append_socialbuttons', 26 ); // gedaan, eerst widget, dan socmed
+
+	// extra widget ruimte
+	add_action( 'genesis_loop', 'rhswp_append_widgets_before_socmed_footer', 24 );
+
 
 	/** standard loop vervangen door custom loop */
 	remove_action( 'genesis_loop', 'genesis_do_loop' );

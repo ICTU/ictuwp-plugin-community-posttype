@@ -1,6 +1,7 @@
 # Changelog
 
 ## Version history
+* 1.3.1 - Append new widget space to templates.
 * 1.2.9 - Small PHP bugfix.
 * 1.2.8 - Show months for all posts, and show year.
 * 1.2.6 - Bug fix for empty lists; nofollow attribute for external links.

@@ -54,7 +54,10 @@ if ( function_exists( 'genesis' ) ) {
 	add_action( 'genesis_entry_content', 'community_add_communities_grid', 22 );
 
 	// social media share buttons
-	add_action( 'genesis_entry_content', 'rhswp_append_socialbuttons', 24 );
+	add_action( 'genesis_entry_content', 'rhswp_append_socialbuttons', 26 ); // gedaan, eerst widget, dan socmed
+
+	// extra widget ruimte
+	add_action( 'genesis_entry_content', 'rhswp_append_widgets_before_socmed_footer', 24 );
 
 	// append content blocks
 	if ( function_exists( 'rhswp_extra_contentblokken_checker' ) && function_exists( 'rhswp_write_extra_contentblokken' ) ) {
@@ -74,13 +77,13 @@ if ( function_exists( 'genesis' ) ) {
 
 	get_header(); ?>
 
-	<div id="primary" class="content-area">
-		<div id="content" class="clearfix">
+        <div id="primary" class="content-area">
+            <div id="content" class="clearfix">
 
-			<?php echo community_add_communities_grid() ?>
+                <?php echo community_add_communities_grid() ?>
 
-		</div><!-- #content -->
-	</div><!-- #primary -->
+            </div><!-- #content -->
+        </div><!-- #primary -->
 
 	<?php
 
