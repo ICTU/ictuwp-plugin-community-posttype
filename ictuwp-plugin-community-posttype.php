@@ -8,8 +8,8 @@
  * Plugin Name:         ICTU / Digitale Overheid / Community
  * Plugin URI:          https://github.com/ICTU/ictuwp-plugin-community-posttype
  * Description:         Plugin voor het aanmaken van posttype 'community' en bijbehorende taxonomieen.
- * Version:             1.3.1
- * Version description: Append new widget space to templates.
+ * Version:             1.4.1
+ * Version description: Upgrade to RSS Aggregator version 5.0.x
  * Author:              Paul van Buuren
  * Author URI:          https://github.com/ICTU/ictuwp-plugin-community-posttype/
  * License:             GPL-2.0+
@@ -1810,7 +1810,7 @@ function community_feed_items_show( $items = array() ) {
 				$date     = date_i18n( $date_format_badge, strtotime( $post_meta ) );
 				$date_tag = '<time datetime="' . date_i18n( $date_format_badge, strtotime( $post_meta ) ) . '">' . $date . '</time>';
 
-				$return .= '<span class="date date-event">' . $date_tag . '</span> ' . $container_start . '<a rel="nofollow" href="' . get_permalink() . '"' . $cssclass_a . '>' . get_the_title() . '</a>';
+				$return .= '<span class="date date-event">' . $date_tag . '</span> ' . $container_start . '<a rel="nofollow" href="' . $items->post->wprss_item_permalink . '"' . $cssclass_a . '>' . get_the_title() . '</a>';
 				$return .= $extra_info . $container_end;
 				$return .= '</li>';
 
@@ -1839,7 +1839,7 @@ function community_feed_items_show( $items = array() ) {
 					$return .= '<li>';
 				}
 
-				$return .= $date_string . ' ' . $container_start . '<a rel="nofollow" href="' . get_permalink() . '"' . $cssclass_a . '>' . get_the_title() . '</a>';
+				$return .= $date_string . ' ' . $container_start . '<a rel="nofollow" href="' . $items->post->wprss_item_permalink . '"' . $cssclass_a . '>' . get_the_title() . '</a>';
 				$return .= $extra_info . $container_end;
 				$return .= '</li>';
 
@@ -1915,12 +1915,3 @@ function get_feed_ids_for_tax( $existing_feedids = array(), $taxonomy = null, $t
 	return $return;
 }
 
-if ( function_exists( 'rhswp_append_widgets_before_socmed_footer' ) ) {
-
-} else {
-	function rhswp_append_widgets_before_socmed_footer() {
-		echo '<h1>Update theme to version >  2.44.2</h1>';
-		echo '<p>missing function : rhswp_append_widgets_before_socmed_footer</p>';
-
-	}
-}
