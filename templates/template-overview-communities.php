@@ -318,7 +318,6 @@ function community_add_communities_grid( $doreturn = false ) {
 		$container_title .= "\n" . '<p id="filter_explication">' . $result['filter_explication'] . '</p>';
 		if ( $thepage ) {
 			$container_title .= "\n" . '<a href="' . get_permalink( $thepage ) . '" class="reset">' . _x( 'Toon alle community\'s', 'reset filter', 'wp-rijkshuisstijl' ) . '</a>';
-//			$container_title .= "\n" . '<button type="submit">' . _x( 'Toon alle community\'s', 'reset filter', 'wp-rijkshuisstijl' ) . '</button>';
 		}
 	}
 	if ( $alphabet_list ) {
@@ -340,7 +339,6 @@ function community_add_communities_grid( $doreturn = false ) {
 			$inner_css_class .= ' column-layout columncount-' . $columncount;
 		} else {
 			//   2 (b) each item shows only header (<details>), no grouping
-//			$inner_css_class .= "\n" . ' grid';
 		}
 	} else {
 		//   1 -  each item shown as solid block, but not for search results
