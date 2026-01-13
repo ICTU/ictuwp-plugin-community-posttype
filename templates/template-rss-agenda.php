@@ -74,6 +74,11 @@ function community_add_agenda_grid( $args = array() ) {
 		'echo'           => false
 	);
 
+	echo '<pre>';
+	var_dump( $args_selection );
+	echo '</pre>';
+	die( 'o nee!' );
+
 	$rss_items = community_feed_items_get( $args_selection );
 
 	if ( ! $rss_items ) {

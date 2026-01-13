@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Custom Post Type: Community
+ * Custom Post Type: Community, rsspostitem, rsseventitem
  * Custom Taxonomies: Communitytype, Communitygrootte
  *
  * @see https://developer.wordpress.org/reference/functions/register_taxonomy/
@@ -73,6 +73,82 @@ register_post_type( DO_COMMUNITY_CPT, $args );
 // add tags to this CPT
 register_taxonomy_for_object_type( 'post_tag', DO_COMMUNITY_CPT );
 
+//========================================================================================================
+// arguments for COMMUNITY_RSS_ITEM
+// These are shared for both CPTs:
+$args['public']   = false;
+$args['supports'] = array( 'title', 'author', 'excerpt', 'editor' );
+
+// -----------------------------------
+// this is specific for COMMUNITY_RSS_ITEM
+$args['label']   = esc_html__( COMMUNITY_RSS_ITEM, 'wp-rijkshuisstijl' );
+$args['rewrite'] = array( 'slug' => COMMUNITY_RSS_ITEM );
+$args['labels'] = array(
+	'name'                  => esc_html_x( 'RSS berichten', 'post type', 'wp-rijkshuisstijl' ),
+	'singular_name'         => esc_html_x( 'RSS bericht', 'post type', 'wp-rijkshuisstijl' ),
+	'menu_name'             => esc_html_x( 'RSS berichten', 'post type', 'wp-rijkshuisstijl' ),
+	'name_admin_bar'        => esc_html_x( 'RSS bericht', 'post type', 'wp-rijkshuisstijl' ),
+	'archives'              => esc_html_x( 'Overzicht RSS berichten', 'post type', 'wp-rijkshuisstijl' ),
+	'attributes'            => esc_html_x( 'Eigenschappen RSS bericht', 'post type', 'wp-rijkshuisstijl' ),
+	'parent_item_colon'     => esc_html_x( 'Parent Map:', 'post type', 'wp-rijkshuisstijl' ),
+	'all_items'             => esc_html_x( 'Alle RSS berichten', 'post type', 'wp-rijkshuisstijl' ),
+	'add_new_item'          => esc_html_x( 'RSS bericht toevoegen', 'post type', 'wp-rijkshuisstijl' ),
+	'add_new'               => esc_html_x( 'Toevoegen', 'post type', 'wp-rijkshuisstijl' ),
+	'new_item'              => esc_html_x( 'Nieuw RSS bericht', 'post type', 'wp-rijkshuisstijl' ),
+	'edit_item'             => esc_html_x( 'Bewerk RSS bericht', 'post type', 'wp-rijkshuisstijl' ),
+	'update_item'           => esc_html_x( 'Update RSS bericht', 'post type', 'wp-rijkshuisstijl' ),
+	'view_item'             => esc_html_x( 'Bekijk RSS bericht', 'post type', 'wp-rijkshuisstijl' ),
+	'view_items'            => esc_html_x( 'Bekijk RSS berichten', 'post type', 'wp-rijkshuisstijl' ),
+	'search_items'          => esc_html_x( 'Zoek RSS bericht', 'post type', 'wp-rijkshuisstijl' ),
+	'not_found'             => esc_html_x( 'Not found', 'post type', 'wp-rijkshuisstijl' ),
+	'not_found_in_trash'    => esc_html_x( 'Not found in Trash', 'post type', 'wp-rijkshuisstijl' ),
+	'featured_image'        => esc_html_x( 'Featured Image', 'post type', 'wp-rijkshuisstijl' ),
+	'set_featured_image'    => esc_html_x( 'Set featured image', 'post type', 'wp-rijkshuisstijl' ),
+	'remove_featured_image' => esc_html_x( 'Remove featured image', 'post type', 'wp-rijkshuisstijl' ),
+	'use_featured_image'    => esc_html_x( 'Use as featured image', 'post type', 'wp-rijkshuisstijl' ),
+	'insert_into_item'      => esc_html_x( 'Insert into Map', 'post type', 'wp-rijkshuisstijl' ),
+	'uploaded_to_this_item' => esc_html_x( 'Uploaded to this RSS bericht', 'post type', 'wp-rijkshuisstijl' ),
+	'items_list'            => esc_html_x( 'Map list', 'post type', 'wp-rijkshuisstijl' ),
+	'items_list_navigation' => esc_html_x( 'Maps list navigation', 'post type', 'wp-rijkshuisstijl' ),
+	'filter_items_list'     => esc_html_x( 'Filter RSS bericht list', 'post type', 'wp-rijkshuisstijl' ),
+);
+register_post_type( COMMUNITY_RSS_ITEM, $args );
+/*
+// -----------------------------------
+// this is specific for DO_COMMUNITY_RSS_EVENT_ITEM
+$args['label']   = esc_html__( DO_COMMUNITY_RSS_EVENT_ITEM, 'wp-rijkshuisstijl' );
+$args['rewrite'] = array( 'slug' => DO_COMMUNITY_RSS_EVENT_ITEM );
+$args['labels'] = array(
+	'name'                  => esc_html_x( 'RSS evenementen', 'post type', 'wp-rijkshuisstijl' ),
+	'singular_name'         => esc_html_x( 'RSS evenement', 'post type', 'wp-rijkshuisstijl' ),
+	'menu_name'             => esc_html_x( 'RSS evenementen', 'post type', 'wp-rijkshuisstijl' ),
+	'name_admin_bar'        => esc_html_x( 'RSS evenement', 'post type', 'wp-rijkshuisstijl' ),
+	'archives'              => esc_html_x( 'Overzicht RSS evenementen', 'post type', 'wp-rijkshuisstijl' ),
+	'attributes'            => esc_html_x( 'Eigenschappen RSS evenement', 'post type', 'wp-rijkshuisstijl' ),
+	'parent_item_colon'     => esc_html_x( 'Parent Map:', 'post type', 'wp-rijkshuisstijl' ),
+	'all_items'             => esc_html_x( 'Alle RSS evenementen', 'post type', 'wp-rijkshuisstijl' ),
+	'add_new_item'          => esc_html_x( 'RSS evenement toevoegen', 'post type', 'wp-rijkshuisstijl' ),
+	'add_new'               => esc_html_x( 'Toevoegen', 'post type', 'wp-rijkshuisstijl' ),
+	'new_item'              => esc_html_x( 'Nieuw RSS evenement', 'post type', 'wp-rijkshuisstijl' ),
+	'edit_item'             => esc_html_x( 'Bewerk RSS evenement', 'post type', 'wp-rijkshuisstijl' ),
+	'update_item'           => esc_html_x( 'Update RSS evenement', 'post type', 'wp-rijkshuisstijl' ),
+	'view_item'             => esc_html_x( 'Bekijk RSS evenement', 'post type', 'wp-rijkshuisstijl' ),
+	'view_items'            => esc_html_x( 'Bekijk RSS evenementen', 'post type', 'wp-rijkshuisstijl' ),
+	'search_items'          => esc_html_x( 'Zoek RSS evenement', 'post type', 'wp-rijkshuisstijl' ),
+	'not_found'             => esc_html_x( 'Not found', 'post type', 'wp-rijkshuisstijl' ),
+	'not_found_in_trash'    => esc_html_x( 'Not found in Trash', 'post type', 'wp-rijkshuisstijl' ),
+	'featured_image'        => esc_html_x( 'Featured Image', 'post type', 'wp-rijkshuisstijl' ),
+	'set_featured_image'    => esc_html_x( 'Set featured image', 'post type', 'wp-rijkshuisstijl' ),
+	'remove_featured_image' => esc_html_x( 'Remove featured image', 'post type', 'wp-rijkshuisstijl' ),
+	'use_featured_image'    => esc_html_x( 'Use as featured image', 'post type', 'wp-rijkshuisstijl' ),
+	'insert_into_item'      => esc_html_x( 'Insert into Map', 'post type', 'wp-rijkshuisstijl' ),
+	'uploaded_to_this_item' => esc_html_x( 'Uploaded to this RSS evenement', 'post type', 'wp-rijkshuisstijl' ),
+	'items_list'            => esc_html_x( 'Map list', 'post type', 'wp-rijkshuisstijl' ),
+	'items_list_navigation' => esc_html_x( 'Maps list navigation', 'post type', 'wp-rijkshuisstijl' ),
+	'filter_items_list'     => esc_html_x( 'Filter RSS evenement list', 'post type', 'wp-rijkshuisstijl' ),
+);
+register_post_type( DO_COMMUNITY_RSS_EVENT_ITEM, $args );
+*/
 //========================================================================================================
 
 // Communitytype

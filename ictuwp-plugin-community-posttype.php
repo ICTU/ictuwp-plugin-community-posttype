@@ -51,10 +51,6 @@ defined( 'DO_COMMUNITY_PAGE_RSS_AGENDA' ) or define( 'DO_COMMUNITY_PAGE_RSS_AGEN
 defined( 'DO_COMMUNITY_PAGE_RSS_POSTS' ) or define( 'DO_COMMUNITY_PAGE_RSS_POSTS', 'template-rss-posts.php' );
 defined( 'DO_COMMUNITY_DETAIL_TEMPLATE' ) or define( 'DO_COMMUNITY_DETAIL_TEMPLATE', 'template-community-detail.php' );
 
-//if ( ! defined( 'RHSWP_WIDGET_AREA_COMMUNITY_OVERVIEW' ) ) {
-//	define( 'RHSWP_WIDGET_AREA_COMMUNITY_OVERVIEW', 'sidebar-community-overview' );
-//}
-
 define( 'DO_COMMUNITYTYPE_CT_VAR', 'communitytype' );
 define( 'DO_COMMUNITYTOPICS_CT_VAR', 'communitytopic' );
 define( 'DO_COMMUNITYAUDIENCE_CT_VAR', 'communityaudience' );
@@ -62,6 +58,13 @@ define( 'DO_COMMUNITYBESTUURSLAAG_CT_VAR', 'communitygov' );
 define( 'DO_COMMUNITY_MAX_VAR', 'communitymaxnr' );
 define( 'DO_COMMUNITY_MAX_DEFAULT', 20 );
 define( 'DO_COMMUNITY_MAX_OPTIONS', array( 10, 20, 50, 100 ) );
+
+define( 'DO_COMMUNITY_RSS_POST_ITEM', 'rsspostitem' );
+define( 'DO_COMMUNITY_RSS_EVENT_ITEM', 'rsseventitem' );
+
+define( 'COMMUNITY_RSS_ITEM', 'communityrssitem' );
+
+
 
 //========================================================================================================
 add_action( 'plugins_loaded', array( 'DO_COMMUNITY_CPT', 'init' ), 10 );
@@ -73,6 +76,10 @@ require_once plugin_dir_path( __FILE__ ) . 'includes/widget-filter.php';
 require_once plugin_dir_path( __FILE__ ) . 'includes/widget-last-added.php';
 
 require_once plugin_dir_path( __FILE__ ) . 'includes/widget-communitys-with-feed.php';
+
+// code from plugin:
+// https://wordpress.org/plugins/rss-retriever-lite/
+require_once plugin_dir_path( __FILE__ ) . 'includes/rss-retriever-lite.php';
 
 //========================================================================================================
 
@@ -1275,7 +1282,7 @@ function community_feed_get_valid_feeds( $args = array() ) {
 	 *
 	 * A single Communities CPT may have value(s) for ACF field 'rss_feed_source_events'
 	 * and / or 'rss_feed_source_posts'. These ACF fields point to an RSS feed source (post type: 'wprss_feed_id')
-	 * that may have RSS items (post type: 'wprss_feed_item') available.
+	 * that may have RSS items (post type: COMMUNITY_RSS_ITEM) available.
 	 * If RSS items exist in {$wpdb->prefix}posts, they are linked to a feed source. So if we have feed
 	 * sources in {$wpdb->prefix}postmeta, we have a feed with actual posts. For a feed with posts we get the
 	 * attached Community CPT, via either 'rss_feed_source_events' or 'rss_feed_source_posts'. For these
@@ -1331,7 +1338,7 @@ function community_feed_add_filter_form( $args = array() ) {
 		'method'         => 'get',
 		'action'         => $_SERVER['REQUEST_URI'],
 		'event_type'     => 'posts',
-		'post_types'     => 'wprss_feed_item',
+		'post_types'     => COMMUNITY_RSS_ITEM,
 		'paging'         => false,
 		'source'         => null,
 		'sort_order'     => 'ASC',
@@ -1511,7 +1518,7 @@ function community_feed_items_get( $args = array() ) {
 
 	$defaults = array(
 		'event_type'     => 'events',
-		'post_types'     => 'wprss_feed_item',
+		'post_types'     => COMMUNITY_RSS_ITEM,
 		'paging'         => false,
 		'source'         => null,
 		'sort_order'     => 'ASC',
