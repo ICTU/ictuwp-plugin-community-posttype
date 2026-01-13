@@ -1,7 +1,7 @@
 # Changelog
 
 ## Version history
-* 1.4.2.a - Upgrade to RSS Aggregator version 5.0.x
+* 1.4.1 - Upgrade to RSS Aggregator version 5.0.x
 * 1.3.1 - Append new widget space to templates.
 * 1.2.9 - Small PHP bugfix.
 * 1.2.8 - Show months for all posts, and show year.
