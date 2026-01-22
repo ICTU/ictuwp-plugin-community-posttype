@@ -570,7 +570,7 @@ function rss_retrieval_attach_post_thumbnail( $post_id, $image_url, $title ) {
 
 function rss_retrieval_default_options() {
 	$defaults = [
-		rss_retrieval_settings_accounts             => [],
+//		rss_retrieval_settings_accounts       => [],
 		DO_COMMUNITY_RSS_CHECK_DATE           => 0,
 		DO_COMMUNITY_RSS_POST_LIFE_CHECK_DATE => 0,
 		DO_COMMUNITY_RSS_MAX_EXEC_TIME        => 60,
@@ -588,211 +588,10 @@ function rss_retrieval_default_options() {
 		}
 	}
 
-	$options = get_option( rss_retrieval_settings_accounts );
-
-	$services = [
-		'deepl'  => [ 'api_key' ],
-		'yandex' => [ 'api_key' ],
-		'google' => [ 'api_key' ],
-	];
-
-	foreach ( $services as $service => $keys ) {
-		foreach ( $keys as $key ) {
-			$option_key = "{$service}_{$key}";
-			if ( ! isset( $options[ $option_key ] ) ) {
-				$options[ $option_key ] = '';
-			}
-		}
-
-		$api_limit_key             = "{$service}_api_limit";
-		$options[ $api_limit_key ] = [
-			'epoch'        => $options[ $api_limit_key ]['epoch'] ?? 0,
-			'max_requests' => $options[ $api_limit_key ]['max_requests'] ?? 0,
-			'count'        => $options[ $api_limit_key ]['count'] ?? 0,
-			'period'       => $options[ $api_limit_key ]['period'] ?? 3600,
-		];
-	}
-
 	if ( ! get_option( DO_COMMUNITY_RSS_CRON_MAGIC ) ) {
 		update_option( DO_COMMUNITY_RSS_CRON_MAGIC, md5( time() ) );
 	}
 
-	update_option( rss_retrieval_settings_accounts, $options );
-}
-
-function rss_retrieval_yandex_translate( $apikey, $text, $dir, $return_empty = false ) {
-	global $rssrtvr_lite;
-
-	if ( $rssrtvr_lite->api_overlimit( 'yandex_api_limit' ) ) {
-		$rssrtvr_lite->log( 'Yandex Translate API hourly request limit has been reached' );
-
-		return $return_empty ? '' : false;
-	}
-
-	if ( str_starts_with( $apikey, 'trnsl.' ) ) {
-		$rssrtvr_lite->log( 'Translate content with Yandex Translate API v1.5' );
-
-		$response = wp_remote_post(
-			'https://translate.yandex.net/api/v1.5/tr.json/translate',
-			[
-				'timeout' => 15,
-				'body'    => [
-					'key'    => trim( $apikey ),
-					'lang'   => $dir,
-					'format' => 'html',
-					'text'   => $text,
-				],
-			]
-		);
-
-		if ( is_wp_error( $response ) ) {
-			$rssrtvr_lite->log( 'Yandex Translate request error: ' . $response->get_error_message() );
-
-			return $return_empty ? '' : false;
-		}
-
-		$json = json_decode( wp_remote_retrieve_body( $response ), true );
-	} else {
-		$rssrtvr_lite->log( 'Translate content with Yandex Translate API v2' );
-
-		list( $sl, $tr ) = explode( '-', $dir );
-
-		$postData = [
-			'texts'              => [ $text ],
-			'sourceLanguageCode' => $sl,
-			'targetLanguageCode' => $tr,
-		];
-
-		$response = wp_remote_post(
-			'https://translate.api.cloud.yandex.net/translate/v2/translate',
-			[
-				'timeout' => 15,
-				'headers' => [
-					'Authorization' => 'Api-Key ' . $apikey,
-					'Content-Type'  => 'application/json',
-				],
-				'body'    => wp_json_encode( $postData ),
-			]
-		);
-
-		if ( is_wp_error( $response ) ) {
-			$rssrtvr_lite->log( 'Yandex Translate request error: ' . $response->get_error_message() );
-
-			return $return_empty ? '' : false;
-		}
-
-		$json = json_decode( wp_remote_retrieve_body( $response ), true );
-	}
-
-	if ( ! isset( $json['code'] ) && isset( $json['translations'][0]['text'] ) ) {
-		$rssrtvr_lite->log( 'Done' );
-
-		return $json['translations'][0]['text'];
-	} elseif ( isset( $json['code'] ) && (int) $json['code'] === 200 && isset( $json['text'][0] ) ) {
-		$rssrtvr_lite->log( 'Done' );
-
-		return $json['text'][0];
-	} else {
-		$rssrtvr_lite->log( 'Yandex Translate report: "' . ( $json['message'] ?? 'Unknown error' ) . '"' );
-
-		return $return_empty ? '' : false;
-	}
-}
-
-function rss_retrieval_google_translate( $apikey, $text, $source, $target, $return_empty = false ) {
-	global $rssrtvr_lite;
-
-	if ( $rssrtvr_lite->api_overlimit( 'google_api_limit' ) ) {
-		$rssrtvr_lite->log( 'Google Translate API hourly request limit has been reached' );
-
-		return $return_empty ? '' : false;
-	}
-
-	$rssrtvr_lite->log( 'Translate content with Google Translate' );
-
-	$response = wp_remote_post(
-		'https://translation.googleapis.com/language/translate/v2',
-		[
-			'timeout' => 15,
-			'body'    => [
-				'key'    => trim( $apikey ),
-				'source' => $source,
-				'target' => $target,
-				'q'      => $text,
-			],
-		]
-	);
-
-	if ( is_wp_error( $response ) ) {
-		$rssrtvr_lite->log( 'Google Translate request error: ' . $response->get_error_message() );
-
-		return $return_empty ? '' : false;
-	}
-
-	$json = json_decode( wp_remote_retrieve_body( $response ), true );
-
-	if ( isset( $json['data']['translations'][0]['translatedText'] ) ) {
-		$rssrtvr_lite->log( 'Done' );
-
-		return $json['data']['translations'][0]['translatedText'];
-	} else {
-		$msg = '';
-		if ( isset( $json['error']['errors'][0]['message'] ) ) {
-			$msg = $json['error']['errors'][0]['message'];
-		} elseif ( isset( $json['error']['message'] ) ) {
-			$msg = $json['error']['message'];
-		} else {
-			$msg = 'Unknown error';
-		}
-		$rssrtvr_lite->log( 'Google Translate report: "' . esc_html( $msg ) . '"' );
-
-		return $return_empty ? '' : false;
-	}
-}
-
-function rss_retrieval_deepl_translate( $apikey, $text, $target, $use_api_free = false, $return_empty = false ) {
-	global $rssrtvr_lite;
-
-	if ( $rssrtvr_lite->api_overlimit( 'deepl_api_limit' ) ) {
-		$rssrtvr_lite->log( 'DeepL API hourly request limit has been reached' );
-
-		return $return_empty ? '' : false;
-	}
-
-	$rssrtvr_lite->log( 'Translate content with DeepL' );
-
-	$url = $use_api_free ? 'https://api-free.deepl.com/v2/translate' : 'https://api.deepl.com/v2/translate';
-
-	$response = wp_remote_post(
-		$url,
-		[
-			'timeout' => 15,
-			'body'    => [
-				'preserve_formatting' => 1,
-				'auth_key'            => trim( $apikey ),
-				'target_lang'         => $target,
-				'text'                => $text,
-			],
-		]
-	);
-
-	if ( is_wp_error( $response ) ) {
-		$rssrtvr_lite->log( 'DeepL request error: ' . $response->get_error_message() );
-
-		return $return_empty ? '' : false;
-	}
-
-	$json = json_decode( wp_remote_retrieve_body( $response ), true );
-
-	if ( isset( $json['translations'][0]['text'] ) ) {
-		$rssrtvr_lite->log( 'Done' );
-
-		return $json['translations'][0]['text'];
-	} else {
-		$rssrtvr_lite->log( isset( $json['message'] ) ? $json['message'] : 'Unknown DeepL error' );
-
-		return $return_empty ? '' : false;
-	}
 }
 
 function rss_retrieval_compare_files( $file_name_1, $file_name_2 ) {
@@ -1283,157 +1082,6 @@ function rss_retrieval_period_select( $p, $n ) {
 	echo '</select>';
 }
 
-function rss_retrieval_accounts_menu() {
-	$accounts = get_option( rss_retrieval_settings_accounts );
-
-	if ( isset( $_POST['modify_accounts'] ) && check_admin_referer( 'rss_retrieval_settings_accounts' ) ) {
-
-		$lite_api_keys = [
-			'deepl_api_key',
-			'yandex_api_key',
-			'google_api_key',
-		];
-
-		foreach ( $lite_api_keys as $key ) {
-			if ( isset( $_POST[ $key ] ) ) {
-				$accounts[ $key ] = trim( rss_retrieval_sanitize_user_input( $_POST[ $key ] ) );
-			}
-		}
-
-		$accounts['deepl_api_limit']['max_requests']  = abs( intval( $_POST['deepl_api_limit'] ?? $accounts['deepl_api_limit']['max_requests'] ) );
-		$accounts['google_api_limit']['max_requests'] = abs( intval( $_POST['google_api_limit'] ?? $accounts['google_api_limit']['max_requests'] ) );
-		$accounts['yandex_api_limit']['max_requests'] = abs( intval( $_POST['yandex_api_limit'] ?? $accounts['yandex_api_limit']['max_requests'] ) );
-		$accounts['deepl_api_limit']['period']        = intval( $_POST['deepl_api_limit_period'] ?? $accounts['deepl_api_limit']['period'] );
-		$accounts['google_api_limit']['period']       = intval( $_POST['google_api_limit_period'] ?? $accounts['google_api_limit']['period'] );
-		$accounts['yandex_api_limit']['period']       = intval( $_POST['yandex_api_limit_period'] ?? $accounts['yandex_api_limit']['period'] );
-
-		update_option( rss_retrieval_settings_accounts, $accounts );
-	}
-	?>
-    <div class="wrap">
-        <h2><?php esc_html_e( 'Accounts', "wp-rijkshuisstijl" ); ?></h2>
-        <br>
-        <form method="post" action="<?php echo esc_url( rss_retrieval_request_uri() ); ?>">
-
-            <div id="third_party">
-                <table class="form-table">
-                    <tr>
-                        <td colspan="2">
-                            <table class="rssrtvr-box">
-
-                                <tr>
-                                    <th>DeepL API key</th>
-                                    <td>
-                                        <input type="text" style="width: 100%;" name="deepl_api_key" size="80"
-                                               value="<?php echo esc_attr( esc_attr( stripslashes( $accounts['deepl_api_key'] ) ) ); ?>">
-                                        <p class="description">Enter your API key above in order to use DeepL
-                                            Translator. If you don't have one, get it <a
-                                                    href="https://www.deepl.com/pro.html" target="_blank">here</a>.</p>
-                                    </td>
-                                </tr>
-
-                                <tr>
-                                    <th>DeepL request limit</th>
-                                    <td>
-                                        <input type="number" min="0" name="deepl_api_limit" size="6"
-                                               value="<?php echo esc_attr( esc_attr( stripslashes( $accounts['deepl_api_limit']['max_requests'] ) ) ); ?>">
-										<?php
-										rss_retrieval_period_select( $accounts['deepl_api_limit']['period'], 'deepl_api_limit_period' );
-										?>
-                                        <p class="description">Set the limit for DeepL API requests. A value of
-                                            <code>0</code> is interpreted as no limit.</p>
-                                    </td>
-                                </tr>
-
-                            </table>
-                        </td>
-                    </tr>
-
-                    <tr>
-                        <td colspan="2">
-                            <table class="rssrtvr-box">
-
-                                <tr>
-                                    <th>Google Translate API key</th>
-                                    <td>
-                                        <input type="text" style="width: 100%;" name="google_api_key" size="80"
-                                               value="<?php echo esc_attr( stripslashes( $accounts['google_api_key'] ) ); ?>">
-                                        <p class="description">Enter your API key above in order to use Google
-                                            Translate. If you don't have one, get it <a
-                                                    href="https://cloud.google.com/translate/docs/getting-started"
-                                                    target="_blank">here</a>.</p>
-                                    </td>
-                                </tr>
-
-                                <tr>
-                                    <th>Google Translate request limit</th>
-                                    <td>
-                                        <input type="number" min="0" name="google_api_limit" size="6"
-                                               value="<?php echo esc_attr( stripslashes( $accounts['google_api_limit']['max_requests'] ) ); ?>">
-										<?php
-										rss_retrieval_period_select( $accounts['google_api_limit']['period'], 'google_api_limit_period' );
-										?>
-                                        <p class="description">Set the limit for Google Translate API requests. A value
-                                            of <code>0</code> is interpreted as no limit.</p>
-                                    </td>
-                                </tr>
-
-                            </table>
-                        </td>
-                    </tr>
-
-                    <tr>
-                        <td colspan="2">
-                            <table class="rssrtvr-box">
-
-                                <tr>
-                                    <th>Yandex Translate API key</th>
-                                    <td>
-                                        <input type="text" style="width: 100%;" name="yandex_api_key" size="80"
-                                               value="<?php echo esc_attr( stripslashes( $accounts['yandex_api_key'] ) ); ?>">
-                                        <p class="description">Enter your API key above in order to use Yandex
-                                            Translate. If you don't have one, get it
-                                            <a href="https://cloud.yandex.com/en/docs/iam/operations/api-key/create"
-                                               target="_blank">here</a> or <a
-                                                    href="https://translate.yandex.com/developers/keys" target="_blank">here</a>.
-                                        </p>
-                                        <p class="description">Both Yandex Translate API v1.5 and v2 keys are
-                                            supported.</p>
-                                    </td>
-                                </tr>
-
-                                <tr>
-                                    <th>Yandex Translate request limit</th>
-                                    <td>
-                                        <input type="number" min="0" name="yandex_api_limit" size="6"
-                                               value="<?php echo esc_attr( stripslashes( $accounts['yandex_api_limit']['max_requests'] ) ); ?>">
-										<?php
-										rss_retrieval_period_select( $accounts['yandex_api_limit']['period'], 'yandex_api_limit_period' );
-										?>
-                                        <p class="description">Set the limit for Yandex Translate API requests. A value
-                                            of <code>0</code> is interpreted as no limit.</p>
-                                    </td>
-                                </tr>
-
-                            </table>
-                        </td>
-                    </tr>
-                </table>
-            </div>
-
-			<?php wp_nonce_field( 'rss_retrieval_settings_accounts' ); ?>
-            <br>
-            <div style="text-align:left;">
-                <input type="submit" name="modify_accounts" class="button-primary"
-                       value="<?php esc_attr_e( 'Update settings', "wp-rijkshuisstijl" ); ?>"/>&nbsp;&nbsp;
-                <input type="button" name="cancel"
-                       value="<?php esc_attr_e( 'Cancel', "wp-rijkshuisstijl" ); ?>"
-                       class="button" onclick="javascript:history.go(-1)"/>
-            </div>
-        </form>
-    </div>
-	<?php
-}
 
 function rss_retrieval_sanitize_user_input( $input, $default = '' ) {
 	if ( is_array( $default ) ) {
@@ -1762,379 +1410,91 @@ class class_rss_retrieval_syndicator {
 			update_option( DO_COMMUNITY_RSS_SYNDICATED_FEEDS, $this->feeds );
 		}
 
-		$this->langs = [
-			'YANDEX_TRANSLATE_LANGS' => [
-				'hy-ru' => '&#x1F1E6;&#x1F1F2; Armenian - &#x1F1F7;&#x1F1FA; Russian',
-				'az-ru' => '&#x1F1E6;&#x1F1FF; Azerbaijani - &#x1F1F7;&#x1F1FA; Russian',
-				'be-bg' => '&#x1F1E7;&#x1F1FE; Belarusian - &#x1F1E7;&#x1F1EC; Bulgarian',
-				'be-cs' => '&#x1F1E7;&#x1F1FE; Belarusian - &#x1F1E8;&#x1F1FF; Czech',
-				'be-de' => '&#x1F1E7;&#x1F1FE; Belarusian - &#x1F1E9;&#x1F1EA; German',
-				'be-en' => '&#x1F1E7;&#x1F1FE; Belarusian - &#x1F1EC;&#x1F1E7; English',
-				'be-es' => '&#x1F1E7;&#x1F1FE; Belarusian - &#x1F1EA;&#x1F1F8; Spanish',
-				'be-fr' => '&#x1F1E7;&#x1F1FE; Belarusian - &#x1F1EB;&#x1F1F7; French',
-				'be-it' => '&#x1F1E7;&#x1F1FE; Belarusian - &#x1F1EE;&#x1F1F9; Italian',
-				'be-pl' => '&#x1F1E7;&#x1F1FE; Belarusian - &#x1F1F5;&#x1F1F1; Polish',
-				'be-ro' => '&#x1F1E7;&#x1F1FE; Belarusian - &#x1F1F7;&#x1F1F4; Romanian',
-				'be-ru' => '&#x1F1E7;&#x1F1FE; Belarusian - &#x1F1F7;&#x1F1FA; Russian',
-				'be-sr' => '&#x1F1E7;&#x1F1FE; Belarusian - &#x1F1F7;&#x1F1F8; Serbian',
-				'be-tr' => '&#x1F1E7;&#x1F1FE; Belarusian - &#x1F1F9;&#x1F1F7; Turkish',
-				'bg-be' => '&#x1F1E7;&#x1F1EC; Bulgarian - &#x1F1E7;&#x1F1FE; Belarusian',
-				'bg-ru' => '&#x1F1E7;&#x1F1EC; Bulgarian - &#x1F1F7;&#x1F1FA; Russian',
-				'bg-uk' => '&#x1F1E7;&#x1F1EC; Bulgarian - &#x1F1FA;&#x1F1E6; Ukrainian',
-				'ca-en' => '&#x1F1E8;&#x1F1E6; Catalan - &#x1F1EC;&#x1F1E7; English',
-				'ca-ru' => '&#x1F1E8;&#x1F1E6; Catalan - &#x1F1F7;&#x1F1FA; Russian',
-				'zh-de' => '&#x1F1E8;&#x1F1F3; Chinese - &#x1F1E9;&#x1F1EA; German',
-				'zh-en' => '&#x1F1E8;&#x1F1F3; Chinese - &#x1F1EC;&#x1F1E7; English',
-				'zh-fr' => '&#x1F1E8;&#x1F1F3; Chinese - &#x1F1EB;&#x1F1F7; French',
-				'zh-ja' => '&#x1F1E8;&#x1F1F3; Chinese - &#x1F1EF;&#x1F1F5; Japanese',
-				'zh-it' => '&#x1F1E8;&#x1F1F3; Chinese - &#x1F1EE;&#x1F1F9; Italian',
-				'zh-ru' => '&#x1F1E8;&#x1F1F3; Chinese - &#x1F1F7;&#x1F1FA; Russian',
-				'zh-es' => '&#x1F1E8;&#x1F1F3; Chinese - &#x1F1EA;&#x1F1F8; Spanish',
-				'cs-be' => '&#x1F1E8;&#x1F1FF; Czech - &#x1F1E7;&#x1F1FE; Belarusian',
-				'cs-en' => '&#x1F1E8;&#x1F1FF; Czech - &#x1F1EC;&#x1F1E7; English',
-				'cs-ru' => '&#x1F1E8;&#x1F1FF; Czech - &#x1F1F7;&#x1F1FA; Russian',
-				'cs-uk' => '&#x1F1E8;&#x1F1FF; Czech - &#x1F1FA;&#x1F1E6; Ukrainian',
-				'da-en' => '&#x1F1E9;&#x1F1F0; Danish - &#x1F1EC;&#x1F1E7; English',
-				'da-ru' => '&#x1F1E9;&#x1F1F0; Danish - &#x1F1F7;&#x1F1FA; Russian',
-				'en-be' => '&#x1F1EC;&#x1F1E7; English - &#x1F1E7;&#x1F1FE; Belarusian',
-				'en-bn' => '&#x1F1EC;&#x1F1E7; English - &#x1F1E7;&#x1F1E9; Bengali',
-				'en-ca' => '&#x1F1EC;&#x1F1E7; English - &#x1F1E8;&#x1F1E6; Catalan',
-				'en-zh' => '&#x1F1EC;&#x1F1E7; English - &#x1F1E8;&#x1F1F3; Chinese',
-				'en-cs' => '&#x1F1EC;&#x1F1E7; English - &#x1F1E8;&#x1F1FF; Czech',
-				'en-da' => '&#x1F1EC;&#x1F1E7; English - &#x1F1E9;&#x1F1F0; Danish',
-				'en-de' => '&#x1F1EC;&#x1F1E7; English - &#x1F1E9;&#x1F1EA; German',
-				'en-el' => '&#x1F1EC;&#x1F1E7; English - &#x1F1EC;&#x1F1F7; Greek',
-				'en-es' => '&#x1F1EC;&#x1F1E7; English - &#x1F1EA;&#x1F1F8; Spanish',
-				'en-et' => '&#x1F1EC;&#x1F1E7; English - &#x1F1EA;&#x1F1EA; Estonian',
-				'en-fi' => '&#x1F1EC;&#x1F1E7; English - &#x1F1EB;&#x1F1EE; Finnish',
-				'en-fr' => '&#x1F1EC;&#x1F1E7; English - &#x1F1EB;&#x1F1F7; French',
-				'en-ja' => '&#x1F1EC;&#x1F1E7; English - &#x1F1EF;&#x1F1F5; Japanese',
-				'en-hu' => '&#x1F1EC;&#x1F1E7; English - &#x1F1ED;&#x1F1FA; Hungarian',
-				'en-it' => '&#x1F1EC;&#x1F1E7; English - &#x1F1EE;&#x1F1F9; Italian',
-				'en-lt' => '&#x1F1EC;&#x1F1E7; English - &#x1F1F1;&#x1F1F9; Lithuanian',
-				'en-lv' => '&#x1F1EC;&#x1F1E7; English - &#x1F1F1;&#x1F1FB; Latvian',
-				'en-mk' => '&#x1F1EC;&#x1F1E7; English - &#x1F1F2;&#x1F1F0; Macedonian',
-				'en-nl' => '&#x1F1EC;&#x1F1E7; English - &#x1F1F3;&#x1F1F1; Dutch',
-				'en-no' => '&#x1F1EC;&#x1F1E7; English - &#x1F1F3;&#x1F1F4; Norwegian',
-				'en-pt' => '&#x1F1EC;&#x1F1E7; English - &#x1F1F5;&#x1F1F9; Portuguese',
-				'en-ru' => '&#x1F1EC;&#x1F1E7; English - &#x1F1F7;&#x1F1FA; Russian',
-				'en-sk' => '&#x1F1EC;&#x1F1E7; English - &#x1F1F8;&#x1F1F0; Slovak',
-				'en-sl' => '&#x1F1EC;&#x1F1E7; English - &#x1F1F8;&#x1F1EE; Slovenian',
-				'en-sq' => '&#x1F1EC;&#x1F1E7; English - &#x1F1E6;&#x1F1F1; Albanian',
-				'en-sv' => '&#x1F1EC;&#x1F1E7; English - &#x1F1F8;&#x1F1EA; Swedish',
-				'en-tr' => '&#x1F1EC;&#x1F1E7; English - &#x1F1F9;&#x1F1F7; Turkish',
-				'en-uk' => '&#x1F1EC;&#x1F1E7; English - &#x1F1FA;&#x1F1E6; Ukrainian',
-				'de-be' => '&#x1F1E9;&#x1F1EA; German - &#x1F1E7;&#x1F1FE; Belarusian',
-				'de-zh' => '&#x1F1E9;&#x1F1EA; German - &#x1F1E8;&#x1F1F3; Chinese',
-				'de-en' => '&#x1F1E9;&#x1F1EA; German - &#x1F1EC;&#x1F1E7; English',
-				'de-es' => '&#x1F1E9;&#x1F1EA; German - &#x1F1EA;&#x1F1F8; Spanish',
-				'de-fr' => '&#x1F1E9;&#x1F1EA; German - &#x1F1EB;&#x1F1F7; French',
-				'de-ja' => '&#x1F1E9;&#x1F1EA; German - &#x1F1EF;&#x1F1F5; Japanese',
-				'de-it' => '&#x1F1E9;&#x1F1EA; German - &#x1F1EE;&#x1F1F9; Italian',
-				'de-ru' => '&#x1F1E9;&#x1F1EA; German - &#x1F1F7;&#x1F1FA; Russian',
-				'de-tr' => '&#x1F1E9;&#x1F1EA; German - &#x1F1F9;&#x1F1F7; Turkish',
-				'de-uk' => '&#x1F1E9;&#x1F1EA; German - &#x1F1FA;&#x1F1E6; Ukrainian',
-				'el-en' => '&#x1F1EC;&#x1F1F7; Greek - &#x1F1EC;&#x1F1E7; English',
-				'el-ru' => '&#x1F1EC;&#x1F1F7; Greek - &#x1F1F7;&#x1F1FA; Russian',
-				'et-en' => '&#x1F1EA;&#x1F1EA; Estonian - &#x1F1EC;&#x1F1E7; English',
-				'et-ru' => '&#x1F1EA;&#x1F1EA; Estonian - &#x1F1F7;&#x1F1FA; Russian',
-				'fi-en' => '&#x1F1EB;&#x1F1EE; Finnish - &#x1F1EC;&#x1F1E7; English',
-				'fi-ru' => '&#x1F1EB;&#x1F1EE; Finnish - &#x1F1F7;&#x1F1FA; Russian',
-				'fr-be' => '&#x1F1EB;&#x1F1F7; French - &#x1F1E7;&#x1F1FE; Belarusian',
-				'fr-zh' => '&#x1F1EB;&#x1F1F7; French - &#x1F1E8;&#x1F1F3; Chinese',
-				'fr-de' => '&#x1F1EB;&#x1F1F7; French - &#x1F1E9;&#x1F1EA; German',
-				'fr-en' => '&#x1F1EB;&#x1F1F7; French - &#x1F1EC;&#x1F1E7; English',
-				'fr-ja' => '&#x1F1EB;&#x1F1F7; French - &#x1F1EF;&#x1F1F5; Japanese',
-				'fr-it' => '&#x1F1EB;&#x1F1F7; French - &#x1F1EE;&#x1F1F9; Italian',
-				'fr-ru' => '&#x1F1EB;&#x1F1F7; French - &#x1F1F7;&#x1F1FA; Russian',
-				'fr-uk' => '&#x1F1EB;&#x1F1F7; French - &#x1F1FA;&#x1F1E6; Ukrainian',
-				'ja-en' => '&#x1F1EF;&#x1F1F5; Japanese - &#x1F1EC;&#x1F1E7; English',
-				'ja-ru' => '&#x1F1EF;&#x1F1F5; Japanese - &#x1F1F7;&#x1F1FA; Russian',
-				'ja-zh' => '&#x1F1EF;&#x1F1F5; Japanese - &#x1F1E8;&#x1F1F3; Chinese',
-				'ja-de' => '&#x1F1EF;&#x1F1F5; Japanese - &#x1F1E9;&#x1F1EA; German',
-				'ja-fr' => '&#x1F1EF;&#x1F1F5; Japanese - &#x1F1EB;&#x1F1F7; French',
-				'hr-ru' => '&#x1F1ED;&#x1F1F7; Croatian - &#x1F1F7;&#x1F1FA; Russian',
-				'hu-en' => '&#x1F1ED;&#x1F1FA; Hungarian - &#x1F1EC;&#x1F1E7; English',
-				'hu-ru' => '&#x1F1ED;&#x1F1FA; Hungarian - &#x1F1F7;&#x1F1FA; Russian',
-				'it-be' => '&#x1F1EE;&#x1F1F9; Italian - &#x1F1E7;&#x1F1FE; Belarusian',
-				'it-zh' => '&#x1F1EE;&#x1F1F9; Italian - &#x1F1E8;&#x1F1F3; Chinese',
-				'it-de' => '&#x1F1EE;&#x1F1F9; Italian - &#x1F1E9;&#x1F1EA; German',
-				'it-en' => '&#x1F1EE;&#x1F1F9; Italian - &#x1F1EC;&#x1F1E7; English',
-				'it-fr' => '&#x1F1EE;&#x1F1F9; Italian - &#x1F1EB;&#x1F1F7; French',
-				'it-ru' => '&#x1F1EE;&#x1F1F9; Italian - &#x1F1F7;&#x1F1FA; Russian',
-				'it-uk' => '&#x1F1EE;&#x1F1F9; Italian - &#x1F1FA;&#x1F1E6; Ukrainian',
-				'lt-en' => '&#x1F1F1;&#x1F1F9; Lithuanian - &#x1F1EC;&#x1F1E7; English',
-				'lt-ru' => '&#x1F1F1;&#x1F1F9; Lithuanian - &#x1F1F7;&#x1F1FA; Russian',
-				'lv-en' => '&#x1F1F1;&#x1F1FB; Latvian - &#x1F1EC;&#x1F1E7; English',
-				'lv-ru' => '&#x1F1F1;&#x1F1FB; Latvian - &#x1F1F7;&#x1F1FA; Russian',
-				'mk-en' => '&#x1F1F2;&#x1F1F0; Macedonian - &#x1F1EC;&#x1F1E7; English',
-				'mk-ru' => '&#x1F1F2;&#x1F1F0; Macedonian - &#x1F1F7;&#x1F1FA; Russian',
-				'nl-en' => '&#x1F1F3;&#x1F1F1; Dutch - &#x1F1EC;&#x1F1E7; English',
-				'nl-ru' => '&#x1F1F3;&#x1F1F1; Dutch - &#x1F1F7;&#x1F1FA; Russian',
-				'no-en' => '&#x1F1F3;&#x1F1F4; Norwegian - &#x1F1EC;&#x1F1E7; English',
-				'no-ru' => '&#x1F1F3;&#x1F1F4; Norwegian - &#x1F1F7;&#x1F1FA; Russian',
-				'pl-be' => '&#x1F1F5;&#x1F1F1; Polish - &#x1F1E7;&#x1F1FE; Belarusian',
-				'pl-ru' => '&#x1F1F5;&#x1F1F1; Polish - &#x1F1F7;&#x1F1FA; Russian',
-				'pl-uk' => '&#x1F1F5;&#x1F1F1; Polish - &#x1F1FA;&#x1F1E6; Ukrainian',
-				'pt-en' => '&#x1F1F5;&#x1F1F9; Portuguese - &#x1F1EC;&#x1F1E7; English',
-				'pt-ru' => '&#x1F1F5;&#x1F1F9; Portuguese - &#x1F1F7;&#x1F1FA; Russian',
-				'ro-be' => '&#x1F1F7;&#x1F1F4; Romanian - &#x1F1E7;&#x1F1FE; Belarusian',
-				'ro-ru' => '&#x1F1F7;&#x1F1F4; Romanian - &#x1F1F7;&#x1F1FA; Russian',
-				'ro-uk' => '&#x1F1F7;&#x1F1F4; Romanian - &#x1F1FA;&#x1F1E6; Ukrainian',
-				'ru-az' => '&#x1F1F7;&#x1F1FA; Russian - &#x1F1E6;&#x1F1FF; Azerbaijani',
-				'ru-be' => '&#x1F1F7;&#x1F1FA; Russian - &#x1F1E7;&#x1F1FE; Belarusian',
-				'ru-bg' => '&#x1F1F7;&#x1F1FA; Russian - &#x1F1E7;&#x1F1EC; Bulgarian',
-				'ru-ca' => '&#x1F1F7;&#x1F1FA; Russian - &#x1F1E8;&#x1F1E6; Catalan',
-				'ru-cs' => '&#x1F1F7;&#x1F1FA; Russian - &#x1F1E8;&#x1F1FF; Czech',
-				'ru-da' => '&#x1F1F7;&#x1F1FA; Russian - &#x1F1E9;&#x1F1F0; Danish',
-				'ru-de' => '&#x1F1F7;&#x1F1FA; Russian - &#x1F1E9;&#x1F1EA; German',
-				'ru-el' => '&#x1F1F7;&#x1F1FA; Russian - &#x1F1EC;&#x1F1F7; Greek',
-				'ru-en' => '&#x1F1F7;&#x1F1FA; Russian - &#x1F1EC;&#x1F1E7; English',
-				'ru-es' => '&#x1F1F7;&#x1F1FA; Russian - &#x1F1EA;&#x1F1F8; Spanish',
-				'ru-et' => '&#x1F1F7;&#x1F1FA; Russian - &#x1F1EA;&#x1F1EA; Estonian',
-				'ru-fi' => '&#x1F1F7;&#x1F1FA; Russian - &#x1F1EB;&#x1F1EE; Finnish',
-				'ru-fr' => '&#x1F1F7;&#x1F1FA; Russian - &#x1F1EB;&#x1F1F7; French',
-				'ru-hr' => '&#x1F1F7;&#x1F1FA; Russian - &#x1F1ED;&#x1F1F7; Croatian',
-				'ru-hu' => '&#x1F1F7;&#x1F1FA; Russian - &#x1F1ED;&#x1F1FA; Hungarian',
-				'ru-hy' => '&#x1F1F7;&#x1F1FA; Russian - &#x1F1E6;&#x1F1F2; Armenian',
-				'ru-it' => '&#x1F1F7;&#x1F1FA; Russian - &#x1F1EE;&#x1F1F9; Italian',
-				'ru-ja' => '&#x1F1F7;&#x1F1FA; Russian - &#x1F1EF;&#x1F1F5; Japanese',
-				'ru-lt' => '&#x1F1F7;&#x1F1FA; Russian - &#x1F1F1;&#x1F1F9; Lithuanian',
-				'ru-lv' => '&#x1F1F7;&#x1F1FA; Russian - &#x1F1F1;&#x1F1FB; Latvian',
-				'ru-mk' => '&#x1F1F7;&#x1F1FA; Russian - &#x1F1F2;&#x1F1F0; Macedonian',
-				'ru-nl' => '&#x1F1F7;&#x1F1FA; Russian - &#x1F1F3;&#x1F1F1; Dutch',
-				'ru-no' => '&#x1F1F7;&#x1F1FA; Russian - &#x1F1F3;&#x1F1F4; Norwegian',
-				'ru-pl' => '&#x1F1F7;&#x1F1FA; Russian - &#x1F1F5;&#x1F1F1; Polish',
-				'ru-pt' => '&#x1F1F7;&#x1F1FA; Russian - &#x1F1F5;&#x1F1F9; Portuguese',
-				'ru-ro' => '&#x1F1F7;&#x1F1FA; Russian - &#x1F1F7;&#x1F1F4; Romanian',
-				'ru-sk' => '&#x1F1F7;&#x1F1FA; Russian - &#x1F1F8;&#x1F1F0; Slovak',
-				'ru-sl' => '&#x1F1F7;&#x1F1FA; Russian - &#x1F1F8;&#x1F1EE; Slovenian',
-				'ru-sq' => '&#x1F1F7;&#x1F1FA; Russian - &#x1F1E6;&#x1F1F1; Albanian',
-				'ru-sr' => '&#x1F1F7;&#x1F1FA; Russian - &#x1F1F7;&#x1F1F8; Serbian',
-				'ru-sv' => '&#x1F1F7;&#x1F1FA; Russian - &#x1F1F8;&#x1F1EA; Swedish',
-				'ru-tr' => '&#x1F1F7;&#x1F1FA; Russian - &#x1F1F9;&#x1F1F7; Turkish',
-				'ru-uk' => '&#x1F1F7;&#x1F1FA; Russian - &#x1F1FA;&#x1F1E6; Ukrainian',
-				'sk-en' => '&#x1F1F8;&#x1F1F0; Slovak - &#x1F1EC;&#x1F1E7; English',
-				'sk-ru' => '&#x1F1F8;&#x1F1F0; Slovak - &#x1F1F7;&#x1F1FA; Russian',
-				'es-be' => '&#x1F1EA;&#x1F1F8; Spanish - &#x1F1E7;&#x1F1FE; Belarusian',
-				'es-zh' => '&#x1F1EA;&#x1F1F8; Spanish - &#x1F1E8;&#x1F1F3; Chinese',
-				'es-de' => '&#x1F1EA;&#x1F1F8; Spanish - &#x1F1E9;&#x1F1EA; German',
-				'es-en' => '&#x1F1EA;&#x1F1F8; Spanish - &#x1F1EC;&#x1F1E7; English',
-				'es-ru' => '&#x1F1EA;&#x1F1F8; Spanish - &#x1F1F7;&#x1F1FA; Russian',
-				'es-uk' => '&#x1F1EA;&#x1F1F8; Spanish - &#x1F1FA;&#x1F1E6; Ukrainian',
-				'sl-en' => '&#x1F1F8;&#x1F1EE; Slovenian - &#x1F1EC;&#x1F1E7; English',
-				'sl-ru' => '&#x1F1F8;&#x1F1EE; Slovenian - &#x1F1F7;&#x1F1FA; Russian',
-				'sq-en' => '&#x1F1E6;&#x1F1F1; Albanian - &#x1F1EC;&#x1F1E7; English',
-				'sq-ru' => '&#x1F1E6;&#x1F1F1; Albanian - &#x1F1F7;&#x1F1FA; Russian',
-				'sr-be' => '&#x1F1F7;&#x1F1F8; Serbian - &#x1F1E7;&#x1F1FE; Belarusian',
-				'sr-ru' => '&#x1F1F7;&#x1F1F8; Serbian - &#x1F1F7;&#x1F1FA; Russian',
-				'sr-uk' => '&#x1F1F7;&#x1F1F8; Serbian - &#x1F1FA;&#x1F1E6; Ukrainian',
-				'sv-en' => '&#x1F1F8;&#x1F1EA; Swedish - &#x1F1EC;&#x1F1E7; English',
-				'sv-ru' => '&#x1F1F8;&#x1F1EA; Swedish - &#x1F1F7;&#x1F1FA; Russian',
-				'tr-be' => '&#x1F1F9;&#x1F1F7; Turkish - &#x1F1E7;&#x1F1FE; Belarusian',
-				'tr-de' => '&#x1F1F9;&#x1F1F7; Turkish - &#x1F1E9;&#x1F1EA; German',
-				'tr-en' => '&#x1F1F9;&#x1F1F7; Turkish - &#x1F1EC;&#x1F1E7; English',
-				'tr-ru' => '&#x1F1F9;&#x1F1F7; Turkish - &#x1F1F7;&#x1F1FA; Russian',
-				'tr-uk' => '&#x1F1F9;&#x1F1F7; Turkish - &#x1F1FA;&#x1F1E6; Ukrainian',
-				'uk-bg' => '&#x1F1FA;&#x1F1E6; Ukrainian - &#x1F1E7;&#x1F1EC; Bulgarian',
-				'uk-cs' => '&#x1F1FA;&#x1F1E6; Ukrainian - &#x1F1E8;&#x1F1FF; Czech',
-				'uk-de' => '&#x1F1FA;&#x1F1E6; Ukrainian - &#x1F1E9;&#x1F1EA; German',
-				'uk-en' => '&#x1F1FA;&#x1F1E6; Ukrainian - &#x1F1EC;&#x1F1E7; English',
-				'uk-es' => '&#x1F1FA;&#x1F1E6; Ukrainian - &#x1F1EA;&#x1F1F8; Spanish',
-				'uk-fr' => '&#x1F1FA;&#x1F1E6; Ukrainian - &#x1F1EB;&#x1F1F7; French',
-				'uk-it' => '&#x1F1FA;&#x1F1E6; Ukrainian - &#x1F1EE;&#x1F1F9; Italian',
-				'uk-pl' => '&#x1F1FA;&#x1F1E6; Ukrainian - &#x1F1F5;&#x1F1F1; Polish',
-				'uk-ro' => '&#x1F1FA;&#x1F1E6; Ukrainian - &#x1F1F7;&#x1F1F4; Romanian',
-				'uk-ru' => '&#x1F1FA;&#x1F1E6; Ukrainian - &#x1F1F7;&#x1F1FA; Russian',
-				'uk-sr' => '&#x1F1FA;&#x1F1E6; Ukrainian - &#x1F1F7;&#x1F1F8; Serbian',
-				'uk-tr' => '&#x1F1FA;&#x1F1E6; Ukrainian - &#x1F1F9;&#x1F1F7; Turkish',
-			],
-			'GOOGLE_TRANSLATE_LANGS' => [
-				'af'    => '&#x1F1E6;&#x1F1FF; Afrikaans',
-				'sq'    => '&#x1F1E6;&#x1F1F1; Albanian',
-				'ar'    => '&#x1F1E6;&#x1F1EA; Arabic',
-				'az'    => '&#x1F1E6;&#x1F1FF; Azerbaijani',
-				'eu'    => '&#x1F1EA;&#x1F1F8; Basque',
-				'be'    => '&#x1F1E7;&#x1F1FE; Belarusian',
-				'bn'    => '&#x1F1E7;&#x1F1E9; Bengali',
-				'bg'    => '&#x1F1E7;&#x1F1EC; Bulgarian',
-				'ca'    => '&#x1F1E8;&#x1F1E6; Catalan',
-				'zh-CN' => '&#x1F1E8;&#x1F1F3; Chinese Simplified',
-				'zh-TW' => '&#x1F1E8;&#x1F1F3; Chinese Traditional',
-				'hr'    => '&#x1F1ED;&#x1F1F7; Croatian',
-				'cs'    => '&#x1F1E8;&#x1F1FF; Czech',
-				'da'    => '&#x1F1E9;&#x1F1F0; Danish',
-				'nl'    => '&#x1F1F3;&#x1F1F1; Dutch',
-				'en'    => '&#x1F1EC;&#x1F1E7; English',
-				'eo'    => '&#x1F1EA;&#x1F1F3; Esperanto',
-				'et'    => '&#x1F1EA;&#x1F1EA; Estonian',
-				'tl'    => '&#x1F1F5;&#x1F1ED; Filipino',
-				'fi'    => '&#x1F1EB;&#x1F1EE; Finnish',
-				'fr'    => '&#x1F1EB;&#x1F1F7; French',
-				'gl'    => '&#x1F1EC;&#x1F1F5; Galician',
-				'ka'    => '&#x1F1EC;&#x1F1EA; Georgian',
-				'de'    => '&#x1F1E9;&#x1F1EA; German',
-				'el'    => '&#x1F1EC;&#x1F1F7; Greek',
-				'gu'    => '&#x1F1EE;&#x1F1EA; Gujarati',
-				'ht'    => '&#x1F1ED;&#x1F1F9; Haitian Creole',
-				'iw'    => '&#x1F1EE;&#x1F1F1; Hebrew',
-				'hi'    => '&#x1F1EE;&#x1F1F3; Hindi',
-				'hu'    => '&#x1F1ED;&#x1F1FA; Hungarian',
-				'is'    => '&#x1F1EE;&#x1F1F8; Icelandic',
-				'id'    => '&#x1F1EE;&#x1F1E9; Indonesian',
-				'ga'    => '&#x1F1EE;&#x1F1EA; Irish',
-				'it'    => '&#x1F1EE;&#x1F1F9; Italian',
-				'ja'    => '&#x1F1EF;&#x1F1F5; Japanese',
-				'kn'    => '&#x1F1FA;&#x1F1F2; Kannada',
-				'ko'    => '&#x1F1F0;&#x1F1F7; Korean',
-				'la'    => '&#x1F1F1;&#x1F1FA; Latin',
-				'lv'    => '&#x1F1F1;&#x1F1FB; Latvian',
-				'lt'    => '&#x1F1F1;&#x1F1F9; Lithuanian',
-				'mk'    => '&#x1F1F2;&#x1F1F0; Macedonian',
-				'ms'    => '&#x1F1F2;&#x1F1FE; Malay',
-				'mt'    => '&#x1F1F2;&#x1F1F9; Maltese',
-				'no'    => '&#x1F1F3;&#x1F1F4; Norwegian',
-				'fa'    => '&#x1F1EE;&#x1F1F7; Persian',
-				'pl'    => '&#x1F1F5;&#x1F1F1; Polish',
-				'pt'    => '&#x1F1F5;&#x1F1F9; Portuguese',
-				'ro'    => '&#x1F1F7;&#x1F1F4; Romanian',
-				'ru'    => '&#x1F1F7;&#x1F1FA; Russian',
-				'sr'    => '&#x1F1F7;&#x1F1F8; Serbian',
-				'sk'    => '&#x1F1F8;&#x1F1F0; Slovak',
-				'sl'    => '&#x1F1F8;&#x1F1EE; Slovenian',
-				'es'    => '&#x1F1EA;&#x1F1F8; Spanish',
-				'sw'    => '&#x1F1F8;&#x1F1F3; Swahili',
-				'sv'    => '&#x1F1F8;&#x1F1EA; Swedish',
-				'ta'    => '&#x1F1F9;&#x1F1F3; Tamil',
-				'te'    => '&#x1F1F9;&#x1F1F0; Telugu',
-				'th'    => '&#x1F1F9;&#x1F1ED; Thai',
-				'tr'    => '&#x1F1F9;&#x1F1F7; Turkish',
-				'uk'    => '&#x1F1FA;&#x1F1E6; Ukrainian',
-				'ur'    => '&#x1F1F0;&#x1F1F7; Urdu',
-				'vi'    => '&#x1F1FB;&#x1F1F3; Vietnamese',
-				'cy'    => '&#x1F1EA;&#x1F1FA; Welsh',
-				'yi'    => '&#x1F1EF;&#x1F1F4; Yiddish',
-			],
-			'DEEPL_TRANSLATE_LANGS'  => [
-				'BG'    => '&#x1f1e7;&#x1f1ec; Bulgarian',
-				'CS'    => '&#x1F1E8;&#x1F1FF; Czech',
-				'DA'    => '&#x1F1E9;&#x1F1F0; Danish',
-				'DE'    => '&#x1F1E9;&#x1F1EA; German',
-				'EL'    => '&#x1F1EC;&#x1F1F7; Greek',
-				'EN-GB' => '&#x1F1EC;&#x1F1E7; English (British)',
-				'EN-US' => '&#x1F1FA;&#x1F1F8; English (American)',
-				'EN'    => '&#x1F1FA;&#x1F1F8; English (unspecified variant)',
-				'ES'    => '&#x1F1EA;&#x1F1F8; Spanish',
-				'ET'    => '&#x1F1EA;&#x1F1EA; Estonian',
-				'FI'    => '&#x1F1EB;&#x1F1EE; Finnish',
-				'FR'    => '&#x1F1EB;&#x1F1F7; French',
-				'HU'    => '&#x1F1ED;&#x1F1FA; Hungarian',
-				'IT'    => '&#x1F1EE;&#x1F1F9; Italian',
-				'JA'    => '&#x1F1EF;&#x1F1F5; Japanese',
-				'LT'    => '&#x1F1F1;&#x1F1F9; Lithuanian',
-				'LV'    => '&#x1F1F1;&#x1F1FB; Latvian',
-				'NL'    => '&#x1F1F3;&#x1F1F1; Dutch',
-				'PL'    => '&#x1F1F5;&#x1F1F1; Polish',
-				'PT-PT' => '&#x1F1F5;&#x1F1F9; Portuguese (unspecified variant)',
-				'PT-BR' => '&#x1F1E7;&#x1F1F7; Portuguese (Brazilian)',
-				'PT'    => '&#x1F1F5;&#x1F1F9; Portuguese (unspecified variant)',
-				'RO'    => '&#x1F1F7;&#x1F1F4; Romanian',
-				'RU'    => '&#x1F1F7;&#x1F1FA; Russian',
-				'SK'    => '&#x1F1F8;&#x1F1F0; Slovak',
-				'SL'    => '&#x1F1F8;&#x1F1EE; Slovenian',
-				'SV'    => '&#x1F1F8;&#x1F1EA; Swedish',
-				'ZH'    => '&#x1F1E8;&#x1F1F3; Chinese',
-			],
-		];
+		$this->langs = [];
 	}
 
 	function api_overlimit( $api_limit_id ) {
-		$accounts = get_option( rss_retrieval_settings_accounts );
-
-		if ( floor( $accounts[ $api_limit_id ]['epoch'] / $accounts[ $api_limit_id ]['period'] ) !== floor( time() / $accounts[ $api_limit_id ]['period'] ) ) {
-			$accounts[ $api_limit_id ]['epoch'] = time();
-			$accounts[ $api_limit_id ]['count'] = 0;
-		}
-
-		if ( $accounts[ $api_limit_id ]['max_requests'] == 0 || $accounts[ $api_limit_id ]['count'] < $accounts[ $api_limit_id ]['max_requests'] ) {
-			++ $accounts[ $api_limit_id ]['count'];
-			update_option( rss_retrieval_settings_accounts, $accounts );
-
-			return false;
-		}
+//		$accounts = get_option( rss_retrieval_settings_accounts );
+//
+//		if ( floor( $accounts[ $api_limit_id ]['epoch'] / $accounts[ $api_limit_id ]['period'] ) !== floor( time() / $accounts[ $api_limit_id ]['period'] ) ) {
+//			$accounts[ $api_limit_id ]['epoch'] = time();
+//			$accounts[ $api_limit_id ]['count'] = 0;
+//		}
+//
+//		if ( $accounts[ $api_limit_id ]['max_requests'] == 0 || $accounts[ $api_limit_id ]['count'] < $accounts[ $api_limit_id ]['max_requests'] ) {
+//			++ $accounts[ $api_limit_id ]['count'];
+//			update_option( rss_retrieval_settings_accounts, $accounts );
+//
+//			return false;
+//		}
 
 		return true;
 	}
 
 	function init_feed_options( $options ) {
 		$default_options = [
-			'interval'                  => 1440,
-			'delay'                     => 0,
-			'max_items'                 => 1,
-			'post_lifetime'             => 0,
-			'post_status'               => 'publish',
-			'comment_status'            => 'open',
-			'ping_status'               => 'closed',
-			'post_type'                 => 'post',
-			'custom_taxonomies'         => [],
-			'post_format'               => 'default',
-			'post_template'             => 'default',
-			'post_author'               => 1,
-			'base_date'                 => 'post',
-			'duplicate_check_method'    => 'guid',
-			'undefined_category'        => 'use_default',
-			'user_agent'                => 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/134.0.0.0 Safari/537.36',
-			'http_headers'              => '',
-			'create_tags'               => '',
-			'auto_tags'                 => '',
-			'polylang_language'         => '',
-			'wpml_language'             => '',
-			'post_tags'                 => '',
-			'post_category'             => [],
-			'date_min'                  => 0,
-			'date_max'                  => 0,
-			'xml_section_tags'          => '',
-			'preserve_titles'           => '',
-			'remove_emojis_from_slugs'  => 'on',
-			'insert_media_attachments'  => 'no',
-			'set_thumbnail'             => 'first_image',
-			'sanitize'                  => '',
-			'convert_encoding'          => '',
-			'require_thumbnail'         => '',
-			'use_fifu'                  => '',
-			'store_images'              => '',
-			'add_to_media_library'      => '',
-			'image_format'              => 'keep',
-			'compression_quality'       => 80,
-			'tags_to_woocommerce'       => '',
-			'cats_to_woocommerce'       => '',
-			'utf8_encoding'             => '',
-			'alt_post_thumbnail_src'    => '',
-			'strip_tags'                => '',
-			'post_title_template'       => '%post_title%',
-			'post_slug_template'        => '%post_title%',
-			'post_content_template'     => '%post_content%',
-			'post_excerpt_template'     => '',
-			'custom_fields'             => '',
-			'translator'                => 'none',
-			'yandex_translation_dir'    => '',
-			'google_translation_source' => '',
-			'google_translation_target' => '',
-			'deepl_translation_target'  => '',
-			'deepl_use_api_free'        => 'on',
-			'filter_post_title'         => 'on',
-			'filter_post_content'       => 'on',
-			'filter_post_excerpt'       => 'on',
-			'filter_post_link'          => '',
-			'filter_all_phrases'        => '',
-			'filter_any_phrases'        => '',
-			'filter_none_phrases'       => '',
-			'filter_any_tags'           => '',
-			'filter_none_tags'          => '',
-			'filter_days_newer'         => 0,
-			'filter_days_older'         => 0,
-			'filter_post_longer'        => 0,
-			'filter_post_shorter'       => 0,
+			'interval'                 => 1440,
+			'delay'                    => 0,
+			'max_items'                => 20,
+			'post_lifetime'            => 0,
+			'post_status'              => 'publish',
+			'comment_status'           => 'open',
+			'ping_status'              => 'closed',
+			'post_type'                => 'post',
+			'custom_taxonomies'        => [],
+			'post_format'              => 'default',
+			'post_template'            => 'default',
+			'post_author'              => 1,
+			'base_date'                => 'post',
+			'duplicate_check_method'   => 'guid',
+			'undefined_category'       => 'use_default',
+			'user_agent'               => 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/134.0.0.0 Safari/537.36',
+			'http_headers'             => '',
+			'create_tags'              => '',
+			'auto_tags'                => '',
+			'polylang_language'        => '',
+			'wpml_language'            => '',
+			'post_tags'                => '',
+			'post_category'            => [],
+			'date_min'                 => 0,
+			'date_max'                 => 0,
+			'xml_section_tags'         => '',
+			'preserve_titles'          => '',
+			'remove_emojis_from_slugs' => 'on',
+			'insert_media_attachments' => 'no',
+			'set_thumbnail'            => 'first_image',
+			'sanitize'                 => '',
+			'convert_encoding'         => '',
+			'require_thumbnail'        => '',
+			'use_fifu'                 => '',
+			'store_images'             => '',
+			'add_to_media_library'     => '',
+			'image_format'             => 'keep',
+			'compression_quality'      => 80,
+			'tags_to_woocommerce'      => '',
+			'cats_to_woocommerce'      => '',
+			'utf8_encoding'            => '',
+			'alt_post_thumbnail_src'   => '',
+			'strip_tags'               => '',
+			'post_title_template'      => '%post_title%',
+			'post_slug_template'       => '%post_title%',
+			'post_content_template'    => '%post_content%',
+			'post_excerpt_template'    => '',
+			'custom_fields'            => '',
+			'translator'               => 'none',
+			'filter_post_title'        => 'on',
+			'filter_post_content'      => 'on',
+			'filter_post_excerpt'      => 'on',
+			'filter_post_link'         => '',
+			'filter_all_phrases'       => '',
+			'filter_any_phrases'       => '',
+			'filter_none_phrases'      => '',
+			'filter_any_tags'          => '',
+			'filter_none_tags'         => '',
+			'filter_days_newer'        => 0,
+			'filter_days_older'        => 0,
+			'filter_post_longer'       => 0,
+			'filter_post_shorter'      => 0,
 		];
 
 		foreach ( $default_options as $key => $value ) {
@@ -2524,6 +1884,8 @@ class class_rss_retrieval_syndicator {
 			foreach ( $rss_lines as $line ) {
 				$line = rtrim( $line );
 				if ( $this->count >= $this->max || $this->failure ) {
+					$theline = 'JOEHOE! ooohw le kakkiepoep';
+					error_log( $theline );
 					break;
 				}
 
@@ -3769,6 +3131,8 @@ class class_rss_retrieval_syndicator {
 		$this->post['post_title']   = $this->unmaskShortCodes( $this->post['post_title'] );
 		$this->post['post_content'] = $this->unmaskShortCodes( $this->post['post_content'] );
 		$this->post['post_excerpt'] = $this->unmaskShortCodes( $this->post['post_excerpt'] );
+
+
 		$DO_COMMUNITY_RSS_Post_name = sanitize_title( $this->post['post_title'] );
 
 		if ( ! isset( $this->post['tags_input'] ) || ! is_array( $this->post['tags_input'] ) ) {
@@ -3777,7 +3141,13 @@ class class_rss_retrieval_syndicator {
 
 		$this->post['custom_taxonomies'] = $this->current_feed['options']['custom_taxonomies'];
 
-		if ( $this->current_feed['options']['translator'] !== 'none' ) {
+		error_log( "JOEHOE: de titelings is " . $this->post['post_title'] . "\n" );
+		error_log( "JOEHOE: Vertalings? " . $this->current_feed['options']['translator'] . "\n" );
+
+		// TODO vertaling ook hier wegslopen. De optie is verdwenen uit de settings, dus niet 'none'
+		if ( $this->current_feed['options']['translator'] && ( $this->current_feed['options']['translator'] !== 'none' ) ) {
+
+			error_log( "JOEHOE: Vertalings. Le kakkings. Wel dus. \n" );
 
 			if ( ! is_array( $this->post['categories'] ) ) {
 				$this->post['categories'] = [];
@@ -3789,13 +3159,6 @@ class class_rss_retrieval_syndicator {
 
 			$packed_content = rss_retrieval_pack_content( $this->post, true );
 
-			if ( $this->current_feed['options']['translator'] === 'yandex_translate' ) {
-				$translated = rss_retrieval_yandex_translate( get_option( rss_retrieval_settings_accounts )['yandex_api_key'], $packed_content, $this->current_feed['options']['yandex_translation_dir'] );
-			} elseif ( $this->current_feed['options']['translator'] === 'google_translate' ) {
-				$translated = rss_retrieval_google_translate( get_option( rss_retrieval_settings_accounts )['google_api_key'], $packed_content, $this->current_feed['options']['google_translation_source'], $this->current_feed['options']['google_translation_target'] );
-			} elseif ( $this->current_feed['options']['translator'] === 'deepl_translate' ) {
-				$translated = rss_retrieval_deepl_translate( get_option( rss_retrieval_settings_accounts )['deepl_api_key'], $packed_content, $this->current_feed['options']['deepl_translation_target'], ( $this->current_feed['options']['deepl_use_api_free'] === 'on' ) );
-			}
 
 			if ( empty( $translated ) ) {
 				$this->log( 'Translation failed' );
@@ -3806,6 +3169,8 @@ class class_rss_retrieval_syndicator {
 
 			$this->post = rss_retrieval_unpack_content( $this->post, $translated );
 		}
+
+		error_log( "JOEHOE: NOG STEEDS titelings is " . $this->post['post_title'] . "\n" );
 
 		if ( is_array( $this->current_feed['options']['post_category'] ) ) {
 			$post_categories = $this->current_feed['options']['post_category'];
@@ -4493,7 +3858,14 @@ class class_rss_retrieval_syndicator {
                         <td>
                             <select name="post_type" id="rssrtvr-lite-post-type">
 								<?php
-								$post_types = get_post_types();
+								// TODO: optie weghalen voor keuze post type
+								$post_types = array( COMMUNITY_RSS_ITEM );
+								//								$post_types = get_post_types();
+
+								//								echo '<pre>';
+								//								var_dump( $post_types );
+								//								echo '</pre>';
+
 								foreach ( $post_types as $post_type ) {
 									echo '<option ' . esc_html( selected( $settings['post_type'], $post_type, false ) ) . ' value="' . esc_html( esc_attr( $post_type ) ) . '">' . esc_html( esc_html( $post_type ) ) . '</option>';
 								}
@@ -4503,44 +3875,53 @@ class class_rss_retrieval_syndicator {
                         </td>
                     </tr>
 
-                    <tr>
-                        <th scope="row"><?php $this->showChangeBox( $change_selected, 'custom_taxonomies' ); ?><?php echo esc_html__( 'Custom taxonomies', "wp-rijkshuisstijl" ); ?></th>
-                        <td>
-							<?php
-							$args       = [
-								'public'   => true,
-								'_builtin' => false,
-							];
-							$taxonomies = get_taxonomies( $args, 'objects', 'and' );
-							foreach ( $taxonomies as $taxonomy ) {
-								if ( isset( $settings['custom_taxonomies'][ $taxonomy->name ] ) ) {
-									$value = $settings['custom_taxonomies'][ $taxonomy->name ];
-								} else {
-									$value = '';
+					<?php
+					if ( 22 === 33 ) {
+
+						?>
+                        <tr>
+                            <th scope="row"><?php $this->showChangeBox( $change_selected, 'custom_taxonomies' ); ?><?php echo esc_html__( 'Custom taxonomies', "wp-rijkshuisstijl" ); ?></th>
+                            <td>
+								<?php
+								$args       = [
+									'public'   => true,
+									'_builtin' => false,
+								];
+								$taxonomies = get_taxonomies( $args, 'objects', 'and' );
+								foreach ( $taxonomies as $taxonomy ) {
+									if ( isset( $settings['custom_taxonomies'][ $taxonomy->name ] ) ) {
+										$value = $settings['custom_taxonomies'][ $taxonomy->name ];
+									} else {
+										$value = '';
+									}
+									echo '<table id="custom_taxonomy_' . esc_attr( $taxonomy->name ) . '">';
+									echo '<tr>';
+									echo '<td style="padding:0px;">';
+									echo '<p class="description"><strong>' . esc_html( $taxonomy->label ) . '</strong> (separate with commas)</p>';
+									echo '<input type="text" size="120" name="custom_taxonomies[' . esc_attr( $taxonomy->name ) . ']" value="' . esc_attr( $value ) . '">';
+									echo '</td>';
+									echo '</tr>';
+									echo '</table>';
 								}
-								echo '<table id="custom_taxonomy_' . esc_attr( $taxonomy->name ) . '">';
-								echo '<tr>';
-								echo '<td style="padding:0px;">';
-								echo '<p class="description"><strong>' . esc_html( $taxonomy->label ) . '</strong> (separate with commas)</p>';
-								echo '<input type="text" size="120" name="custom_taxonomies[' . esc_attr( $taxonomy->name ) . ']" value="' . esc_attr( $value ) . '">';
-								echo '</td>';
-								echo '</tr>';
-								echo '</table>';
-							}
-							?>
-                            <table id="custom_taxonomy_undefined">
-                                <tr>
-                                    <td style="padding:0px">
-                                        <input type="text" size="60" disabled
-                                               value="No custom taxonomies defined for this post type.">
-                                    </td>
-                                </tr>
-                            </table>
-                            <p class="description">Assign WordPress <em>custom taxonomies</em>. Placeholders are allowed
-                                here [<a href="https://www.rssretriever.com/documentation/#custom-taxonomies"
-                                         target="_blank">?</a>]</p>
-                        </td>
-                    </tr>
+								?>
+                                <table id="custom_taxonomy_undefined">
+                                    <tr>
+                                        <td style="padding:0px">
+                                            <input type="text" size="60" disabled
+                                                   value="No custom taxonomies defined for this post type.">
+                                        </td>
+                                    </tr>
+                                </table>
+                                <p class="description">Assign WordPress <em>custom taxonomies</em>. Placeholders are
+                                    allowed
+                                    here [<a href="https://www.rssretriever.com/documentation/#custom-taxonomies"
+                                             target="_blank">?</a>]</p>
+                            </td>
+                        </tr>
+						<?php
+
+					}
+					?>
 
                     <tr>
                         <th scope="row"><?php $this->showChangeBox( $change_selected, 'post_template' ); ?><?php echo esc_html__( 'Custom post template', "wp-rijkshuisstijl" ); ?></th>
@@ -5191,111 +4572,6 @@ class class_rss_retrieval_syndicator {
                     </tr>
 
                     <tr>
-                        <th scope="row"><?php $this->showChangeBox( $change_selected, 'translator' ); ?><?php echo esc_html__( 'Translation', "wp-rijkshuisstijl" ); ?></th>
-                        <td>
-                            <select name="translator" id="rssrtvr-lite-translator">
-								<?php
-								echo '<option ' . esc_html( selected( $settings['translator'], 'none', false ) ) . ' value="none">Do not translate</option>';
-								echo '<option ' . esc_html( selected( $settings['translator'], 'deepl_translate', false ) ) . ' value="deepl_translate">Use DeepL Translate</option>';
-								echo '<option ' . esc_html( selected( $settings['translator'], 'yandex_translate', false ) ) . ' value="yandex_translate">Use Yandex Translate</option>';
-								echo '<option ' . esc_html( selected( $settings['translator'], 'google_translate', false ) ) . ' value="google_translate">Use Google Translate</option>';
-								?>
-                            </select>
-                            <p class="description"><strong>Important</strong>: if the plugin will not be able to
-                                translate the article, the post won't be added.</p>
-
-                            <div id="yandex_translate_settings">
-                                <table class="rssrtvr-box8">
-                                    <tr>
-                                        <th><?php $this->showChangeBox( $change_selected, 'yandex_translation_dir' ); ?>
-                                            Direction
-                                        </th>
-                                        <td><select name="yandex_translation_dir">
-												<?php
-												$langs = $this->langs['YANDEX_TRANSLATE_LANGS'];
-												asort( $langs );
-												foreach ( $langs as $dir => $lang ) {
-													echo '<option ' . ( ( $settings['yandex_translation_dir'] == $dir ) ? 'selected ' : '' ) . 'value="' . esc_html( $dir ) . '">' . esc_html( $lang ) . '</option>';
-												}
-												?>
-                                            </select>
-                                        </td>
-                                    </tr>
-                                </table>
-                            </div>
-
-                            <div id="google_translate_settings">
-                                <table class="rssrtvr-box8">
-                                    <tr>
-                                        <th><?php $this->showChangeBox( $change_selected, 'google_translation_source' ); ?>
-                                            Source
-                                        </th>
-                                        <td><select name="google_translation_source">
-												<?php
-												$langs = $this->langs['GOOGLE_TRANSLATE_LANGS'];
-												asort( $langs );
-												foreach ( $langs as $dir => $lang ) {
-													echo '<option ' . ( ( $settings['google_translation_source'] == $dir ) ? 'selected ' : '' ) . 'value="' . esc_html( $dir ) . '">' . esc_html( $lang ) . '</option>';
-												}
-												?>
-                                            </select>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <th><?php $this->showChangeBox( $change_selected, 'google_translation_target' ); ?>
-                                            Target
-                                        </th>
-                                        <td><select name="google_translation_target">
-												<?php
-												foreach ( $langs as $dir => $lang ) {
-													echo '<option ' . ( ( $settings['google_translation_target'] == $dir ) ? 'selected ' : '' ) . 'value="' . esc_html( $dir ) . '">' . esc_html( $lang ) . '</option>';
-												}
-												?>
-                                            </select>
-                                        </td>
-                                    </tr>
-                                </table>
-                            </div>
-
-                            <div id="deepl_translate_settings">
-                                <table class="rssrtvr-box8">
-                                    <tr>
-                                        <th><?php $this->showChangeBox( $change_selected, 'deepl_translation_target' ); ?>
-                                            Target language
-                                        </th>
-                                        <td>
-                                            <select name="deepl_translation_target">
-												<?php
-												$langs = $this->langs['DEEPL_TRANSLATE_LANGS'];
-												foreach ( $langs as $dir => $lang ) {
-													echo '<option ' . ( ( $settings['deepl_translation_target'] == $dir ) ? 'selected ' : '' ) . 'value="' . esc_html( $dir ) . '">' . esc_html( $lang ) . '</option>';
-												}
-												?>
-                                            </select>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <th><?php $this->showChangeBox( $change_selected, 'deepl_use_api_free' ); ?>Use
-                                            DeepL API Free
-                                        </th>
-                                        <td>
-                                            <input type="checkbox" name="deepl_use_api_free" id="deepl_use_api_free"
-												<?php
-												if ( $settings['deepl_use_api_free'] === 'on' ) {
-													echo 'checked';
-												}
-												?> />
-                                            <label for="deepl_use_api_free">DeepL API Free is a variant of our DeepL API
-                                                Pro plan that allows developers to translate up to 500,000 characters
-                                                per month for free.</label>
-                                        </td>
-                                    </tr>
-                                </table>
-                            </div>
-                        </td>
-                    </tr>
-
-                    <tr>
                         <th scope="row"><?php $this->showChangeBox( $change_selected, 'custom_fields' ); ?>Custom
                             fields
                         </th>
@@ -5648,9 +4924,7 @@ class class_rss_retrieval_syndicator {
 	function enqueue_scripts( $hook ) {
 		if (
 			$hook !== 'toplevel_page_community_rss_import' &&
-			$hook !== 'rss-retriever-lite_page_rss_retrieval_general_settings' &&
-			$hook !== 'rss-retriever-lite_page_rss_retrieval_settings_accounts' &&
-			$hook !== 'rss-retriever-lite_page_class_rss_retrieval_syndicator_log'
+			$hook !== 'rss-retriever-lite_page_rss_retrieval_general_settings'
 		) {
 			return;
 		}
@@ -5715,7 +4989,7 @@ if ( is_admin() ) {
 	rss_retrieval_default_options();
 }
 
-$rssrtvr_lite                                 = new class_rss_retrieval_syndicator();
+$rssrtvr_lite = new class_rss_retrieval_syndicator();
 
 if ( ! is_admin() ) {
 	add_action( 'wp_loaded', [ $rssrtvr_lite, 'cron_init' ] );
@@ -5763,7 +5037,7 @@ if ( ! is_admin() ) {
 }
 
 function rss_retrieval_main_menu() {
-    
+
 	add_menu_page(
 		esc_html__( 'RSS Syndicator', "wp-rijkshuisstijl" ),
 		esc_html__( 'Community RSS', "wp-rijkshuisstijl" ),
@@ -5780,15 +5054,6 @@ function rss_retrieval_main_menu() {
 		'manage_options',
 		'rss_retrieval_general_settings',
 		'rss_retrieval_options_menu'
-	);
-
-	add_submenu_page(
-		'community_rss_import',
-		esc_html__( 'Accounts', "wp-rijkshuisstijl" ),
-		esc_html__( 'Accounts', "wp-rijkshuisstijl" ),
-		'manage_options',
-		'rss_retrieval_settings_accounts',
-		'rss_retrieval_accounts_menu'
 	);
 
 }
