@@ -1,0 +1,98 @@
+.error a {
+    color: #100;
+}
+
+div.rssretriever-ui-tabs-panel {
+    margin: 0;
+    padding-left: 6pt;
+    max-height: 13em;
+    width: 100%;
+    overflow: auto;
+    border: 1px solid #999;
+    border-radius: 4px;
+}
+
+ul.tabs {
+    margin: 0;
+    padding: 0;
+    float: left;
+    list-style: none;
+    height: 32px;
+    border-bottom: 1px solid #ddd;
+    border-left: 1px solid #ddd;
+    width: 100%;
+}
+
+ul.tabs li {
+    float: left;
+    margin: 0;
+    cursor: pointer;
+    padding: 0px 21px;
+    height: 31px;
+    line-height: 31px;
+    border: 1px solid #DDD;
+    border-left: none;
+    font-weight: bold;
+    background: #EEE;
+    overflow: hidden;
+    position: relative;
+}
+
+ul.tabs li:hover {
+    background: #DDD;
+}
+
+ul.tabs li.active {
+    background: #FFF;
+    border-bottom: 1px solid #FFF;
+}
+
+.tab_content {
+    padding: 20px;
+    display: none;
+}
+
+.rssrtvr-button {
+    text-decoration: none;
+    cursor: pointer;
+    color: #333;
+    padding: 4pt 8pt;
+    border-style: solid;
+    border-color: #2271b1;
+    background-color: #fff;
+    border-width: 1pt;
+    border-radius: 3pt;
+}
+
+.rssrtvr-button:hover {
+    background-color: #eee;
+}
+
+.rssrtvr-form th {
+    width: 20em;
+}
+
+.rssrtvr-box {
+    width: 100%;
+    border: 1px dashed #ccc;
+    padding: 0 8px 0 8px;
+    width: 100%;
+}
+
+.rssrtvr-box8 {
+    width: 100%;
+    border: 1px dashed #ccc;
+    padding: 0 8px 0 8px;
+    margin-top: 12px;
+    width: 100%;
+}
+
+.CodeMirror {
+    resize: vertical;
+    overflow: hidden;
+    height: auto;
+}
+
+.CodeMirror-scroll {
+    overflow-y: auto;
+}

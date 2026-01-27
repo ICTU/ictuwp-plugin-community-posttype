@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: ICTU / Digitale Overheid / Community\n"
-"POT-Creation-Date: 2024-01-26 23:38+0100\n"
-"PO-Revision-Date: 2024-01-26 23:38+0100\n"
+"POT-Creation-Date: 2026-01-22 17:17+0100\n"
+"PO-Revision-Date: 2026-01-22 17:18+0100\n"
 "Last-Translator: Paul van Buuren <poedit@wbvb.nl>\n"
 "Language-Team: Paul van Buuren <poedit@wbvb.nl>\n"
 "Language: nl_NL\n"
@@ -10,163 +10,179 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
-"X-Generator: Poedit 3.4.2\n"
+"X-Generator: Poedit 3.8\n"
 "X-Poedit-Basepath: ..\n"
 "X-Poedit-Flags-xgettext: --add-comments=translators:\n"
 "X-Poedit-WPHeader: ictuwp-plugin-community-posttype.php\n"
 "X-Poedit-SourceCharset: UTF-8\n"
-"X-Poedit-KeywordsList: __;_e;_n:1,2;_x:1,2c;_ex:1,2c;_nx:4c,1,2;esc_attr__;"
-"esc_attr_e;esc_attr_x:1,2c;esc_html__;esc_html_e;esc_html_x:1,2c;"
-"_n_noop:1,2;_nx_noop:3c,1,2;__ngettext_noop:1,2\n"
+"X-Poedit-KeywordsList: "
+"__;_e;_n:1,2;_x:1,2c;_ex:1,2c;_nx:4c,1,2;esc_attr__;esc_attr_e;esc_attr_x:1,2c;esc_html__;esc_html_e;esc_html_x:1,2c;_n_noop:1,2;_nx_noop:3c,1,2;__ngettext_noop:1,2\n"
 "X-Poedit-SearchPath-0: .\n"
 "X-Poedit-SearchPathExcluded-0: *.min.js\n"
 
-#: ictuwp-plugin-community-posttype.php:179
+#: ictuwp-plugin-community-posttype.php:181
 msgctxt "naam template"
 msgid "[community] overzicht"
 msgstr ""
 
-#: ictuwp-plugin-community-posttype.php:180
+#: ictuwp-plugin-community-posttype.php:182
+#: includes/widget-communitys-with-feed.php:221
 msgctxt "naam template"
 msgid "[community] toon agenda"
 msgstr ""
 
-#: ictuwp-plugin-community-posttype.php:181
+#: ictuwp-plugin-community-posttype.php:183
+#: includes/widget-communitys-with-feed.php:222
 msgctxt "naam template"
 msgid "[community] toon berichten"
 msgstr ""
 
-#: ictuwp-plugin-community-posttype.php:397
+#: ictuwp-plugin-community-posttype.php:184
+msgctxt "naam template"
+msgid "[community] eventoverzicht in tabelvorm"
+msgstr ""
+
+#: ictuwp-plugin-community-posttype.php:405
 msgctxt "label page template"
 msgid "[Community] alle community's"
 msgstr ""
 
-#: ictuwp-plugin-community-posttype.php:398
+#: ictuwp-plugin-community-posttype.php:406
 msgctxt "label page template"
 msgid "[Community] community-detail"
 msgstr ""
 
-#: ictuwp-plugin-community-posttype.php:399
+#: ictuwp-plugin-community-posttype.php:407
 msgctxt "label page template"
 msgid "[Community] pagina agenda"
 msgstr ""
 
-#: ictuwp-plugin-community-posttype.php:418
+#: ictuwp-plugin-community-posttype.php:426
 msgctxt "customizer menu"
 msgid "Community's"
 msgstr ""
 
-#: ictuwp-plugin-community-posttype.php:420
+#: ictuwp-plugin-community-posttype.php:428
 msgctxt "customizer menu"
 msgid "Instellingen voor community's."
 msgstr ""
 
-#: ictuwp-plugin-community-posttype.php:431
+#: ictuwp-plugin-community-posttype.php:439
 msgctxt "customizer menu"
 msgid "Pagina met alle community's"
 msgstr ""
 
-#: ictuwp-plugin-community-posttype.php:432
+#: ictuwp-plugin-community-posttype.php:440
 msgctxt "customizer menu"
 msgid ""
 "In het kruimelpad en in de URL voor een initiatief zal deze pagina "
 "terugkomen."
 msgstr ""
 
-#: ictuwp-plugin-community-posttype.php:597
+#: ictuwp-plugin-community-posttype.php:605
+#: templates/template-overview-communities.php:603
+msgctxt "Titel in filter"
 msgid "Thema"
-msgid_plural "Thema's"
-msgstr[0] ""
-msgstr[1] ""
+msgstr ""
 
-#: ictuwp-plugin-community-posttype.php:621
-#: ictuwp-plugin-community-posttype.php:761
+#: ictuwp-plugin-community-posttype.php:629
+#: templates/template-overview-communities.php:599
+msgctxt "Titel in filter"
 msgid "Type community"
-msgid_plural "Types community"
-msgstr[0] ""
-msgstr[1] ""
+msgstr ""
 
-#: ictuwp-plugin-community-posttype.php:645
-#: ictuwp-plugin-community-posttype.php:767
-msgid "Doelgroep"
-msgid_plural "Doelgroepen"
-msgstr[0] ""
-msgstr[1] ""
+#: ictuwp-plugin-community-posttype.php:653
+#: templates/template-overview-communities.php:606
+msgctxt "Titel in filter"
+msgid "Type professional"
+msgstr ""
 
-#: ictuwp-plugin-community-posttype.php:669
-msgid "Overheidslaag"
-msgid_plural "Overheidslagen"
-msgstr[0] ""
-msgstr[1] ""
+#: ictuwp-plugin-community-posttype.php:677
+#: templates/template-overview-communities.php:609
+msgctxt "Titel in filter"
+msgid "Type organisatie"
+msgstr ""
 
-#: ictuwp-plugin-community-posttype.php:708
+#: ictuwp-plugin-community-posttype.php:716
 msgid "Onderwerp"
 msgid_plural "Onderwerpen"
 msgstr[0] ""
 msgstr[1] ""
 
-#: ictuwp-plugin-community-posttype.php:764
+#: ictuwp-plugin-community-posttype.php:770
+msgid "Type community"
+msgid_plural "Types community"
+msgstr[0] ""
+msgstr[1] ""
+
+#: ictuwp-plugin-community-posttype.php:773
 msgid "Onderwerp community"
 msgid_plural "Onderwerpen community"
 msgstr[0] ""
 msgstr[1] ""
 
-#: ictuwp-plugin-community-posttype.php:770
+#: ictuwp-plugin-community-posttype.php:776
+msgid "Doelgroep"
+msgid_plural "Doelgroepen"
+msgstr[0] ""
+msgstr[1] ""
+
+#: ictuwp-plugin-community-posttype.php:779
 msgid "Bestuurslaag"
 msgid_plural "Overheidslagen"
 msgstr[0] ""
 msgstr[1] ""
 
-#: ictuwp-plugin-community-posttype.php:781
+#: ictuwp-plugin-community-posttype.php:790
 msgctxt "warning"
 msgid "We konden geen lijst met filters maken."
 msgstr ""
 
-#: ictuwp-plugin-community-posttype.php:800
+#: ictuwp-plugin-community-posttype.php:809
 msgctxt "label keyword veld"
 msgid "Zoek een community"
 msgstr ""
 
-#: ictuwp-plugin-community-posttype.php:801
+#: ictuwp-plugin-community-posttype.php:810
 msgctxt "label input"
 msgid "Zoeken"
 msgstr ""
 
-#: ictuwp-plugin-community-posttype.php:802
-#: templates/template-overview-communities.php:243
+#: ictuwp-plugin-community-posttype.php:811
+#: templates/template-overview-communities.php:255
 msgctxt "placeholder input"
 msgid "[zoekterm voor community]"
 msgstr ""
 
-#: ictuwp-plugin-community-posttype.php:998
-#: templates/archive-communities.php:59
+#: ictuwp-plugin-community-posttype.php:1007
+#: templates/archive-communities.php:65
 msgid "community"
 msgid_plural "community's"
 msgstr[0] ""
 msgstr[1] ""
 
-#: ictuwp-plugin-community-posttype.php:1034
+#: ictuwp-plugin-community-posttype.php:1043
 msgctxt "naam template"
 msgid "Overzicht community's"
 msgstr ""
 
-#: ictuwp-plugin-community-posttype.php:1184
+#: ictuwp-plugin-community-posttype.php:1193
 msgctxt "1st option value select"
 msgid "-selecteer-"
 msgstr ""
 
-#: ictuwp-plugin-community-posttype.php:1315
+#: ictuwp-plugin-community-posttype.php:1324
 msgctxt "button label default"
 msgid "Filter berichten"
 msgstr ""
 
-#: ictuwp-plugin-community-posttype.php:1393
+#: ictuwp-plugin-community-posttype.php:1399
 #, php-format
 msgctxt "button label default"
 msgid "%s per pagina"
 msgstr ""
 
-#: ictuwp-plugin-community-posttype.php:1395
+#: ictuwp-plugin-community-posttype.php:1401
 msgctxt "button label default"
 msgid "Aantal"
 msgstr ""
@@ -194,6 +210,7 @@ msgid "Eigenschappen community"
 msgstr ""
 
 #: includes/register-community-posttype.php:34
+#: includes/register-community-posttype.php:93
 msgctxt "post type"
 msgid "Parent Map:"
 msgstr ""
@@ -209,6 +226,7 @@ msgid "Community toevoegen"
 msgstr ""
 
 #: includes/register-community-posttype.php:37
+#: includes/register-community-posttype.php:96
 msgctxt "post type"
 msgid "Toevoegen"
 msgstr ""
@@ -244,36 +262,43 @@ msgid "Zoek community"
 msgstr ""
 
 #: includes/register-community-posttype.php:44
+#: includes/register-community-posttype.php:103
 msgctxt "post type"
 msgid "Not found"
 msgstr ""
 
 #: includes/register-community-posttype.php:45
+#: includes/register-community-posttype.php:104
 msgctxt "post type"
 msgid "Not found in Trash"
 msgstr ""
 
 #: includes/register-community-posttype.php:46
+#: includes/register-community-posttype.php:105
 msgctxt "post type"
 msgid "Featured Image"
 msgstr ""
 
 #: includes/register-community-posttype.php:47
+#: includes/register-community-posttype.php:106
 msgctxt "post type"
 msgid "Set featured image"
 msgstr ""
 
 #: includes/register-community-posttype.php:48
+#: includes/register-community-posttype.php:107
 msgctxt "post type"
 msgid "Remove featured image"
 msgstr ""
 
 #: includes/register-community-posttype.php:49
+#: includes/register-community-posttype.php:108
 msgctxt "post type"
 msgid "Use as featured image"
 msgstr ""
 
 #: includes/register-community-posttype.php:50
+#: includes/register-community-posttype.php:109
 msgctxt "post type"
 msgid "Insert into Map"
 msgstr ""
@@ -284,11 +309,13 @@ msgid "Uploaded to this community"
 msgstr ""
 
 #: includes/register-community-posttype.php:52
+#: includes/register-community-posttype.php:111
 msgctxt "post type"
 msgid "Map list"
 msgstr ""
 
 #: includes/register-community-posttype.php:53
+#: includes/register-community-posttype.php:112
 msgctxt "post type"
 msgid "Maps list navigation"
 msgstr ""
@@ -298,240 +325,340 @@ msgctxt "post type"
 msgid "Filter community list"
 msgstr ""
 
-#: includes/register-community-posttype.php:80
+#: includes/register-community-posttype.php:87
+#: includes/register-community-posttype.php:89
+msgctxt "post type"
+msgid "RSS berichten"
+msgstr ""
+
+#: includes/register-community-posttype.php:88
+#: includes/register-community-posttype.php:90
+msgctxt "post type"
+msgid "RSS bericht"
+msgstr ""
+
+#: includes/register-community-posttype.php:91
+msgctxt "post type"
+msgid "Overzicht RSS berichten"
+msgstr ""
+
+#: includes/register-community-posttype.php:92
+msgctxt "post type"
+msgid "Eigenschappen RSS bericht"
+msgstr ""
+
+#: includes/register-community-posttype.php:94
+msgctxt "post type"
+msgid "Alle RSS berichten"
+msgstr ""
+
+#: includes/register-community-posttype.php:95
+msgctxt "post type"
+msgid "RSS bericht toevoegen"
+msgstr ""
+
+#: includes/register-community-posttype.php:97
+msgctxt "post type"
+msgid "Nieuw RSS bericht"
+msgstr ""
+
+#: includes/register-community-posttype.php:98
+msgctxt "post type"
+msgid "Bewerk RSS bericht"
+msgstr ""
+
+#: includes/register-community-posttype.php:99
+msgctxt "post type"
+msgid "Update RSS bericht"
+msgstr ""
+
+#: includes/register-community-posttype.php:100
+msgctxt "post type"
+msgid "Bekijk RSS bericht"
+msgstr ""
+
+#: includes/register-community-posttype.php:101
+msgctxt "post type"
+msgid "Bekijk RSS berichten"
+msgstr ""
+
+#: includes/register-community-posttype.php:102
+msgctxt "post type"
+msgid "Zoek RSS bericht"
+msgstr ""
+
+#: includes/register-community-posttype.php:110
+msgctxt "post type"
+msgid "Uploaded to this RSS bericht"
+msgstr ""
+
+#: includes/register-community-posttype.php:113
+msgctxt "post type"
+msgid "Filter RSS bericht list"
+msgstr ""
+
+#: includes/register-community-posttype.php:156
 msgctxt "taxonomy"
 msgid "Type community"
 msgstr ""
 
-#: includes/register-community-posttype.php:81
+#: includes/register-community-posttype.php:157
 msgctxt "taxonomy singular name"
 msgid "Communitytype"
 msgstr ""
 
-#: includes/register-community-posttype.php:82
+#: includes/register-community-posttype.php:158
 msgctxt "taxonomy"
 msgid "Search communitytype"
 msgstr ""
 
-#: includes/register-community-posttype.php:83
+#: includes/register-community-posttype.php:159
 msgctxt "taxonomy"
 msgid "All communitytypes"
 msgstr ""
 
-#: includes/register-community-posttype.php:84
+#: includes/register-community-posttype.php:160
 msgctxt "taxonomy"
 msgid "Parent communitytype"
 msgstr ""
 
-#: includes/register-community-posttype.php:85
+#: includes/register-community-posttype.php:161
 msgctxt "taxonomy"
 msgid "Parent communitytype:"
 msgstr ""
 
-#: includes/register-community-posttype.php:86
+#: includes/register-community-posttype.php:162
 msgctxt "taxonomy"
 msgid "Edit communitytype"
 msgstr ""
 
-#: includes/register-community-posttype.php:87
+#: includes/register-community-posttype.php:163
 msgctxt "taxonomy"
 msgid "Bekijk communitytype"
 msgstr ""
 
-#: includes/register-community-posttype.php:88
+#: includes/register-community-posttype.php:164
 msgctxt "taxonomy"
 msgid "Update communitytype"
 msgstr ""
 
-#: includes/register-community-posttype.php:89
+#: includes/register-community-posttype.php:165
 msgctxt "taxonomy"
 msgid "Add new communitytype"
 msgstr ""
 
-#: includes/register-community-posttype.php:90
+#: includes/register-community-posttype.php:166
 msgctxt "taxonomy"
 msgid "New communitytype name"
 msgstr ""
 
-#: includes/register-community-posttype.php:91
+#: includes/register-community-posttype.php:167
 msgctxt "taxonomy"
 msgid "Types"
 msgstr ""
 
-#: includes/register-community-posttype.php:109
-#: includes/register-community-posttype.php:120
+#: includes/register-community-posttype.php:185
+#: includes/register-community-posttype.php:196
 msgctxt "taxonomy"
 msgid "Thema's"
 msgstr ""
 
-#: includes/register-community-posttype.php:110
+#: includes/register-community-posttype.php:186
 msgctxt "taxonomy singular name"
 msgid "Thema"
 msgstr ""
 
-#: includes/register-community-posttype.php:111
+#: includes/register-community-posttype.php:187
 msgctxt "taxonomy"
 msgid "Search thema's"
 msgstr ""
 
-#: includes/register-community-posttype.php:112
+#: includes/register-community-posttype.php:188
 msgctxt "taxonomy"
 msgid "Alle thema's"
 msgstr ""
 
-#: includes/register-community-posttype.php:113
+#: includes/register-community-posttype.php:189
 msgctxt "taxonomy"
 msgid "Parent thema"
 msgstr ""
 
-#: includes/register-community-posttype.php:114
+#: includes/register-community-posttype.php:190
 msgctxt "taxonomy"
 msgid "Parent thema:"
 msgstr ""
 
-#: includes/register-community-posttype.php:115
+#: includes/register-community-posttype.php:191
 msgctxt "taxonomy"
 msgid "Bekijk thema"
 msgstr ""
 
-#: includes/register-community-posttype.php:116
+#: includes/register-community-posttype.php:192
 msgctxt "taxonomy"
 msgid "Edit thema"
 msgstr ""
 
-#: includes/register-community-posttype.php:117
+#: includes/register-community-posttype.php:193
 msgctxt "taxonomy"
 msgid "Update thema"
 msgstr ""
 
-#: includes/register-community-posttype.php:118
+#: includes/register-community-posttype.php:194
 msgctxt "taxonomy"
 msgid "Add new thema"
 msgstr ""
 
-#: includes/register-community-posttype.php:119
+#: includes/register-community-posttype.php:195
 msgctxt "taxonomy"
 msgid "New thema name"
 msgstr ""
 
-#: includes/register-community-posttype.php:139
+#: includes/register-community-posttype.php:215
 msgctxt "taxonomy"
 msgid "Types organisatie"
 msgstr ""
 
-#: includes/register-community-posttype.php:140
+#: includes/register-community-posttype.php:216
 msgctxt "taxonomy singular name"
 msgid "Type organisatie"
 msgstr ""
 
-#: includes/register-community-posttype.php:141
+#: includes/register-community-posttype.php:217
 msgctxt "taxonomy"
 msgid "Search organisatie-types"
 msgstr ""
 
-#: includes/register-community-posttype.php:142
+#: includes/register-community-posttype.php:218
 msgctxt "taxonomy"
 msgid "Alle organisatie-types"
 msgstr ""
 
-#: includes/register-community-posttype.php:143
+#: includes/register-community-posttype.php:219
 msgctxt "taxonomy"
 msgid "Parent organisatie-type"
 msgstr ""
 
-#: includes/register-community-posttype.php:144
+#: includes/register-community-posttype.php:220
 msgctxt "taxonomy"
 msgid "Parent organisatie-type:"
 msgstr ""
 
-#: includes/register-community-posttype.php:145
+#: includes/register-community-posttype.php:221
 msgctxt "taxonomy"
 msgid "Bekijk organisatie-type"
 msgstr ""
 
-#: includes/register-community-posttype.php:146
+#: includes/register-community-posttype.php:222
 msgctxt "taxonomy"
 msgid "Edit organisatie-type"
 msgstr ""
 
-#: includes/register-community-posttype.php:147
+#: includes/register-community-posttype.php:223
 msgctxt "taxonomy"
 msgid "Update organisatie-type"
 msgstr ""
 
-#: includes/register-community-posttype.php:148
+#: includes/register-community-posttype.php:224
 msgctxt "taxonomy"
 msgid "Add new organisatie-type"
 msgstr ""
 
-#: includes/register-community-posttype.php:149
+#: includes/register-community-posttype.php:225
 msgctxt "taxonomy"
 msgid "New organisatie-type name"
 msgstr ""
 
-#: includes/register-community-posttype.php:150
+#: includes/register-community-posttype.php:226
 msgctxt "taxonomy"
 msgid "Type organisatie"
 msgstr ""
 
-#: includes/register-community-posttype.php:170
+#: includes/register-community-posttype.php:246
 msgctxt "taxonomy"
 msgid "Community-doelgroepen"
 msgstr ""
 
-#: includes/register-community-posttype.php:171
+#: includes/register-community-posttype.php:247
 msgctxt "taxonomy singular name"
 msgid "Doelgroep"
 msgstr ""
 
-#: includes/register-community-posttype.php:172
+#: includes/register-community-posttype.php:248
 msgctxt "taxonomy"
 msgid "Search doelgroepen"
 msgstr ""
 
-#: includes/register-community-posttype.php:173
+#: includes/register-community-posttype.php:249
 msgctxt "taxonomy"
 msgid "Alle doelgroepen"
 msgstr ""
 
-#: includes/register-community-posttype.php:174
+#: includes/register-community-posttype.php:250
 msgctxt "taxonomy"
 msgid "Parent doelgroep"
 msgstr ""
 
-#: includes/register-community-posttype.php:175
+#: includes/register-community-posttype.php:251
 msgctxt "taxonomy"
 msgid "Parent doelgroep:"
 msgstr ""
 
-#: includes/register-community-posttype.php:176
+#: includes/register-community-posttype.php:252
 msgctxt "taxonomy"
 msgid "Edit doelgroep"
 msgstr ""
 
-#: includes/register-community-posttype.php:177
+#: includes/register-community-posttype.php:253
 msgctxt "taxonomy"
 msgid "Bekijk doelgroep"
 msgstr ""
 
-#: includes/register-community-posttype.php:178
+#: includes/register-community-posttype.php:254
 msgctxt "taxonomy"
 msgid "Update doelgroep"
 msgstr ""
 
-#: includes/register-community-posttype.php:179
+#: includes/register-community-posttype.php:255
 msgctxt "taxonomy"
 msgid "Add new doelgroep"
 msgstr ""
 
-#: includes/register-community-posttype.php:180
+#: includes/register-community-posttype.php:256
 msgctxt "taxonomy"
 msgid "New doelgroep name"
 msgstr ""
 
-#: includes/register-community-posttype.php:181
+#: includes/register-community-posttype.php:257
 msgctxt "taxonomy"
 msgid "Doelgroepen"
+msgstr ""
+
+#: includes/widget-communitys-with-feed.php:34
+msgid "Lijst van community\\'s met actieve feed voor agenda of berichten."
+msgstr ""
+
+#: includes/widget-communitys-with-feed.php:36
+msgctxt "widget name"
+msgid "(DO - community) actieve feeds"
+msgstr ""
+
+#: includes/widget-communitys-with-feed.php:178
+msgctxt "default title"
+msgid "Community's"
+msgstr ""
+
+#: includes/widget-communitys-with-feed.php:197 includes/widget-filter.php:122
+#: includes/widget-last-added.php:126
+msgid "Titel"
+msgstr ""
+
+#: includes/widget-communitys-with-feed.php:207 includes/widget-filter.php:130
+#: includes/widget-last-added.php:135
+msgid "Beschrijving"
+msgstr ""
+
+#: includes/widget-communitys-with-feed.php:215
+msgid "Voor welke pagina-template?"
 msgstr ""
 
 #: includes/widget-filter.php:37
@@ -551,44 +678,540 @@ msgid ""
 "\"Community's\"."
 msgstr ""
 
-#: includes/widget-filter.php:122 includes/widget-last-added.php:192
-msgid "Titel"
-msgstr ""
-
-#: includes/widget-filter.php:130 includes/widget-last-added.php:201
-msgid "Beschrijving"
-msgstr ""
-
 #: includes/widget-last-added.php:34
 msgid "Widget last added communities"
 msgstr ""
 
 #: includes/widget-last-added.php:36
 msgctxt "widget name"
-msgid "(DO - community) recent toegevoegd widget"
+msgid "(DO - community)  recent toegevoegd"
 msgstr ""
 
-#: includes/widget-last-added.php:180
+#: includes/widget-last-added.php:114
 msgctxt "default title"
 msgid "Recent toegevoegde community's"
 msgstr ""
 
-#: includes/widget-last-added.php:209
+#: includes/widget-last-added.php:143
 msgctxt "label"
 msgid "Maximum aantal community's"
 msgstr ""
 
-#: includes/widget-last-added.php:229
+#: includes/widget-last-added.php:163
 msgctxt "label"
 msgid "Niet ouder dan hoeveel dagen?"
 msgstr ""
 
-#: templates/template-overview-communities.php:20
+#: rss-importer/rss-retriever-lite.php:1005
+msgctxt "RSS importer"
+msgid "Settings"
+msgstr ""
+
+#: rss-importer/rss-retriever-lite.php:1072
+msgctxt "RSS importer"
+msgid "Update options"
+msgstr ""
+
+#: rss-importer/rss-retriever-lite.php:1163
+msgctxt "RSS importer"
+msgid "Community RSS Syndicator - Mass Modify Selected Feeds"
+msgstr ""
+
+#: rss-importer/rss-retriever-lite.php:1175
+msgctxt "RSS importer"
+msgid "Community RSS Syndicator - Default Settings"
+msgstr ""
+
+#: rss-importer/rss-retriever-lite.php:1185
+msgctxt "RSS settings"
+msgid "Community RSS"
+msgstr ""
+
+#: rss-importer/rss-retriever-lite.php:1327
+msgctxt "RSS importer"
+msgid "Syndicator Log"
+msgstr ""
+
+#: rss-importer/rss-retriever-lite.php:1333
+msgctxt "RSS importer"
+msgid "Copy to clipboard"
+msgstr ""
+
+#: rss-importer/rss-retriever-lite.php:3830
+msgctxt "RSS settings"
+msgid "Check for updates every"
+msgstr ""
+
+#: rss-importer/rss-retriever-lite.php:3840
+msgctxt "RSS importer"
+msgid "Maximum number of posts"
+msgstr ""
+
+#: rss-importer/rss-retriever-lite.php:3849
+msgctxt "RSS importer"
+msgid "Check for duplicates by"
+msgstr ""
+
+#: rss-importer/rss-retriever-lite.php:3868
+msgctxt "RSS importer"
+msgid "Custom taxonomies"
+msgstr ""
+
+#: rss-importer/rss-retriever-lite.php:3912
+msgctxt "RSS importer"
+msgid "Custom post template"
+msgstr ""
+
+#: rss-importer/rss-retriever-lite.php:3934
+msgctxt "RSS importer"
+msgid "Post format"
+msgstr ""
+
+#: rss-importer/rss-retriever-lite.php:3961
+msgctxt "RSS importer"
+msgid "Post author"
+msgstr ""
+
+#: rss-importer/rss-retriever-lite.php:3983
+msgctxt "RSS importer"
+msgid "Post lifetime"
+msgstr ""
+
+#: rss-importer/rss-retriever-lite.php:3994
+msgctxt "RSS importer"
+msgid "Post status"
+msgstr ""
+
+#: rss-importer/rss-retriever-lite.php:4008
+msgctxt "RSS importer"
+msgid "Base date"
+msgstr ""
+
+#: rss-importer/rss-retriever-lite.php:4020
+msgctxt "RSS importer"
+msgid "Post date adjustment range"
+msgstr ""
+
+#: rss-importer/rss-retriever-lite.php:4035
+msgctxt "RSS importer"
+msgid "Categories"
+msgstr ""
+
+#: rss-importer/rss-retriever-lite.php:4049
+msgctxt "RSS importer"
+msgid "Undefined categories"
+msgstr ""
+
+#: rss-importer/rss-retriever-lite.php:4069
+msgctxt "RSS importer"
+msgid "Tags from category names"
+msgstr ""
+
+#: rss-importer/rss-retriever-lite.php:4080
+msgctxt "RSS importer"
+msgid "Post tags"
+msgstr ""
+
+#: rss-importer/rss-retriever-lite.php:4090
+msgctxt "RSS importer"
+msgid "Auto tags"
+msgstr ""
+
+#: rss-importer/rss-retriever-lite.php:4101
+msgctxt "RSS importer"
+msgid "Tags to WooCommerce"
+msgstr ""
+
+#: rss-importer/rss-retriever-lite.php:4112
+msgctxt "RSS importer"
+msgid "Categories to WooCommerce"
+msgstr ""
+
+#: rss-importer/rss-retriever-lite.php:4123
+msgctxt "RSS importer"
+msgid "Comments"
+msgstr ""
+
+#: rss-importer/rss-retriever-lite.php:4134
+msgctxt "RSS importer"
+msgid "Pings"
+msgstr ""
+
+#: rss-importer/rss-retriever-lite.php:4161
+msgctxt "RSS importer"
+msgid "Polylang language"
+msgstr ""
+
+#: rss-importer/rss-retriever-lite.php:4196
+msgctxt "RSS importer"
+msgid "WPML language"
+msgstr ""
+
+#: rss-importer/rss-retriever-lite.php:4232
+msgctxt "RSS importer"
+msgid "Store images locally"
+msgstr ""
+
+#: rss-importer/rss-retriever-lite.php:4264
+msgctxt "RSS importer"
+msgid "Add to Media Library"
+msgstr ""
+
+#: rss-importer/rss-retriever-lite.php:4278
+msgctxt "RSS importer"
+msgid "Media attachments"
+msgstr ""
+
+#: rss-importer/rss-retriever-lite.php:4307
+msgctxt "RSS importer"
+msgid "Post thumbnails"
+msgstr ""
+
+#: rss-importer/rss-retriever-lite.php:4324
+msgctxt "RSS importer"
+msgid "Use FIFU"
+msgstr ""
+
+#: rss-importer/rss-retriever-lite.php:4337
+msgctxt "RSS importer"
+msgid "Alternative thumbnail source"
+msgstr ""
+
+#: rss-importer/rss-retriever-lite.php:4348
+msgctxt "RSS importer"
+msgid "Post thumbnail is required"
+msgstr ""
+
+#: rss-importer/rss-retriever-lite.php:4372
+#: rss-importer/rss-retriever-lite.php:4437
+msgctxt "RSS importer"
+msgid "Post title"
+msgstr ""
+
+#: rss-importer/rss-retriever-lite.php:4385
+msgctxt "RSS importer"
+msgid "Post slug"
+msgstr ""
+
+#: rss-importer/rss-retriever-lite.php:4396
+msgctxt "RSS importer"
+msgid "Remove emojis from post slugs"
+msgstr ""
+
+#: rss-importer/rss-retriever-lite.php:4406
+msgctxt "RSS importer"
+msgid "Post content"
+msgstr ""
+
+#: rss-importer/rss-retriever-lite.php:4419
+msgctxt "RSS importer"
+msgid "Post excerpt"
+msgstr ""
+
+#: rss-importer/rss-retriever-lite.php:4434
+msgctxt "RSS importer"
+msgid "Post link (URL)"
+msgstr ""
+
+#: rss-importer/rss-retriever-lite.php:4440
+msgctxt "RSS importer"
+msgid "Post content (HTML)"
+msgstr ""
+
+#: rss-importer/rss-retriever-lite.php:4443
+msgctxt "RSS importer"
+msgid "Shortened post content (HTML, max characters)"
+msgstr ""
+
+#: rss-importer/rss-retriever-lite.php:4446
+msgctxt "RSS importer"
+msgid "Post content (plain text, no HTML tags)"
+msgstr ""
+
+#: rss-importer/rss-retriever-lite.php:4449
+msgctxt "RSS importer"
+msgid "Shortened post content (plain text, max words)"
+msgstr ""
+
+#: rss-importer/rss-retriever-lite.php:4452
+msgctxt "RSS importer"
+msgid "Post excerpt (HTML)"
+msgstr ""
+
+#: rss-importer/rss-retriever-lite.php:4455
+msgctxt "RSS importer"
+msgid "Shortened post excerpt (HTML, max characters)"
+msgstr ""
+
+#: rss-importer/rss-retriever-lite.php:4458
+msgctxt "RSS importer"
+msgid "Post excerpt (plain text, no HTML tags)"
+msgstr ""
+
+#: rss-importer/rss-retriever-lite.php:4461
+msgctxt "RSS importer"
+msgid "Shortened post excerpt (plain text, max words)"
+msgstr ""
+
+#: rss-importer/rss-retriever-lite.php:4464
+msgctxt "RSS importer"
+msgid "Media enclosure URL"
+msgstr ""
+
+#: rss-importer/rss-retriever-lite.php:4467
+msgctxt "RSS importer"
+msgid "Media description"
+msgstr ""
+
+#: rss-importer/rss-retriever-lite.php:4470
+msgctxt "RSS importer"
+msgid "Media thumbnail URL by index (0-based)"
+msgstr ""
+
+#: rss-importer/rss-retriever-lite.php:4473
+msgctxt "RSS importer"
+msgid "Media content URL by index (0-based)"
+msgstr ""
+
+#: rss-importer/rss-retriever-lite.php:4476
+msgctxt "RSS importer"
+msgid "Embed code for a YouTube video matching the keyword"
+msgstr ""
+
+#: rss-importer/rss-retriever-lite.php:4479
+msgctxt "RSS importer"
+msgid "Post GUID"
+msgstr ""
+
+#: rss-importer/rss-retriever-lite.php:4482
+msgctxt "RSS importer"
+msgid "Post date (default format)"
+msgstr ""
+
+#: rss-importer/rss-retriever-lite.php:4485
+msgctxt "RSS importer"
+msgid "Post date (custom PHP date format, e.g. Y-m-d)"
+msgstr ""
+
+#: rss-importer/rss-retriever-lite.php:4488
+msgctxt "RSS importer"
+msgid "Comma-separated post categories"
+msgstr ""
+
+#: rss-importer/rss-retriever-lite.php:4491
+msgctxt "RSS importer"
+msgid "Value of an XML tag from the feed"
+msgstr ""
+
+#: rss-importer/rss-retriever-lite.php:4494
+msgctxt "RSS importer"
+msgid "Attribute value of an XML tag"
+msgstr ""
+
+#: rss-importer/rss-retriever-lite.php:4521
+msgctxt "RSS importer"
+msgid "HTML tags to strip"
+msgstr ""
+
+#: rss-importer/rss-retriever-lite.php:4532
+msgctxt "RSS importer"
+msgid "UTF-8 encoding"
+msgstr ""
+
+#: rss-importer/rss-retriever-lite.php:4546
+msgctxt "RSS importer"
+msgid "Convert character encoding"
+msgstr ""
+
+#: rss-importer/rss-retriever-lite.php:4557
+msgctxt "RSS importer"
+msgid "Sanitize content"
+msgstr ""
+
+#: rss-importer/rss-retriever-lite.php:4613
+msgctxt "RSS importer"
+msgid "Apply filtering to"
+msgstr ""
+
+#: rss-importer/rss-retriever-lite.php:4625
+msgctxt "RSS importer"
+msgid "Must contain any of these keywords"
+msgstr ""
+
+#: rss-importer/rss-retriever-lite.php:4633
+msgctxt "RSS importer"
+msgid "Must contain all these keywords"
+msgstr ""
+
+#: rss-importer/rss-retriever-lite.php:4641
+msgctxt "RSS importer"
+msgid "Must contain none of these keywords"
+msgstr ""
+
+#: rss-importer/rss-retriever-lite.php:4649
+msgctxt "RSS importer"
+msgid "Must contain any of these tags"
+msgstr ""
+
+#: rss-importer/rss-retriever-lite.php:4657
+msgctxt "RSS importer"
+msgid "Must contain none of these tags"
+msgstr ""
+
+#: rss-importer/rss-retriever-lite.php:4665
+msgctxt "RSS importer"
+msgid "Must be newer than"
+msgstr ""
+
+#: rss-importer/rss-retriever-lite.php:4674
+msgctxt "RSS importer"
+msgid "Must be older than"
+msgstr ""
+
+#: rss-importer/rss-retriever-lite.php:4683
+msgctxt "RSS importer"
+msgid "Must be longer than"
+msgstr ""
+
+#: rss-importer/rss-retriever-lite.php:4691
+msgctxt "RSS importer"
+msgid "Must be shorter than"
+msgstr ""
+
+#: rss-importer/rss-retriever-lite.php:4706
+msgctxt "RSS importer"
+msgid "Apply these settings to selected feeds"
+msgstr ""
+
+#: rss-importer/rss-retriever-lite.php:4707
+#: rss-importer/rss-retriever-lite.php:4711
+#: rss-importer/rss-retriever-lite.php:4715
+#: rss-importer/rss-retriever-lite.php:4720
+msgctxt "RSS importer"
+msgid "Cancel"
+msgstr ""
+
+#: rss-importer/rss-retriever-lite.php:4710
+msgctxt "RSS importer"
+msgid "Update Feed Settings"
+msgstr ""
+
+#: rss-importer/rss-retriever-lite.php:4714
+msgctxt "RSS importer"
+msgid "Syndicate This Feed"
+msgstr ""
+
+#: rss-importer/rss-retriever-lite.php:4719
+msgctxt "RSS importer"
+msgid "Update default settings"
+msgstr ""
+
+#: rss-importer/rss-retriever-lite.php:4758
+msgctxt "RSS importer"
+msgid "User agent"
+msgstr ""
+
+#: rss-importer/rss-retriever-lite.php:4769
+msgctxt "RSS importer"
+msgid "HTTP headers"
+msgstr ""
+
+#: rss-importer/rss-retriever-lite.php:4798
+msgctxt "RSS importer"
+msgid "&nbsp; Syndicate &raquo; &nbsp;"
+msgstr ""
+
+#: rss-importer/rss-retriever-lite.php:4832
+msgctxt "RSS importer"
+msgid "Feed title"
+msgstr ""
+
+#: rss-importer/rss-retriever-lite.php:4833
+msgctxt "RSS importer"
+msgid "URL"
+msgstr ""
+
+#: rss-importer/rss-retriever-lite.php:4834
+msgctxt "RSS importer"
+msgid "Next update"
+msgstr ""
+
+#: rss-importer/rss-retriever-lite.php:4835
+msgctxt "RSS importer"
+msgid "Last update"
+msgstr ""
+
+#: rss-importer/rss-retriever-lite.php:4860
+msgctxt "RSS importer"
+msgid "&#x23E9; Pull selected feeds now!"
+msgstr ""
+
+#: rss-importer/rss-retriever-lite.php:4863
+msgctxt "RSS importer"
+msgid "Mass modify selected feeds"
+msgstr ""
+
+#: rss-importer/rss-retriever-lite.php:4866
+msgctxt "RSS importer"
+msgid "Shuffle update times"
+msgstr ""
+
+#: rss-importer/rss-retriever-lite.php:4873
+msgctxt "RSS importer"
+msgid "&#x274C; Delete selected feeds and syndicated posts"
+msgstr ""
+
+#: rss-importer/rss-retriever-lite.php:4875
+msgid "Delete selected feeds and syndicated posts?"
+msgstr ""
+
+#: rss-importer/rss-retriever-lite.php:4877
+msgctxt "RSS importer"
+msgid "&#x274C; Delete selected feeds"
+msgstr ""
+
+#: rss-importer/rss-retriever-lite.php:4879
+msgid "Delete selected feeds?"
+msgstr ""
+
+#: rss-importer/rss-retriever-lite.php:4881
+msgctxt "RSS importer"
+msgid "&#x274C; Delete posts syndicated from selected feeds"
+msgstr ""
+
+#: rss-importer/rss-retriever-lite.php:4883
+msgid "Delete posts syndicated from selected feeds?"
+msgstr ""
+
+#: rss-importer/rss-retriever-lite.php:4897
+msgctxt "RSS importer"
+msgid "Alter default settings"
+msgstr ""
+
+#: rss-importer/rss-retriever-lite.php:5019
+msgid "RSS Syndicator"
+msgstr ""
+
+#: rss-importer/rss-retriever-lite.php:5020
+msgid "Community RSS"
+msgstr ""
+
+#: rss-importer/rss-retriever-lite.php:5029
+#: rss-importer/rss-retriever-lite.php:5030
+msgid "Settings"
+msgstr ""
+
+#: templates/template-calendar-view.php:79
+msgctxt ""
+msgid "Alle events gepresenteerd in een tabel"
+msgstr ""
+
+#: templates/template-overview-communities.php:21
 msgctxt "Labels detailbuttons"
 msgid "Toon alle community's"
 msgstr ""
 
-#: templates/template-overview-communities.php:21
+#: templates/template-overview-communities.php:22
 #, php-format
 msgctxt "Labels detailbuttons"
 msgid ""
@@ -596,124 +1219,104 @@ msgid ""
 "with '%s' to make the text available."
 msgstr ""
 
-#: templates/template-overview-communities.php:26
+#: templates/template-overview-communities.php:27
 msgctxt "Labels detailbuttons"
 msgid "All detail blocks are closed"
 msgstr ""
 
-#: templates/template-overview-communities.php:27
+#: templates/template-overview-communities.php:28
 msgctxt "Labels detailbuttons"
 msgid "All detail blocks are open"
 msgstr ""
 
-#: templates/template-overview-communities.php:29
+#: templates/template-overview-communities.php:30
 msgctxt "Labels detailbuttons"
 msgid "Verberg alle community's"
 msgstr ""
 
-#: templates/template-overview-communities.php:182
+#: templates/template-overview-communities.php:194
 msgctxt "community lijst titel"
 msgid "Alle community's"
 msgstr ""
 
-#: templates/template-overview-communities.php:221
+#: templates/template-overview-communities.php:233
 #, php-format
 msgid "%s community gevonden"
 msgid_plural "%s community's gevonden"
 msgstr[0] ""
 msgstr[1] ""
 
-#: templates/template-overview-communities.php:241
+#: templates/template-overview-communities.php:253
 msgctxt "label keyword veld"
 msgid "Zoek community"
 msgstr ""
 
-#: templates/template-overview-communities.php:242
+#: templates/template-overview-communities.php:254
 msgctxt "Zoek community input label"
 msgid "Zoek"
 msgstr ""
 
-#: templates/template-overview-communities.php:308
+#: templates/template-overview-communities.php:320
 msgctxt "reset filter"
 msgid "Toon alle community's"
 msgstr ""
 
-#: templates/template-overview-communities.php:411
+#: templates/template-overview-communities.php:421
 msgctxt "read more visible link text"
 msgid "Lees meer"
 msgstr ""
 
-#: templates/template-overview-communities.php:411
+#: templates/template-overview-communities.php:421
 #, php-format
 msgctxt "read more invisible link text"
 msgid "over de community %s"
 msgstr ""
 
-#: templates/template-overview-communities.php:459
+#: templates/template-overview-communities.php:469
 msgctxt "no results"
 msgid "Geen community's gevonden"
 msgstr ""
 
-#: templates/template-overview-communities.php:471
-#: templates/template-rss-agenda.php:82
+#: templates/template-overview-communities.php:481
+#: templates/template-rss-agenda.php:89
 msgctxt "Header rss links"
 msgid "Agenda"
 msgstr ""
 
-#: templates/template-overview-communities.php:512
-#: templates/template-rss-posts.php:79
+#: templates/template-overview-communities.php:522
+#: templates/template-rss-posts.php:90
 msgctxt "Header rss links"
 msgid "Berichten"
 msgstr ""
 
-#: templates/template-overview-communities.php:550
+#: templates/template-overview-communities.php:560
 msgctxt "label keyword veld"
 msgid "Laatst toegevoegd"
 msgstr ""
 
-#: templates/template-overview-communities.php:589
-msgctxt "Titel in filter"
-msgid "Type community"
-msgstr ""
-
-#: templates/template-overview-communities.php:593
-msgctxt "Titel in filter"
-msgid "Thema"
-msgstr ""
-
-#: templates/template-overview-communities.php:596
-msgctxt "Titel in filter"
-msgid "Type professional"
-msgstr ""
-
-#: templates/template-overview-communities.php:599
-msgctxt "Titel in filter"
-msgid "Type organisatie"
-msgstr ""
-
-#: templates/template-overview-communities.php:650
+#: templates/template-overview-communities.php:660
 msgctxt "label keyword veld"
 msgid "Onderwerpen, types en doelgroepen"
 msgstr ""
 
-#: templates/template-overview-communities.php:787
+#: templates/template-overview-communities.php:797
 msgid "Types"
 msgstr ""
 
-#: templates/template-overview-communities.php:788
+#: templates/template-overview-communities.php:798
 msgid "Onderwerpen"
 msgstr ""
 
-#: templates/template-overview-communities.php:789
+#: templates/template-overview-communities.php:799
 msgid "Doelgroepen"
 msgstr ""
 
-#: templates/template-rss-agenda.php:49 templates/template-rss-posts.php:45
+#: templates/template-rss-agenda.php:51 templates/template-rss-posts.php:51
 msgctxt "button label berichten"
 msgid "Filter op thema"
 msgstr ""
 
-#: templates/template-rss-agenda.php:50 templates/template-rss-posts.php:46
+#: templates/template-rss-agenda.php:52 templates/template-rss-posts.php:52
 msgctxt "button label berichten"
 msgid "Filter"
 msgstr ""

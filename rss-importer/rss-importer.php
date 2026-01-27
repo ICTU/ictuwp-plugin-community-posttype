@@ -685,7 +685,7 @@ function rss_retrieval_save_image( $image_url, $preferred_name = '', $width = - 
 			return $image_url;
 		}
 
-		$default_file_name = sanitize_file_name( sanitize_title( $preferred_name ) . $ext );
+		$default_file_name = sanitize_file_name( rss - retriever - lite . phpsanitize_title( $preferred_name ) );
 		if ( $preferred_name !== '' && strpos( $default_file_name, '%' ) === false ) {
 			$file_name = $default_file_name;
 		} else {
@@ -1002,7 +1002,7 @@ function rss_retrieval_options_menu() {
 	}
 	?>
     <div class="wrap">
-        <h2><?php esc_html_e( 'Settings', "wp-rijkshuisstijl" ); ?></h2>
+        <h2><?php esc_html( _x( 'Settings', "RSS importer", "wp-rijkshuisstijl" ) ); ?></h2>
         <div class="metabox-holder postbox-container">
             <form method="post" action="<?php echo esc_url( rss_retrieval_request_uri() ); ?>" name="general_settings">
                 <div class="section" style="display:block">
@@ -1054,12 +1054,22 @@ function rss_retrieval_options_menu() {
                                     execute all operations. If set to zero, no time limit is imposed.</p>
                             </td>
                         </tr>
+                        <tr>
+                            <th scope="row">Post author</th>
+                            <td>
+                                <input type="number" min="0"
+                                       name="<?php echo esc_attr( DO_COMMUNITY_RSS_MAX_EXEC_TIME ); ?>" size="5"
+                                       value="<?php echo esc_attr( get_option( DO_COMMUNITY_RSS_MAX_EXEC_TIME ) ); ?>">
+                                <p class="description">Maximum PHP execution time, given to Community RSS to
+                                    execute all operations. If set to zero, no time limit is imposed.</p>
+                            </td>
+                        </tr>
                     </table>
 					<?php wp_nonce_field( 'rss_retrieval_general_settings' ); ?>
                     <br>
                     <div style="text-align:left;">
                         <input type="submit" name="submit_options" class="button-primary"
-                               value="<?php esc_attr_e( 'Update options', "wp-rijkshuisstijl" ); ?>"/>
+                               value="<?php esc_attr( _x( 'Update options', "RSS importer", "wp-rijkshuisstijl" ) ); ?>"/>
                     </div>
                 </div>
             </form>
@@ -1150,7 +1160,7 @@ function rss_retrieval_xml_syndicator_menu() {
 	?>
     <div class="wrap">
 		<?php if ( isset( $_POST['modify_selected_feeds'] ) ) { ?>
-            <h2><?php esc_html_e( 'Community RSS Syndicator - Mass Modify Selected Feeds', "wp-rijkshuisstijl" ); ?></h2>
+            <h2><?php esc_html( _x( 'Community RSS Syndicator - Mass Modify Selected Feeds', "RSS importer", "wp-rijkshuisstijl" ) ); ?></h2>
             <table class="widefat" style="margin: 8pt 0 8pt 0;">
                 <tr>
                     <td>
@@ -1162,7 +1172,7 @@ function rss_retrieval_xml_syndicator_menu() {
 			<?php
 		} elseif ( isset( $_POST['alter_default_settings'] ) ) {
 			?>
-            <h2><?php esc_html_e( 'Community RSS Syndicator - Default Settings', "wp-rijkshuisstijl" ); ?></h2>
+            <h2><?php esc_html( _x( 'Community RSS Syndicator - Default Settings', "RSS importer", "wp-rijkshuisstijl" ) ); ?></h2>
             <table class="widefat" style="margin: 8pt 0 8pt 0;">
                 <tr>
                     <td>
@@ -1172,7 +1182,7 @@ function rss_retrieval_xml_syndicator_menu() {
             </table>
 			<?php
 		} else {
-			echo '<h2>' . esc_html( esc_html__( 'Community RSS', "wp-rijkshuisstijl" ) ) . '</h2>';
+			echo '<h2>' . esc_html( _x( 'Community RSS', 'RSS settings', "RSS importer", "wp-rijkshuisstijl" ) ) . '</h2>';
 		}
 		?>
 
@@ -1314,13 +1324,13 @@ function rss_retrieval_xml_syndicator_menu() {
 function rss_retrieval_syndicator_log_menu() {
 	?>
     <div class="wrap">
-        <h2><?php esc_html_e( 'Syndicator Log', "wp-rijkshuisstijl" ); ?></h2>
+        <h2><?php esc_html( _x( 'Syndicator Log', "RSS importer", "wp-rijkshuisstijl" ) ); ?></h2>
         <br>
         <textarea readonly id="rssrtvr-lite-log" cols="100" rows="20" wrap="on"
                   style="margin:0;height:30em;width:100%;background-color:white"><?php echo esc_textarea( get_option( DO_COMMUNITY_RSS_LOG ) ); ?></textarea>
         <p>
             <a href="#rssrtvr-lite-log" class="rssrtvr-button rssrtvr-lite-copy">
-				<?php esc_html_e( 'Copy to clipboard', "wp-rijkshuisstijl" ); ?>
+				<?php esc_html( _x( 'Copy to clipboard', "RSS importer", "wp-rijkshuisstijl" ) ); ?>
             </a>
         </p>
     </div>
@@ -1435,12 +1445,12 @@ class class_rss_retrieval_syndicator {
 		$default_options = [
 			'interval'                 => 1440,
 			'delay'                    => 0,
-			'max_items'                => 20,
+			'max_rss_items'            => 20,
 			'post_lifetime'            => 0,
 			'post_status'              => 'publish',
-			'comment_status'           => 'open',
+			'comment_status'           => 'closed',
 			'ping_status'              => 'closed',
-			'post_type'                => 'post',
+			'post_type'                => COMMUNITY_RSS_ITEM,
 			'custom_taxonomies'        => [],
 			'post_format'              => 'default',
 			'post_template'            => 'default',
@@ -2014,7 +2024,7 @@ class class_rss_retrieval_syndicator {
 						update_option( DO_COMMUNITY_RSS_FEEDS_UPDATED, $this->feeds_updated );
 						$this->current_feed = $this->feeds[ $i ];
 						$this->resetPost();
-						$this->max = (int) $this->current_feed['options']['max_items'];
+						$this->max = (int) $this->current_feed['options']['max_rss_items'];
 						$this->log( 'Feed URL: ' . $this->current_feed['url'] );
 
 						if ( $this->show_report ) {
@@ -2670,7 +2680,7 @@ class class_rss_retrieval_syndicator {
 		$source_path   = $upload_path . $relative_path;
 
 		$new_extension = $this->current_feed['options']['image_format'] === 'webp' ? '.webp' : '.jpg';
-		$new_filename  = basename( $source_path, '.png' ) . $new_extension;
+		$new_filename  = rss - retriever - lite . phpbasename( $source_path, '.png' );
 		$new_path      = $upload_path . esc_html( dirname( $relative_path ) ) . '/' . $new_filename;
 
 		$path_parts = pathinfo( $new_path );
@@ -3817,7 +3827,7 @@ class class_rss_retrieval_syndicator {
 					<?php } ?>
 
                     <tr>
-                        <th scope="row"><?php $this->showChangeBox( $change_selected, 'interval' ); ?><?php echo esc_html__( 'Check for updates every', "wp-rijkshuisstijl" ); ?></th>
+                        <th scope="row"><?php $this->showChangeBox( $change_selected, 'interval' ); ?><?php echo esc_html( _x( 'Check for updates every', 'RSS settings', "RSS importer", "wp-rijkshuisstijl" ) ); ?></th>
                         <td>
 							<?php
 							echo '<input type="number" min="0" name="interval" value="' . esc_attr( $settings['interval'] ) . '" size="4"> minutes.';
@@ -3827,16 +3837,16 @@ class class_rss_retrieval_syndicator {
                     </tr>
 
                     <tr>
-                        <th scope="row"><?php $this->showChangeBox( $change_selected, 'max_items' ); ?><?php echo esc_html__( 'Maximum number of posts', "wp-rijkshuisstijl" ); ?></th>
+                        <th scope="row"><?php $this->showChangeBox( $change_selected, 'max_rss_items' ); ?><?php echo esc_html( _x( 'Maximum number of posts', "RSS importer", "wp-rijkshuisstijl" ) ); ?></th>
                         <td>
 							<?php
-							echo '<input type="number" min="0" name="max_items" value="' . esc_attr( $settings['max_items'] ) . '" size="4">' . '<p class="description">Use low values to decrease the syndication time and improve SEO of your blog.</p>';
+							echo '<input type="number" min="0" name="max_rss_items" value="' . esc_attr( $settings['max_rss_items'] ) . '" size="4">' . '<p class="description">Use low values to decrease the syndication time and improve SEO of your blog.</p>';
 							?>
                         </td>
                     </tr>
 
                     <tr>
-                        <th scope="row"><?php $this->showChangeBox( $change_selected, 'duplicate_check_method' ); ?><?php echo esc_html__( 'Check for duplicates by', "wp-rijkshuisstijl" ); ?></th>
+                        <th scope="row"><?php $this->showChangeBox( $change_selected, 'duplicate_check_method' ); ?><?php echo esc_html( _x( 'Check for duplicates by', "RSS importer", "wp-rijkshuisstijl" ) ); ?></th>
                         <td>
                             <select name="duplicate_check_method">
 								<?php
@@ -3850,37 +3860,12 @@ class class_rss_retrieval_syndicator {
                         </td>
                     </tr>
 
-                    <tr>
-                        <th scope="row">
-							<?php $this->showChangeBox( $change_selected, 'post_type' ); ?>
-							<?php echo esc_html__( 'Post type', "wp-rijkshuisstijl" ); ?>
-                        </th>
-                        <td>
-                            <select name="post_type" id="rssrtvr-lite-post-type">
-								<?php
-								// TODO: optie weghalen voor keuze post type
-								$post_types = array( COMMUNITY_RSS_ITEM );
-								//								$post_types = get_post_types();
-
-								//								echo '<pre>';
-								//								var_dump( $post_types );
-								//								echo '</pre>';
-
-								foreach ( $post_types as $post_type ) {
-									echo '<option ' . esc_html( selected( $settings['post_type'], $post_type, false ) ) . ' value="' . esc_html( esc_attr( $post_type ) ) . '">' . esc_html( esc_html( $post_type ) ) . '</option>';
-								}
-								?>
-                            </select>
-                            <p class="description">Select WordPress <em>post type</em>.</p>
-                        </td>
-                    </tr>
-
 					<?php
 					if ( 22 === 33 ) {
 
 						?>
                         <tr>
-                            <th scope="row"><?php $this->showChangeBox( $change_selected, 'custom_taxonomies' ); ?><?php echo esc_html__( 'Custom taxonomies', "wp-rijkshuisstijl" ); ?></th>
+                            <th scope="row"><?php $this->showChangeBox( $change_selected, 'custom_taxonomies' ); ?><?php echo esc_html( _x( 'Custom taxonomies', "RSS importer", "wp-rijkshuisstijl" ) ); ?></th>
                             <td>
 								<?php
 								$args       = [
@@ -3924,7 +3909,7 @@ class class_rss_retrieval_syndicator {
 					?>
 
                     <tr>
-                        <th scope="row"><?php $this->showChangeBox( $change_selected, 'post_template' ); ?><?php echo esc_html__( 'Custom post template', "wp-rijkshuisstijl" ); ?></th>
+                        <th scope="row"><?php $this->showChangeBox( $change_selected, 'post_template' ); ?><?php echo esc_html( _x( 'Custom post template', "RSS importer", "wp-rijkshuisstijl" ) ); ?></th>
                         <td>
 							<?php
 							$custom    = wp_get_theme()->get_post_templates();
@@ -3946,7 +3931,7 @@ class class_rss_retrieval_syndicator {
                     </tr>
 
                     <tr>
-                        <th scope="row"><?php $this->showChangeBox( $change_selected, 'post_format' ); ?><?php echo esc_html__( 'Post format', "wp-rijkshuisstijl" ); ?></th>
+                        <th scope="row"><?php $this->showChangeBox( $change_selected, 'post_format' ); ?><?php echo esc_html( _x( 'Post format', "RSS importer", "wp-rijkshuisstijl" ) ); ?></th>
                         <td>
                             <select name="post_format">
 								<?php
@@ -3973,7 +3958,7 @@ class class_rss_retrieval_syndicator {
                     </tr>
 
                     <tr>
-                        <th scope="row"><?php $this->showChangeBox( $change_selected, 'post_author' ); ?><?php echo esc_html__( 'Post author', "wp-rijkshuisstijl" ); ?></th>
+                        <th scope="row"><?php $this->showChangeBox( $change_selected, 'post_author' ); ?><?php echo esc_html( _x( 'Post author', "RSS importer", "wp-rijkshuisstijl" ) ); ?></th>
                         <td>
                             <select name="post_author">
 								<?php
@@ -3995,7 +3980,7 @@ class class_rss_retrieval_syndicator {
                     </tr>
 
                     <tr>
-                        <th scope="row"><?php $this->showChangeBox( $change_selected, 'post_lifetime' ); ?><?php echo esc_html__( 'Post lifetime', "wp-rijkshuisstijl" ); ?></th>
+                        <th scope="row"><?php $this->showChangeBox( $change_selected, 'post_lifetime' ); ?><?php echo esc_html( _x( 'Post lifetime', "RSS importer", "wp-rijkshuisstijl" ) ); ?></th>
                         <td>
 							<?php
 							echo '<input type="number" min="0" name="post_lifetime" value="' . esc_attr( $settings['post_lifetime'] ) . '" size="4"> hours.';
@@ -4006,7 +3991,7 @@ class class_rss_retrieval_syndicator {
                     </tr>
 
                     <tr>
-                        <th scope="row"><?php $this->showChangeBox( $change_selected, 'post_status' ); ?><?php echo esc_html__( 'Post status', "wp-rijkshuisstijl" ); ?></th>
+                        <th scope="row"><?php $this->showChangeBox( $change_selected, 'post_status' ); ?><?php echo esc_html( _x( 'Post status', "RSS importer", "wp-rijkshuisstijl" ) ); ?></th>
                         <td>
                             <select name="post_status">
 								<?php
@@ -4019,8 +4004,15 @@ class class_rss_retrieval_syndicator {
                         </td>
                     </tr>
 
+
+					<?php
+					if ( $settings['base_date'] !== 'post' ) {
+						$settings['base_date'] = 'syndication';
+					}
+					?>
+
                     <tr>
-                        <th scope="row"><?php $this->showChangeBox( $change_selected, 'base_date' ); ?><?php echo esc_html__( 'Base date', "wp-rijkshuisstijl" ); ?></th>
+                        <th scope="row"><?php $this->showChangeBox( $change_selected, 'base_date' ); ?><?php echo esc_html( _x( 'Base date', "RSS importer", "wp-rijkshuisstijl" ) ); ?></th>
                         <td>
                             <select name="base_date">
 								<?php
@@ -4032,7 +4024,7 @@ class class_rss_retrieval_syndicator {
                     </tr>
 
                     <tr>
-                        <th scope="row"><?php $this->showChangeBox( $change_selected, 'date_range' ); ?><?php echo esc_html__( 'Post date adjustment range', "wp-rijkshuisstijl" ); ?></th>
+                        <th scope="row"><?php $this->showChangeBox( $change_selected, 'date_range' ); ?><?php echo esc_html( _x( 'Post date adjustment range', "RSS importer", "wp-rijkshuisstijl" ) ); ?></th>
                         <td>
 							<?php
 							echo '<input type="number" name="date_min" value="' . esc_attr( $settings['date_min'] ) . '" size="6"> .. <input type="number" name="date_max" value="' . esc_attr( $settings['date_max'] ) . '" size="6">';
@@ -4047,7 +4039,7 @@ class class_rss_retrieval_syndicator {
                     </tr>
 
                     <tr>
-                        <th scope="row"><?php $this->showChangeBox( $change_selected, 'post_category[]' ); ?><?php echo esc_html__( 'Categories', "wp-rijkshuisstijl" ); ?></th>
+                        <th scope="row"><?php $this->showChangeBox( $change_selected, 'post_category[]' ); ?><?php echo esc_html( _x( 'Categories', "RSS importer", "wp-rijkshuisstijl" ) ); ?></th>
                         <td>
                             <ul id="categorychecklist" class="list:category categorychecklist form-no-clear">
                                 <div id="categories-all" class="rssretriever-ui-tabs-panel">
@@ -4061,7 +4053,7 @@ class class_rss_retrieval_syndicator {
                     </tr>
 
                     <tr>
-                        <th scope="row"><?php $this->showChangeBox( $change_selected, 'undefined_category' ); ?><?php echo esc_html__( 'Undefined categories', "wp-rijkshuisstijl" ); ?></th>
+                        <th scope="row"><?php $this->showChangeBox( $change_selected, 'undefined_category' ); ?><?php echo esc_html( _x( 'Undefined categories', "RSS importer", "wp-rijkshuisstijl" ) ); ?></th>
                         <td>
                             <select name="undefined_category">
 								<?php
@@ -4081,7 +4073,7 @@ class class_rss_retrieval_syndicator {
                     </tr>
 
                     <tr>
-                        <th scope="row"><?php $this->showChangeBox( $change_selected, 'create_tags' ); ?><?php echo esc_html__( 'Tags from category names', "wp-rijkshuisstijl" ); ?></th>
+                        <th scope="row"><?php $this->showChangeBox( $change_selected, 'create_tags' ); ?><?php echo esc_html( _x( 'Tags from category names', "RSS importer", "wp-rijkshuisstijl" ) ); ?></th>
                         <td>
 							<?php
 							echo '<input type="checkbox" name="create_tags" id="create_tags" ' . ( ( $settings['create_tags'] === 'on' ) ? 'checked ' : '' ) . '>';
@@ -4092,7 +4084,7 @@ class class_rss_retrieval_syndicator {
                     </tr>
 
                     <tr>
-                        <th scope="row"><?php $this->showChangeBox( $change_selected, 'post_tags' ); ?><?php echo esc_html__( 'Post tags', "wp-rijkshuisstijl" ); ?></th>
+                        <th scope="row"><?php $this->showChangeBox( $change_selected, 'post_tags' ); ?><?php echo esc_html( _x( 'Post tags', "RSS importer", "wp-rijkshuisstijl" ) ); ?></th>
                         <td>
 							<?php
 							echo '<input type="text" style="width:100%;" name="post_tags" value="' . esc_html( stripslashes( $settings['post_tags'] ) ) . '">';
@@ -4102,7 +4094,7 @@ class class_rss_retrieval_syndicator {
                     </tr>
 
                     <tr>
-                        <th scope="row"><?php $this->showChangeBox( $change_selected, 'auto_tags' ); ?><?php echo esc_html__( 'Auto tags', "wp-rijkshuisstijl" ); ?></th>
+                        <th scope="row"><?php $this->showChangeBox( $change_selected, 'auto_tags' ); ?><?php echo esc_html( _x( 'Auto tags', "RSS importer", "wp-rijkshuisstijl" ) ); ?></th>
                         <td>
 							<?php
 							echo '<input type="checkbox" name="auto_tags" id="auto_tags" ' . ( ( $settings['auto_tags'] === 'on' ) ? 'checked ' : '' ) . '>';
@@ -4113,7 +4105,7 @@ class class_rss_retrieval_syndicator {
                     </tr>
 
                     <tr>
-                        <th scope="row"><?php $this->showChangeBox( $change_selected, 'tags_to_woocommerce' ); ?><?php echo esc_html__( 'Tags to WooCommerce', "wp-rijkshuisstijl" ); ?></th>
+                        <th scope="row"><?php $this->showChangeBox( $change_selected, 'tags_to_woocommerce' ); ?><?php echo esc_html( _x( 'Tags to WooCommerce', "RSS importer", "wp-rijkshuisstijl" ) ); ?></th>
                         <td>
 							<?php
 							echo '<input type="checkbox" name="tags_to_woocommerce" id="tags_to_woocommerce" ' . ( ( $settings['tags_to_woocommerce'] === 'on' ) ? 'checked ' : '' ) . '>';
@@ -4124,7 +4116,7 @@ class class_rss_retrieval_syndicator {
                     </tr>
 
                     <tr>
-                        <th scope="row"><?php $this->showChangeBox( $change_selected, 'cats_to_woocommerce' ); ?><?php echo esc_html__( 'Categories to WooCommerce', "wp-rijkshuisstijl" ); ?></th>
+                        <th scope="row"><?php $this->showChangeBox( $change_selected, 'cats_to_woocommerce' ); ?><?php echo esc_html( _x( 'Categories to WooCommerce', "RSS importer", "wp-rijkshuisstijl" ) ); ?></th>
                         <td>
 							<?php
 							echo '<input type="checkbox" name="cats_to_woocommerce" id="cats_to_woocommerce" ' . ( ( $settings['cats_to_woocommerce'] === 'on' ) ? 'checked ' : '' ) . '>';
@@ -4135,7 +4127,7 @@ class class_rss_retrieval_syndicator {
                     </tr>
 
                     <tr>
-                        <th scope="row"><?php $this->showChangeBox( $change_selected, 'comment_status' ); ?><?php echo esc_html__( 'Comments', "wp-rijkshuisstijl" ); ?></th>
+                        <th scope="row"><?php $this->showChangeBox( $change_selected, 'comment_status' ); ?><?php echo esc_html( _x( 'Comments', "RSS importer", "wp-rijkshuisstijl" ) ); ?></th>
                         <td>
                             <select name="comment_status">
 								<?php
@@ -4146,7 +4138,7 @@ class class_rss_retrieval_syndicator {
                         </td>
                     </tr>
                     <tr>
-                        <th scope="row"><?php $this->showChangeBox( $change_selected, 'ping_status' ); ?><?php echo esc_html__( 'Pings', "wp-rijkshuisstijl" ); ?></th>
+                        <th scope="row"><?php $this->showChangeBox( $change_selected, 'ping_status' ); ?><?php echo esc_html( _x( 'Pings', "RSS importer", "wp-rijkshuisstijl" ) ); ?></th>
                         <td>
                             <select name="ping_status">
 								<?php
@@ -4173,7 +4165,7 @@ class class_rss_retrieval_syndicator {
 					}
 					?>
                     <tr>
-                        <th scope="row"><?php $this->showChangeBox( $change_selected, 'polylang_language' ); ?><?php echo esc_html__( 'Polylang language', "wp-rijkshuisstijl" ); ?></th>
+                        <th scope="row"><?php $this->showChangeBox( $change_selected, 'polylang_language' ); ?><?php echo esc_html( _x( 'Polylang language', "RSS importer", "wp-rijkshuisstijl" ) ); ?></th>
                         <td>
                             <select name="polylang_language"
 								<?php
@@ -4208,7 +4200,7 @@ class class_rss_retrieval_syndicator {
 					}
 					?>
                     <tr>
-                        <th scope="row"><?php $this->showChangeBox( $change_selected, 'wpml_language' ); ?><?php echo esc_html__( 'WPML language', "wp-rijkshuisstijl" ); ?></th>
+                        <th scope="row"><?php $this->showChangeBox( $change_selected, 'wpml_language' ); ?><?php echo esc_html( _x( 'WPML language', "RSS importer", "wp-rijkshuisstijl" ) ); ?></th>
                         <td>
                             <select name="wpml_language"
 								<?php
@@ -4244,7 +4236,7 @@ class class_rss_retrieval_syndicator {
 				?>
 				">
                     <tr>
-                        <th scope="row"><?php $this->showChangeBox( $change_selected, 'store_images' ); ?><?php echo esc_html__( 'Store images locally', "wp-rijkshuisstijl" ); ?></th>
+                        <th scope="row"><?php $this->showChangeBox( $change_selected, 'store_images' ); ?><?php echo esc_html( _x( 'Store images locally', "RSS importer", "wp-rijkshuisstijl" ) ); ?></th>
                         <td>
 							<?php
 							echo '<input type="checkbox" name="store_images" id="store_images" ' . ( ( $settings['store_images'] === 'on' ) ? 'checked ' : '' ) . '>';
@@ -4276,7 +4268,7 @@ class class_rss_retrieval_syndicator {
                     </td>
 
                     <tr>
-                        <th scope="row"><?php $this->showChangeBox( $change_selected, 'add_to_media_library' ); ?><?php echo esc_html__( 'Add to Media Library', "wp-rijkshuisstijl" ); ?></th>
+                        <th scope="row"><?php $this->showChangeBox( $change_selected, 'add_to_media_library' ); ?><?php echo esc_html( _x( 'Add to Media Library', "RSS importer", "wp-rijkshuisstijl" ) ); ?></th>
                         <td>
 							<?php
 							echo '<input type="checkbox" name="add_to_media_library" id="add_to_media_library" ' . ( ( $settings['add_to_media_library'] === 'on' ) ? 'checked ' : '' ) . '>';
@@ -4290,7 +4282,7 @@ class class_rss_retrieval_syndicator {
 
                     <tr>
                         <th scope="row"><a
-                                    name="media-attachments"></a><?php $this->showChangeBox( $change_selected, 'insert_media_attachments' ); ?><?php echo esc_html__( 'Media attachments', "wp-rijkshuisstijl" ); ?>
+                                    name="media-attachments"></a><?php $this->showChangeBox( $change_selected, 'insert_media_attachments' ); ?><?php echo esc_html( _x( 'Media attachments', "RSS importer", "wp-rijkshuisstijl" ) ); ?>
                         </th>
                         <td>
                             <select name="insert_media_attachments">
@@ -4319,7 +4311,7 @@ class class_rss_retrieval_syndicator {
 				?>
 				">
                     <tr>
-                        <th scope="row"><?php $this->showChangeBox( $change_selected, 'set_thumbnail' ); ?><?php echo esc_html__( 'Post thumbnails', "wp-rijkshuisstijl" ); ?></th>
+                        <th scope="row"><?php $this->showChangeBox( $change_selected, 'set_thumbnail' ); ?><?php echo esc_html( _x( 'Post thumbnails', "RSS importer", "wp-rijkshuisstijl" ) ); ?></th>
                         <td>
                             <select id="set_thumbnail" name="set_thumbnail">
 								<?php
@@ -4336,7 +4328,7 @@ class class_rss_retrieval_syndicator {
                     </tr>
 
                     <tr>
-                        <th scope="row"><?php $this->showChangeBox( $change_selected, 'use_fifu' ); ?><?php echo esc_html__( 'Use FIFU', "wp-rijkshuisstijl" ); ?></th>
+                        <th scope="row"><?php $this->showChangeBox( $change_selected, 'use_fifu' ); ?><?php echo esc_html( _x( 'Use FIFU', "RSS importer", "wp-rijkshuisstijl" ) ); ?></th>
                         <td>
 							<?php
 							echo '<input type="checkbox" name="use_fifu" id="use_fifu" ' . ( ( $settings['use_fifu'] === 'on' ) ? 'checked ' : '' ) . '>';
@@ -4349,7 +4341,7 @@ class class_rss_retrieval_syndicator {
                     </tr>
 
                     <tr>
-                        <th scope="row"><?php $this->showChangeBox( $change_selected, 'alt_post_thumbnail_src' ); ?><?php echo esc_html__( 'Alternative thumbnail source', "wp-rijkshuisstijl" ); ?></th>
+                        <th scope="row"><?php $this->showChangeBox( $change_selected, 'alt_post_thumbnail_src' ); ?><?php echo esc_html( _x( 'Alternative thumbnail source', "RSS importer", "wp-rijkshuisstijl" ) ); ?></th>
                         <td>
 							<?php
 							echo '<input type="text" name="alt_post_thumbnail_src" style="margin:0;width:100%;" value="' . esc_html( stripslashes( $settings['alt_post_thumbnail_src'] ) ) . '" size="20">';
@@ -4360,7 +4352,7 @@ class class_rss_retrieval_syndicator {
                     </tr>
 
                     <tr>
-                        <th scope="row"><?php $this->showChangeBox( $change_selected, 'require_thumbnail' ); ?><?php echo esc_html__( 'Post thumbnail is required', "wp-rijkshuisstijl" ); ?></th>
+                        <th scope="row"><?php $this->showChangeBox( $change_selected, 'require_thumbnail' ); ?><?php echo esc_html( _x( 'Post thumbnail is required', "RSS importer", "wp-rijkshuisstijl" ) ); ?></th>
                         <td>
 							<?php
 							echo '<input type="checkbox" name="require_thumbnail" id="require_thumbnail" ' . ( ( $settings['require_thumbnail'] === 'on' ) ? 'checked ' : '' ) . '>';
@@ -4384,7 +4376,7 @@ class class_rss_retrieval_syndicator {
 				?>
 				">
                     <tr>
-                        <th scope="row"><?php $this->showChangeBox( $change_selected, 'post_title_template' ); ?><?php echo esc_html__( 'Post title', "wp-rijkshuisstijl" ); ?></th>
+                        <th scope="row"><?php $this->showChangeBox( $change_selected, 'post_title_template' ); ?><?php echo esc_html( _x( 'Post title', "RSS importer", "wp-rijkshuisstijl" ) ); ?></th>
                         <td>
 							<?php
 							echo '<textarea style="width:100%; height:5em; background-color:white;" wrap="on" name="post_title_template" id="post_title_template">' . esc_html( stripslashes( $settings['post_title_template'] ) ) . '</textarea>';
@@ -4397,7 +4389,7 @@ class class_rss_retrieval_syndicator {
                     </tr>
 
                     <tr>
-                        <th scope="row"><?php $this->showChangeBox( $change_selected, 'post_slug_template' ); ?><?php echo esc_html__( 'Post slug', "wp-rijkshuisstijl" ); ?></th>
+                        <th scope="row"><?php $this->showChangeBox( $change_selected, 'post_slug_template' ); ?><?php echo esc_html( _x( 'Post slug', "RSS importer", "wp-rijkshuisstijl" ) ); ?></th>
                         <td>
 							<?php
 							echo '<input type="text" name="post_slug_template" style="margin:0;width:100%;" value="' . esc_html( stripslashes( $settings['post_slug_template'] ) ) . '" size="20">';
@@ -4408,7 +4400,7 @@ class class_rss_retrieval_syndicator {
                     </tr>
 
                     <tr>
-                        <th scope="row"><?php $this->showChangeBox( $change_selected, 'remove_emojis_from_slugs' ); ?><?php echo esc_html__( 'Remove emojis from post slugs', "wp-rijkshuisstijl" ); ?></th>
+                        <th scope="row"><?php $this->showChangeBox( $change_selected, 'remove_emojis_from_slugs' ); ?><?php echo esc_html( _x( 'Remove emojis from post slugs', "RSS importer", "wp-rijkshuisstijl" ) ); ?></th>
                         <td>
 							<?php
 							echo '<input type="checkbox" name="remove_emojis_from_slugs" id="remove_emojis_from_slugs" ' . ( ( $settings['remove_emojis_from_slugs'] === 'on' ) ? 'checked ' : '' ) . '>';
@@ -4418,7 +4410,7 @@ class class_rss_retrieval_syndicator {
                     </tr>
 
                     <tr>
-                        <th scope="row"><?php $this->showChangeBox( $change_selected, 'post_content_template' ); ?><?php echo esc_html__( 'Post content', "wp-rijkshuisstijl" ); ?></th>
+                        <th scope="row"><?php $this->showChangeBox( $change_selected, 'post_content_template' ); ?><?php echo esc_html( _x( 'Post content', "RSS importer", "wp-rijkshuisstijl" ) ); ?></th>
                         <td>
 							<?php
 							echo '<textarea style="width:100%; height:20em; background-color:white;" wrap="on" name="post_content_template" id="post_content_template">' . esc_html( stripslashes( $settings['post_content_template'] ) ) . '</textarea>';
@@ -4431,7 +4423,7 @@ class class_rss_retrieval_syndicator {
                     </tr>
 
                     <tr>
-                        <th scope="row"><?php $this->showChangeBox( $change_selected, 'post_excerpt_template' ); ?><?php echo esc_html__( 'Post excerpt', "wp-rijkshuisstijl" ); ?></th>
+                        <th scope="row"><?php $this->showChangeBox( $change_selected, 'post_excerpt_template' ); ?><?php echo esc_html( _x( 'Post excerpt', "RSS importer", "wp-rijkshuisstijl" ) ); ?></th>
                         <td>
 							<?php
 							echo '<textarea style="width:100%; height:20em; background-color:white;" wrap="on" name="post_excerpt_template" id="post_excerpt_template">' . esc_html( stripslashes( $settings['post_excerpt_template'] ) ) . '</textarea>';
@@ -4446,60 +4438,67 @@ class class_rss_retrieval_syndicator {
                             <div style="padding: 1em; background: #f9f9f9; border: 1px solid #ddd; border-radius: 4px;">
                                 <ul style="margin-top: 0.5em;">
                                     <li><code>%link%</code>
-                                        – <?php echo esc_html__( 'Post link (URL)', "wp-rijkshuisstijl" ); ?></li>
+                                        – <?php echo esc_html( _x( 'Post link (URL)', "RSS importer", "wp-rijkshuisstijl" ) ); ?>
+                                    </li>
                                     <li><code>%post_title%</code>
-                                        – <?php echo esc_html__( 'Post title', "wp-rijkshuisstijl" ); ?></li>
+                                        – <?php echo esc_html( _x( 'Post title', "RSS importer", "wp-rijkshuisstijl" ) ); ?>
+                                    </li>
                                     <li><code>%post_content%</code>
-                                        – <?php echo esc_html__( 'Post content (HTML)', "wp-rijkshuisstijl" ); ?></li>
+                                        – <?php echo esc_html( _x( 'Post content (HTML)', "RSS importer", "wp-rijkshuisstijl" ) ); ?>
+                                    </li>
                                     <li><code>%post_content[<em>max_length</em>]%</code>
-                                        – <?php echo esc_html__( 'Shortened post content (HTML, max characters)', "wp-rijkshuisstijl" ); ?>
+                                        – <?php echo esc_html( _x( 'Shortened post content (HTML, max characters)', "RSS importer", "wp-rijkshuisstijl" ) ); ?>
                                     </li>
                                     <li><code>%post_content_notags%</code>
-                                        – <?php echo esc_html__( 'Post content (plain text, no HTML tags)', "wp-rijkshuisstijl" ); ?>
+                                        – <?php echo esc_html( _x( 'Post content (plain text, no HTML tags)', "RSS importer", "wp-rijkshuisstijl" ) ); ?>
                                     </li>
                                     <li><code>%post_content_notags[<em>num_words</em>]%</code>
-                                        – <?php echo esc_html__( 'Shortened post content (plain text, max words)', "wp-rijkshuisstijl" ); ?>
+                                        – <?php echo esc_html( _x( 'Shortened post content (plain text, max words)', "RSS importer", "wp-rijkshuisstijl" ) ); ?>
                                     </li>
                                     <li><code>%post_excerpt%</code>
-                                        – <?php echo esc_html__( 'Post excerpt (HTML)', "wp-rijkshuisstijl" ); ?></li>
+                                        – <?php echo esc_html( _x( 'Post excerpt (HTML)', "RSS importer", "wp-rijkshuisstijl" ) ); ?>
+                                    </li>
                                     <li><code>%post_excerpt[<em>max_length</em>]%</code>
-                                        – <?php echo esc_html__( 'Shortened post excerpt (HTML, max characters)', "wp-rijkshuisstijl" ); ?>
+                                        – <?php echo esc_html( _x( 'Shortened post excerpt (HTML, max characters)', "RSS importer", "wp-rijkshuisstijl" ) ); ?>
                                     </li>
                                     <li><code>%post_excerpt_notags%</code>
-                                        – <?php echo esc_html__( 'Post excerpt (plain text, no HTML tags)', "wp-rijkshuisstijl" ); ?>
+                                        – <?php echo esc_html( _x( 'Post excerpt (plain text, no HTML tags)', "RSS importer", "wp-rijkshuisstijl" ) ); ?>
                                     </li>
                                     <li><code>%post_excerpt_notags[<em>num_words</em>]%</code>
-                                        – <?php echo esc_html__( 'Shortened post excerpt (plain text, max words)', "wp-rijkshuisstijl" ); ?>
+                                        – <?php echo esc_html( _x( 'Shortened post excerpt (plain text, max words)', "RSS importer", "wp-rijkshuisstijl" ) ); ?>
                                     </li>
                                     <li><code>%enclosure_url%</code>
-                                        – <?php echo esc_html__( 'Media enclosure URL', "wp-rijkshuisstijl" ); ?></li>
+                                        – <?php echo esc_html( _x( 'Media enclosure URL', "RSS importer", "wp-rijkshuisstijl" ) ); ?>
+                                    </li>
                                     <li><code>%media_description%</code>
-                                        – <?php echo esc_html__( 'Media description', "wp-rijkshuisstijl" ); ?></li>
+                                        – <?php echo esc_html( _x( 'Media description', "RSS importer", "wp-rijkshuisstijl" ) ); ?>
+                                    </li>
                                     <li><code>%media_thumbnail[<em>index</em>]%</code>
-                                        – <?php echo esc_html__( 'Media thumbnail URL by index (0-based)', "wp-rijkshuisstijl" ); ?>
+                                        – <?php echo esc_html( _x( 'Media thumbnail URL by index (0-based)', "RSS importer", "wp-rijkshuisstijl" ) ); ?>
                                     </li>
                                     <li><code>%media_content[<em>index</em>]%</code>
-                                        – <?php echo esc_html__( 'Media content URL by index (0-based)', "wp-rijkshuisstijl" ); ?>
+                                        – <?php echo esc_html( _x( 'Media content URL by index (0-based)', "RSS importer", "wp-rijkshuisstijl" ) ); ?>
                                     </li>
                                     <li><code>%youtube_video[<em>keyword</em>]%</code>
-                                        – <?php echo esc_html__( 'Embed code for a YouTube video matching the keyword', "wp-rijkshuisstijl" ); ?>
+                                        – <?php echo esc_html( _x( 'Embed code for a YouTube video matching the keyword', "RSS importer", "wp-rijkshuisstijl" ) ); ?>
                                     </li>
                                     <li><code>%post_guid%</code>
-                                        – <?php echo esc_html__( 'Post GUID', "wp-rijkshuisstijl" ); ?></li>
+                                        – <?php echo esc_html( _x( 'Post GUID', "RSS importer", "wp-rijkshuisstijl" ) ); ?>
+                                    </li>
                                     <li><code>%post_date%</code>
-                                        – <?php echo esc_html__( 'Post date (default format)', "wp-rijkshuisstijl" ); ?>
+                                        – <?php echo esc_html( _x( 'Post date (default format)', "RSS importer", "wp-rijkshuisstijl" ) ); ?>
                                     </li>
                                     <li><code>%post_date[<em>format</em>]%</code>
-                                        – <?php echo esc_html__( 'Post date (custom PHP date format, e.g. Y-m-d)', "wp-rijkshuisstijl" ); ?>
+                                        – <?php echo esc_html( _x( 'Post date (custom PHP date format, e.g. Y-m-d)', "RSS importer", "wp-rijkshuisstijl" ) ); ?>
                                     </li>
                                     <li><code>%categories%</code>
-                                        – <?php echo esc_html__( 'Comma-separated post categories', "wp-rijkshuisstijl" ); ?>
+                                        – <?php echo esc_html( _x( 'Comma-separated post categories', "RSS importer", "wp-rijkshuisstijl" ) ); ?>
                                     </li>
                                     <li><code>%xml_tags[<em>tag_name</em>]%</code>
-                                        – <?php echo esc_html__( 'Value of an XML tag from the feed', "wp-rijkshuisstijl" ); ?>
+                                        – <?php echo esc_html( _x( 'Value of an XML tag from the feed', "RSS importer", "wp-rijkshuisstijl" ) ); ?>
                                     </li>
                                     <li><code>%xml_tags_attr[<em>tag_name</em>][<em>attribute</em>]%</code>
-                                        – <?php echo esc_html__( 'Attribute value of an XML tag', "wp-rijkshuisstijl" ); ?>
+                                        – <?php echo esc_html( _x( 'Attribute value of an XML tag', "RSS importer", "wp-rijkshuisstijl" ) ); ?>
                                     </li>
                                 </ul>
                             </div>
@@ -4526,7 +4525,7 @@ class class_rss_retrieval_syndicator {
 				?>
 				">
                     <tr>
-                        <th scope="row"><?php $this->showChangeBox( $change_selected, 'strip_tags' ); ?><?php echo esc_html__( 'HTML tags to strip', "wp-rijkshuisstijl" ); ?></th>
+                        <th scope="row"><?php $this->showChangeBox( $change_selected, 'strip_tags' ); ?><?php echo esc_html( _x( 'HTML tags to strip', "RSS importer", "wp-rijkshuisstijl" ) ); ?></th>
                         <td>
 							<?php
 							echo '<input type="text" name="strip_tags" style="margin:0;width:100%;" value="' . esc_html( stripslashes( $settings['strip_tags'] ) ) . '" size="20">';
@@ -4537,7 +4536,7 @@ class class_rss_retrieval_syndicator {
                     </tr>
 
                     <tr>
-                        <th scope="row"><?php $this->showChangeBox( $change_selected, 'utf8_encoding' ); ?><?php echo esc_html__( 'UTF-8 encoding', "wp-rijkshuisstijl" ); ?></th>
+                        <th scope="row"><?php $this->showChangeBox( $change_selected, 'utf8_encoding' ); ?><?php echo esc_html( _x( 'UTF-8 encoding', "RSS importer", "wp-rijkshuisstijl" ) ); ?></th>
                         <td>
 							<?php
 							echo '<input type="checkbox" name="utf8_encoding" id="utf8_encoding" ' . ( ( $settings['utf8_encoding'] === 'on' ) ? 'checked ' : '' ) . '>';
@@ -4551,7 +4550,7 @@ class class_rss_retrieval_syndicator {
                     </tr>
 
                     <tr>
-                        <th scope="row"><?php $this->showChangeBox( $change_selected, 'convert_encoding' ); ?><?php echo esc_html__( 'Convert character encoding', "wp-rijkshuisstijl" ); ?></th>
+                        <th scope="row"><?php $this->showChangeBox( $change_selected, 'convert_encoding' ); ?><?php echo esc_html( _x( 'Convert character encoding', "RSS importer", "wp-rijkshuisstijl" ) ); ?></th>
                         <td>
 							<?php
 							echo '<input type="checkbox" name="convert_encoding" id="convert_encoding" ' . ( ( $settings['convert_encoding'] === 'on' ) ? 'checked ' : '' ) . '>';
@@ -4562,7 +4561,7 @@ class class_rss_retrieval_syndicator {
                     </tr>
 
                     <tr>
-                        <th scope="row"><?php $this->showChangeBox( $change_selected, 'sanitize' ); ?><?php echo esc_html__( 'Sanitize content', "wp-rijkshuisstijl" ); ?></th>
+                        <th scope="row"><?php $this->showChangeBox( $change_selected, 'sanitize' ); ?><?php echo esc_html( _x( 'Sanitize content', "RSS importer", "wp-rijkshuisstijl" ) ); ?></th>
                         <td>
 							<?php
 							echo '<input type="checkbox" name="sanitize" id="sanitize" ' . ( ( $settings['sanitize'] === 'on' ) ? 'checked ' : '' ) . '>';
@@ -4618,7 +4617,7 @@ class class_rss_retrieval_syndicator {
 				?>
 				">
                     <tr>
-                        <th scope="row"><?php $this->showChangeBox( $change_selected, 'filter_post_title' ); ?><?php echo esc_html__( 'Apply filtering to', "wp-rijkshuisstijl" ); ?></th>
+                        <th scope="row"><?php $this->showChangeBox( $change_selected, 'filter_post_title' ); ?><?php echo esc_html( _x( 'Apply filtering to', "RSS importer", "wp-rijkshuisstijl" ) ); ?></th>
                         <td>
 							<?php
 							echo '<input type="checkbox" name="filter_post_title" id="filter_post_title" ' . ( ( $settings['filter_post_title'] === 'on' ) ? 'checked ' : '' ) . '> <label for="filter_post_title">post title</label> &nbsp; ';
@@ -4630,7 +4629,7 @@ class class_rss_retrieval_syndicator {
                     </tr>
 
                     <tr>
-                        <th scope="row"><?php $this->showChangeBox( $change_selected, 'filter_any_phrases' ); ?><?php echo esc_html__( 'Must contain any of these keywords', "wp-rijkshuisstijl" ); ?></th>
+                        <th scope="row"><?php $this->showChangeBox( $change_selected, 'filter_any_phrases' ); ?><?php echo esc_html( _x( 'Must contain any of these keywords', "RSS importer", "wp-rijkshuisstijl" ) ); ?></th>
                         <td>
 							<?php echo '<input type="text" style="width:100%" name="filter_any_phrases" value="' . esc_html( stripslashes( $settings['filter_any_phrases'] ) ) . '">'; ?>
                             <p class="description">Separate keywords and phrases with commas.</p>
@@ -4638,7 +4637,7 @@ class class_rss_retrieval_syndicator {
                     </tr>
 
                     <tr>
-                        <th scope="row"><?php $this->showChangeBox( $change_selected, 'filter_all_phrases' ); ?><?php echo esc_html__( 'Must contain all these keywords', "wp-rijkshuisstijl" ); ?></th>
+                        <th scope="row"><?php $this->showChangeBox( $change_selected, 'filter_all_phrases' ); ?><?php echo esc_html( _x( 'Must contain all these keywords', "RSS importer", "wp-rijkshuisstijl" ) ); ?></th>
                         <td>
 							<?php echo '<input type="text" style="width:100%" name="filter_all_phrases" value="' . esc_html( stripslashes( $settings['filter_all_phrases'] ) ) . '">'; ?>
                             <p class="description">Separate keywords and phrases with commas.</p>
@@ -4646,7 +4645,7 @@ class class_rss_retrieval_syndicator {
                     </tr>
 
                     <tr>
-                        <th scope="row"><?php $this->showChangeBox( $change_selected, 'filter_none_phrases' ); ?><?php echo esc_html__( 'Must contain none of these keywords', "wp-rijkshuisstijl" ); ?></th>
+                        <th scope="row"><?php $this->showChangeBox( $change_selected, 'filter_none_phrases' ); ?><?php echo esc_html( _x( 'Must contain none of these keywords', "RSS importer", "wp-rijkshuisstijl" ) ); ?></th>
                         <td>
 							<?php echo '<input type="text" style="width:100%" name="filter_none_phrases" value="' . esc_html( stripslashes( $settings['filter_none_phrases'] ) ) . '"'; ?>
                             <p class="description">Separate keywords and phrases with commas.</p>
@@ -4654,7 +4653,7 @@ class class_rss_retrieval_syndicator {
                     </tr>
 
                     <tr>
-                        <th scope="row"><?php $this->showChangeBox( $change_selected, 'filter_any_tags' ); ?><?php echo esc_html__( 'Must contain any of these tags', "wp-rijkshuisstijl" ); ?></th>
+                        <th scope="row"><?php $this->showChangeBox( $change_selected, 'filter_any_tags' ); ?><?php echo esc_html( _x( 'Must contain any of these tags', "RSS importer", "wp-rijkshuisstijl" ) ); ?></th>
                         <td>
 							<?php echo '<input type="text" style="width:100%" name="filter_any_tags" value="' . esc_html( stripslashes( $settings['filter_any_tags'] ) ) . '"'; ?>
                             <p class="description">Separate tags and phrases with commas.</p>
@@ -4662,7 +4661,7 @@ class class_rss_retrieval_syndicator {
                     </tr>
 
                     <tr>
-                        <th scope="row"><?php $this->showChangeBox( $change_selected, 'filter_none_tags' ); ?><?php echo esc_html__( 'Must contain none of these tags', "wp-rijkshuisstijl" ); ?></th>
+                        <th scope="row"><?php $this->showChangeBox( $change_selected, 'filter_none_tags' ); ?><?php echo esc_html( _x( 'Must contain none of these tags', "RSS importer", "wp-rijkshuisstijl" ) ); ?></th>
                         <td>
 							<?php echo '<input type="text" style="width:100%" name="filter_none_tags" value="' . esc_html( stripslashes( $settings['filter_none_tags'] ) ) . '">'; ?>
                             <p class="description">Separate tags and phrases with commas.</p>
@@ -4670,7 +4669,7 @@ class class_rss_retrieval_syndicator {
                     </tr>
 
                     <tr>
-                        <th scope="row"><?php $this->showChangeBox( $change_selected, 'filter_days_newer' ); ?><?php echo esc_html__( 'Must be newer than', "wp-rijkshuisstijl" ); ?></th>
+                        <th scope="row"><?php $this->showChangeBox( $change_selected, 'filter_days_newer' ); ?><?php echo esc_html( _x( 'Must be newer than', "RSS importer", "wp-rijkshuisstijl" ) ); ?></th>
                         <td>
 							<?php echo '<input type="number" min="0" name="filter_days_newer" value="' . esc_html( stripslashes( $settings['filter_days_newer'] ) ) . '" size="3"> day(s).'; ?>
                             <p class="description">Specify the date of a news publication in the feed (if present). Use
@@ -4679,7 +4678,7 @@ class class_rss_retrieval_syndicator {
                     </tr>
 
                     <tr>
-                        <th scope="row"><?php $this->showChangeBox( $change_selected, 'filter_days_older' ); ?><?php echo esc_html__( 'Must be older than', "wp-rijkshuisstijl" ); ?></th>
+                        <th scope="row"><?php $this->showChangeBox( $change_selected, 'filter_days_older' ); ?><?php echo esc_html( _x( 'Must be older than', "RSS importer", "wp-rijkshuisstijl" ) ); ?></th>
                         <td>
 							<?php echo '<input type="number" min="0" name="filter_days_older" value="' . esc_html( stripslashes( $settings['filter_days_older'] ) ) . '" size="3"> day(s).'; ?>
                             <p class="description">Specify the date of a news publication in the feed (if present). Use
@@ -4688,7 +4687,7 @@ class class_rss_retrieval_syndicator {
                     </tr>
 
                     <tr>
-                        <th scope="row"><?php $this->showChangeBox( $change_selected, 'filter_post_longer' ); ?><?php echo esc_html__( 'Must be longer than', "wp-rijkshuisstijl" ); ?></th>
+                        <th scope="row"><?php $this->showChangeBox( $change_selected, 'filter_post_longer' ); ?><?php echo esc_html( _x( 'Must be longer than', "RSS importer", "wp-rijkshuisstijl" ) ); ?></th>
                         <td>
 							<?php echo '<input type="number" min="0" name="filter_post_longer" value="' . esc_html( stripslashes( $settings['filter_post_longer'] ) ) . '" size="3"> character(s).'; ?>
                             <p class="description">Specify the the minimum post length. Use 0 for any size.</p>
@@ -4696,7 +4695,7 @@ class class_rss_retrieval_syndicator {
                     </tr>
 
                     <tr>
-                        <th scope="row"><?php $this->showChangeBox( $change_selected, 'filter_post_shorter' ); ?><?php echo esc_html__( 'Must be shorter than', "wp-rijkshuisstijl" ); ?></th>
+                        <th scope="row"><?php $this->showChangeBox( $change_selected, 'filter_post_shorter' ); ?><?php echo esc_html( _x( 'Must be shorter than', "RSS importer", "wp-rijkshuisstijl" ) ); ?></th>
                         <td>
 							<?php echo '<input type="number" min="0" name="filter_post_shorter" value="' . esc_html( stripslashes( $settings['filter_post_shorter'] ) ) . '" size="3"> character(s).'; ?>
                             <p class="description">Specify the the maximum post length. Use 0 for any size.</p>
@@ -4711,21 +4710,21 @@ class class_rss_retrieval_syndicator {
 			echo '<div class="submit">';
 			if ( isset( $_POST['modify_selected_feeds'] ) && check_admin_referer( 'rss_retrieval_xml_syndicator' ) ) {
 				echo '<input type="hidden" name="feed_ids" value="' . esc_attr( base64_encode( serialize( $_POST['feed_ids'] ) ) ) . '">';
-				echo '<input class="button-primary" name="apply_settings_to_selected_feeds" value="' . esc_html( esc_attr__( 'Apply these settings to selected feeds', "wp-rijkshuisstijl" ) ) . '" type="submit">&nbsp;&nbsp;';
-				echo '<input class="button" name="cancel" value="' . esc_html( esc_attr__( 'Cancel', "wp-rijkshuisstijl" ) ) . '" type="submit">';
+				echo '<input class="button-primary" name="apply_settings_to_selected_feeds" value="' . esc_html( _x( 'Apply these settings to selected feeds', "RSS importer", "wp-rijkshuisstijl" ) ) . '" type="submit">&nbsp;&nbsp;';
+				echo '<input class="button" name="cancel" value="' . esc_html( _x( 'Cancel', "RSS importer", "wp-rijkshuisstijl" ) ) . '" type="submit">';
 			} elseif ( $islocal ) {
 				if ( $this->edit_existing ) {
-					echo '<input class="button-primary" name="update_feed_settings" value="' . esc_html( esc_attr__( 'Update Feed Settings', "wp-rijkshuisstijl" ) ) . '" type="submit">&nbsp;&nbsp;';
-					echo '<input class="button" name="cancel" value="' . esc_html( esc_attr__( 'Cancel', "wp-rijkshuisstijl" ) ) . '" type="submit">';
+					echo '<input class="button-primary" name="update_feed_settings" value="' . esc_html( _x( 'Update Feed Settings', "RSS importer", "wp-rijkshuisstijl" ) ) . '" type="submit">&nbsp;&nbsp;';
+					echo '<input class="button" name="cancel" value="' . esc_html( _x( 'Cancel', "RSS importer", "wp-rijkshuisstijl" ) ) . '" type="submit">';
 					echo '<input type="hidden" name="feed_id" value="' . (int) $_GET['edit-feed-id'] . '">';
 				} else {
-					echo '<input class="button-primary" name="syndicate_feed" value="' . esc_html( esc_attr__( 'Syndicate This Feed', "wp-rijkshuisstijl" ) ) . '" type="submit">&nbsp;&nbsp;';
-					echo '<input class="button" name="cancel" value="' . esc_html( esc_attr__( 'Cancel', "wp-rijkshuisstijl" ) ) . '" type="submit">';
+					echo '<input class="button-primary" name="syndicate_feed" value="' . esc_html( _x( 'Syndicate This Feed', "RSS importer", "wp-rijkshuisstijl" ) ) . '" type="submit">&nbsp;&nbsp;';
+					echo '<input class="button" name="cancel" value="' . esc_html( _x( 'Cancel', "RSS importer", "wp-rijkshuisstijl" ) ) . '" type="submit">';
 					echo '<input type="hidden" name="feed_url" value="' . esc_html( esc_attr( $this->current_feed_url ) ) . '">';
 				}
 			} else {
-				echo '<input class="button-primary" name="update_default_settings" value="' . esc_html( esc_attr__( 'Update default settings', "wp-rijkshuisstijl" ) ) . '" type="submit">&nbsp;';
-				echo '<input class="button" name="cancel" value="' . esc_html( esc_attr__( 'Cancel', "wp-rijkshuisstijl" ) ) . '" type="submit">';
+				echo '<input class="button-primary" name="update_default_settings" value="' . esc_html( _x( 'Update default settings', "RSS importer", "wp-rijkshuisstijl" ) ) . '" type="submit">&nbsp;';
+				echo '<input class="button" name="cancel" value="' . esc_html( _x( 'Cancel', "RSS importer", "wp-rijkshuisstijl" ) ) . '" type="submit">';
 			}
 			echo '</div>';
 			wp_nonce_field( 'rss_retrieval_xml_syndicator' );
@@ -4744,7 +4743,7 @@ class class_rss_retrieval_syndicator {
 		}
 		if ( intval( $this->feeds[ $id ]['options']['interval'] ) === 0 ) {
 			return 'never';
-		} elseif ( intval( $this->feeds[ $id ]['options']['max_items'] ) === 0 ) {
+		} elseif ( intval( $this->feeds[ $id ]['options']['max_rss_items'] ) === 0 ) {
 			return 'skip';
 		} elseif ( ( $time - $updated ) >= $interval ) {
 			return 'asap';
@@ -4763,7 +4762,7 @@ class class_rss_retrieval_syndicator {
 		?>
 		">
             <tr>
-                <th scope="row"><?php $this->showChangeBox( $change_selected, 'user_agent' ); ?><?php echo esc_html__( 'User agent', "wp-rijkshuisstijl" ); ?></th>
+                <th scope="row"><?php $this->showChangeBox( $change_selected, 'user_agent' ); ?><?php echo esc_html( _x( 'User agent', "RSS importer", "wp-rijkshuisstijl" ) ); ?></th>
                 <td>
 					<?php
 					echo '<input type="text" style="width:100%" name="user_agent" value="' . esc_html( stripslashes( $settings['user_agent'] ) ) . '">';
@@ -4774,7 +4773,7 @@ class class_rss_retrieval_syndicator {
             </tr>
 
             <tr>
-                <th scope="row"><?php $this->showChangeBox( $change_selected, 'http_headers' ); ?><?php echo esc_html__( 'HTTP headers', "wp-rijkshuisstijl" ); ?></th>
+                <th scope="row"><?php $this->showChangeBox( $change_selected, 'http_headers' ); ?><?php echo esc_html( _x( 'HTTP headers', "RSS importer", "wp-rijkshuisstijl" ) ); ?></th>
                 <td>
 					<?php
 					echo '<textarea cols="90" rows="10" wrap="off" name="http_headers" style="margin:0;height:10em;width:100%;">' . esc_html( stripslashes( $settings['http_headers'] ) ) . '</textarea>';
@@ -4803,7 +4802,7 @@ class class_rss_retrieval_syndicator {
 
                     <div style="align-self: center;">
                         <input class="button-primary" name="new_feed"
-                               value="<?php echo esc_attr__( '&nbsp; Syndicate &raquo; &nbsp;', "wp-rijkshuisstijl" ); ?>"
+                               value="<?php echo _x( '&nbsp; Syndicate &raquo; &nbsp;', "RSS importer", "wp-rijkshuisstijl" ); ?>"
                                type="submit">
                     </div>
                 </div>
@@ -4836,11 +4835,11 @@ class class_rss_retrieval_syndicator {
 					}
 					echo '<table class="widefat" style="margin-top: .5em" width="100%">';
 					echo '<tr style="background: #f0f0f0;">';
-					echo '<th scope="row" style="width:3%;"><input type="checkbox" onclick="DO_COMMUNITY_RSS_CheckAllLs(document.getElementById(\'syndycated_feeds\'));"></th>';
-					echo '<th scope="row" style="font-weight: 600; width:25%;">' . esc_html__( 'Feed title', "wp-rijkshuisstijl" ) . '</th>';
-					echo '<th scope="row" style="font-weight: 600; width:50%;">' . esc_html__( 'URL', "wp-rijkshuisstijl" ) . '</th>';
-					echo '<th scope="row" style="font-weight: 600; width:10%;">' . esc_html__( 'Next update', "wp-rijkshuisstijl" ) . '</th>';
-					echo '<th scope="row" style="font-weight: 600; width:12%;">' . esc_html__( 'Last update', "wp-rijkshuisstijl" ) . '</th>';
+					echo '<th scope="row" style="width:3%;"><input type="checkbox" onclick="rssrtvr_lite_CheckAllLs(document.getElementById(\'syndycated_feeds\'));"></th>';
+					echo '<th scope="row" style="font-weight: 600; width:25%;">' . esc_html( _x( 'Feed title', "RSS importer", "wp-rijkshuisstijl" ) ) . '</th>';
+					echo '<th scope="row" style="font-weight: 600; width:50%;">' . esc_html( _x( 'URL', "RSS importer", "wp-rijkshuisstijl" ) ) . '</th>';
+					echo '<th scope="row" style="font-weight: 600; width:10%;">' . esc_html( _x( 'Next update', "RSS importer", "wp-rijkshuisstijl" ) ) . '</th>';
+					echo '<th scope="row" style="font-weight: 600; width:12%;">' . esc_html( _x( 'Last update', "RSS importer", "wp-rijkshuisstijl" ) ) . '</th>';
 					echo '</tr>';
 					$i = 0;
 					foreach ( $display_feeds as $item ) {
@@ -4865,30 +4864,30 @@ class class_rss_retrieval_syndicator {
                             <td>
                                 <div align="left">
                                     <input class="button-primary" name="check_for_updates"
-                                           value="<?php echo esc_attr__( '&#x23E9; Pull selected feeds now!', "wp-rijkshuisstijl" ); ?>"
+                                           value="<?php echo _x( '&#x23E9; Pull selected feeds now!', "RSS importer", "wp-rijkshuisstijl" ); ?>"
                                            type="submit">
                                     <input class="button secondary" name="modify_selected_feeds"
-                                           value="<?php echo esc_attr__( 'Mass modify selected feeds', "wp-rijkshuisstijl" ); ?>"
+                                           value="<?php echo _x( 'Mass modify selected feeds', "RSS importer", "wp-rijkshuisstijl" ); ?>"
                                            type="submit">
                                     <input class="button secondary" name="shuffle_update_time"
-                                           value="<?php echo esc_attr__( 'Shuffle update times', "wp-rijkshuisstijl" ); ?>"
+                                           value="<?php echo _x( 'Shuffle update times', "RSS importer", "wp-rijkshuisstijl" ); ?>"
                                            type="submit">
                                 </div>
                             </td>
                             <td>
                                 <div align="right">
                                     <input class="button secondary" name="delete_feeds_and_posts"
-                                           value="<?php echo esc_attr__( '&#x274C; Delete selected feeds and syndicated posts', "wp-rijkshuisstijl" ); ?>"
+                                           value="<?php echo _x( '&#x274C; Delete selected feeds and syndicated posts', "RSS importer", "wp-rijkshuisstijl" ); ?>"
                                            type="submit"
-                                           onclick="return confirm('<?php echo esc_js( __( 'Delete selected feeds and syndicated posts?', "wp-rijkshuisstijl" ) ); ?>')">
+                                           onclick="return confirm('<?php echo esc_js( __( 'Delete selected feeds and syndicated posts?', "RSS importer", "wp-rijkshuisstijl" ) ); ?>')">
                                     <input class="button secondary" name="delete_feeds"
-                                           value="<?php echo esc_attr__( '&#x274C; Delete selected feeds', "wp-rijkshuisstijl" ); ?>"
+                                           value="<?php echo _x( '&#x274C; Delete selected feeds', "RSS importer", "wp-rijkshuisstijl" ); ?>"
                                            type="submit"
-                                           onclick="return confirm('<?php echo esc_js( __( 'Delete selected feeds?', "wp-rijkshuisstijl" ) ); ?>')">
+                                           onclick="return confirm('<?php echo esc_js( __( 'Delete selected feeds?', "RSS importer", "wp-rijkshuisstijl" ) ); ?>')">
                                     <input class="button secondary" name="delete_posts"
-                                           value="<?php echo esc_attr__( '&#x274C; Delete posts syndicated from selected feeds', "wp-rijkshuisstijl" ); ?>"
+                                           value="<?php echo _x( '&#x274C; Delete posts syndicated from selected feeds', "RSS importer", "wp-rijkshuisstijl" ); ?>"
                                            type="submit"
-                                           onclick="return confirm('<?php echo esc_js( __( 'Delete posts syndicated from selected feeds?', "wp-rijkshuisstijl" ) ); ?>')">
+                                           onclick="return confirm('<?php echo esc_js( __( 'Delete posts syndicated from selected feeds?', "RSS importer", "wp-rijkshuisstijl" ) ); ?>')">
                                 </div>
                             </td>
                         </tr>
@@ -4902,7 +4901,7 @@ class class_rss_retrieval_syndicator {
                             <div align="right">
                                 <br>
                                 <input class="button-primary" name="alter_default_settings"
-                                       value="<?php echo esc_attr__( 'Alter default settings', "wp-rijkshuisstijl" ); ?>"
+                                       value="<?php echo _x( 'Alter default settings', "RSS importer", "wp-rijkshuisstijl" ); ?>"
                                        type="submit">
                             </div>
                         </td>
@@ -4928,21 +4927,6 @@ class class_rss_retrieval_syndicator {
 		) {
 			return;
 		}
-
-		wp_enqueue_style(
-			'rssrtvr-lite-admin',
-			plugin_dir_url( __FILE__ ) . 'assets/admin.css',
-			[],
-			'1.0.0'
-		);
-
-		wp_enqueue_script(
-			'rssrtvr-lite-admin',
-			plugin_dir_url( __FILE__ ) . 'assets/admin.js',
-			[ 'jquery' ],
-			'1.0.0',
-			true
-		);
 
 		wp_enqueue_code_editor( [ 'type' => 'text/html' ] );
 		wp_enqueue_script( 'wp-theme-plugin-editor' );
@@ -5038,22 +5022,24 @@ if ( ! is_admin() ) {
 
 function rss_retrieval_main_menu() {
 
-	add_menu_page(
-		esc_html__( 'RSS Syndicator', "wp-rijkshuisstijl" ),
-		esc_html__( 'Community RSS', "wp-rijkshuisstijl" ),
+	add_submenu_page(
+		'edit.php?post_type=' . DO_COMMUNITY_CPT,
+		esc_html__( 'Community feeds', "wp-rijkshuisstijl" ),
+		esc_html__( 'Community feeds', "wp-rijkshuisstijl" ),
 		'manage_options',
 		'community_rss_import',
 		'rss_retrieval_xml_syndicator_menu',
-		'dashicons-rss'
+		2
 	);
 
 	add_submenu_page(
-		'community_rss_import',
-		esc_html__( 'Settings', "wp-rijkshuisstijl" ),
-		esc_html__( 'Settings', "wp-rijkshuisstijl" ),
+		'edit.php?post_type=' . DO_COMMUNITY_CPT,
+		esc_html__( 'Feeds settings', "wp-rijkshuisstijl" ),
+		esc_html__( 'Feeds settings', "wp-rijkshuisstijl" ),
 		'manage_options',
 		'rss_retrieval_general_settings',
-		'rss_retrieval_options_menu'
+		'rss_retrieval_options_menu',
+		3
 	);
 
 }

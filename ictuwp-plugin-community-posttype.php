@@ -38,7 +38,7 @@ require_once plugin_dir_path( __FILE__ ) . 'includes/widget-communitys-with-feed
 
 // code from plugin:
 // https://wordpress.org/plugins/rss-retriever-lite/
-require_once plugin_dir_path( __FILE__ ) . 'includes/rss-retriever-lite.php';
+require_once plugin_dir_path( __FILE__ ) . 'rss-importer/rss-importer.php';
 
 //========================================================================================================
 
@@ -83,12 +83,13 @@ if ( ! class_exists( 'DO_COMMUNITY_CPT' ) ) :
 
 			$this->fn_ictu_community_setup_actions();
 
+			$this->fn_ictu_community_setup_actions();
+
 		}
 
 		/** ----------------------------------------------------------------------------------------------------
 		 * Hook this plugins functions into WordPress.
-		 * Use priority = 20, to ensure that the taxonomy is registered for post types from other plugins,
-		 * such as the podcasts plugin (seriously-simple-podcasting)
+		 * Use priority = 20, to ensure that the taxonomy is registered for post types from other plugins
 		 */
 		private function fn_ictu_community_setup_actions() {
 
@@ -118,6 +119,10 @@ if ( ! class_exists( 'DO_COMMUNITY_CPT' ) ) :
 			// add the page template to the templates list
 			add_filter( 'acf/include_fields', array( $this, 'fn_ictu_community_acf_fields' ) );
 
+			// extra scripts and css
+			add_action( 'admin_enqueue_scripts', array( $this, 'wpdocs_theme_name_scripts' ) );
+
+
 		}
 
 		/** ----------------------------------------------------------------------------------------------------
@@ -128,6 +133,29 @@ if ( ! class_exists( 'DO_COMMUNITY_CPT' ) ) :
 		public function fn_ictu_community_register_posttypes() {
 
 			require_once plugin_dir_path( __FILE__ ) . 'includes/register-community-posttype.php';
+
+		}
+
+		/**
+		 * Proper way to enqueue scripts and styles
+		 */
+		public function wpdocs_theme_name_scripts() {
+
+			wp_enqueue_style(
+				'rssrtvr-lite-admin',
+				plugin_dir_url( __FILE__ ) . 'rss-importer/rss-importer-admin.css',
+				[],
+				'1.0.0'
+			);
+
+
+			wp_enqueue_script(
+				'rssrtvr-lite-admin',
+				plugin_dir_url( __FILE__ ) . 'rss-importer/rss-importer-admin.js',
+				[ 'jquery' ],
+				'1.0.0',
+				true
+			);
 
 		}
 

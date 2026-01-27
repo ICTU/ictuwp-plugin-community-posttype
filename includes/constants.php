@@ -51,7 +51,6 @@ const DO_COMMUNITY_RSS_MIN_UPDATE_TIME        = 1;
 const DO_COMMUNITY_RSS_CURL_USER_AGENT        = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36';
 const DO_COMMUNITY_RSS_CHECK_DATE             = 'rssrtvr_checkdate';
 const DO_COMMUNITY_RSS_POST_LIFE_CHECK_DATE   = 'rssrtvr_post_life_check_date';
-//const rss_retrieval_settings_accounts         = 'rssrtvr_accaunts';
 const DO_COMMUNITY_RSS_FEED_OPTIONS           = 'rssrtvr_feed_options';
 const DO_COMMUNITY_RSS_FEEDS_UPDATED          = 'rssrtvr_feeds_updated';
 const DO_COMMUNITY_RSS_SYNDICATED_FEEDS       = 'rssrtvr_syndicated_feeds';

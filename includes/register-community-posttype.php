@@ -78,11 +78,13 @@ register_taxonomy_for_object_type( 'post_tag', DO_COMMUNITY_CPT );
 // These are shared for both CPTs:
 $args['public']   = false;
 $args['supports'] = array( 'title', 'author', 'excerpt', 'editor' );
+$args['show_in_menu'] = 'edit.php?post_type=' . DO_COMMUNITY_CPT;
 
 // -----------------------------------
 // this is specific for COMMUNITY_RSS_ITEM
 $args['label']   = esc_html__( COMMUNITY_RSS_ITEM, 'wp-rijkshuisstijl' );
 $args['rewrite'] = array( 'slug' => COMMUNITY_RSS_ITEM );
+
 $args['labels'] = array(
 	'name'                  => esc_html_x( 'RSS berichten', 'post type', 'wp-rijkshuisstijl' ),
 	'singular_name'         => esc_html_x( 'RSS bericht', 'post type', 'wp-rijkshuisstijl' ),
@@ -91,7 +93,7 @@ $args['labels'] = array(
 	'archives'              => esc_html_x( 'Overzicht RSS berichten', 'post type', 'wp-rijkshuisstijl' ),
 	'attributes'            => esc_html_x( 'Eigenschappen RSS bericht', 'post type', 'wp-rijkshuisstijl' ),
 	'parent_item_colon'     => esc_html_x( 'Parent Map:', 'post type', 'wp-rijkshuisstijl' ),
-	'all_items'             => esc_html_x( 'Alle RSS berichten', 'post type', 'wp-rijkshuisstijl' ),
+	'all_items'             => esc_html_x( 'Geimporteerde items', 'post type', 'wp-rijkshuisstijl' ),
 	'add_new_item'          => esc_html_x( 'RSS bericht toevoegen', 'post type', 'wp-rijkshuisstijl' ),
 	'add_new'               => esc_html_x( 'Toevoegen', 'post type', 'wp-rijkshuisstijl' ),
 	'new_item'              => esc_html_x( 'Nieuw RSS bericht', 'post type', 'wp-rijkshuisstijl' ),
