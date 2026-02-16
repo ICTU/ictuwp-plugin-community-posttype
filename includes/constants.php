@@ -40,6 +40,9 @@ define( 'DO_COMMUNITY_MAX_OPTIONS', array( 10, 20, 50, 100 ) );
 define( 'DO_COMMUNITY_RSS_POST_ITEM', 'rsspostitem' );
 define( 'DO_COMMUNITY_RSS_EVENT_ITEM', 'rsseventitem' );
 
+define( 'DO_COMMUNITY_RSS_FEED_ITEM', 'wprss_feed_item' );
+
+
 define( 'COMMUNITY_RSS_ITEM', 'communityrssitem' );
 
 //========================================================================================================

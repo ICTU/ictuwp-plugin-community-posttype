@@ -534,23 +534,7 @@ function rss_retrieval_post_exists( $post, $method = '' ) {
 
 	if ( isset( $result ) ) {
 		foreach ( $result as $res ) {
-			if ( function_exists( 'pll_get_post_language' ) ) {
-				if ( ( $rssrtvr_lite->current_feed['options']['polylang_language'] === '' && pll_get_post_language( $res->ID ) === pll_default_language() ) || pll_get_post_language( $res->ID ) === $rssrtvr_lite->current_feed['options']['polylang_language'] ) {
-					return $res->ID;
-				} else {
-					$rssrtvr_lite->polylang_translations[ pll_get_post_language( $res->ID ) ] = $res->ID;
-				}
-			} elseif ( defined( 'ICL_SITEPRESS_VERSION' ) && isset( $GLOBALS['sitepress'] ) ) {
-				global $sitepress;
-				$post_language = $sitepress->get_language_for_element( $res->ID, 'post_' . get_post_type( $res->ID ) );
-				if ( ( $rssrtvr_lite->current_feed['options']['wpml_language'] === '' && $post_language === $sitepress->get_default_language() ) || $post_language === $rssrtvr_lite->current_feed['options']['wpml_language'] ) {
-					return $res->ID;
-				} else {
-					$rssrtvr_lite->wpml_translations[ $post_language ] = $res->ID;
-				}
-			} else {
 				return $res->ID;
-			}
 		}
 	}
 
@@ -980,6 +964,7 @@ function rss_retrieval_get_youtube_video( $keyword ) {
 }
 
 function rss_retrieval_options_menu() {
+
 	if ( isset( $_POST['submit_options'] ) && check_admin_referer( 'rss_retrieval_general_settings' ) ) {
 		update_option( DO_COMMUNITY_RSS_MAX_EXEC_TIME, abs( intval( $_POST[ DO_COMMUNITY_RSS_MAX_EXEC_TIME ] ) ) );
 
@@ -1068,8 +1053,7 @@ function rss_retrieval_options_menu() {
 					<?php wp_nonce_field( 'rss_retrieval_general_settings' ); ?>
                     <br>
                     <div style="text-align:left;">
-                        <input type="submit" name="submit_options" class="button-primary"
-                               value="<?php esc_attr( _x( 'Update options', "RSS importer", "wp-rijkshuisstijl" ) ); ?>"/>
+                        <input type="submit" name="submit_options" class="button-primary" value="<?php echo esc_attr( __( 'Update options', "RSS importer", "wp-rijkshuisstijl" ) ); ?>"/>
                     </div>
                 </div>
             </form>
@@ -1360,8 +1344,6 @@ class class_rss_retrieval_syndicator {
 	public $insideitem;
 	public $parents = [];
 	public $new_tag = false;
-	public $polylang_translations = [];
-	public $wpml_translations = [];
 	public $element_tag;
 	public $tag;
 	public $count;
@@ -1934,6 +1916,7 @@ class class_rss_retrieval_syndicator {
 
 			if ( ! $this->count ) {
 				if ( ! is_admin() ) {
+                    # todo vertalen
 					$this->log( '0 items added from ' . $feed_url );
 				}
 
@@ -1943,6 +1926,7 @@ class class_rss_retrieval_syndicator {
 			return $this->count;
 		} else {
 			if ( is_admin() ) {
+                # todo vertalen
 				echo '<div id="message" class="error"><p>The source feed is empty.</p></div>';
 			} else {
 				$this->log( 'The source feed is empty.' );
@@ -3011,8 +2995,6 @@ class class_rss_retrieval_syndicator {
 
 		$this->link_checked          = 'none';
 		$this->image_urls            = [];
-		$this->polylang_translations = [];
-		$this->wpml_translations     = [];
 
 		if ( ! mb_strlen( trim( $this->post['post_title'] ) ) ) {
 			if ( mb_strlen( $this->post['post_excerpt'] ) ) {
@@ -3179,8 +3161,6 @@ class class_rss_retrieval_syndicator {
 
 			$this->post = rss_retrieval_unpack_content( $this->post, $translated );
 		}
-
-		error_log( "JOEHOE: NOG STEEDS titelings is " . $this->post['post_title'] . "\n" );
 
 		if ( is_array( $this->current_feed['options']['post_category'] ) ) {
 			$post_categories = $this->current_feed['options']['post_category'];
@@ -3446,47 +3426,6 @@ class class_rss_retrieval_syndicator {
 
 		$this->log( 'Done' );
 
-		if ( function_exists( 'pll_set_post_language' ) && function_exists( 'pll_save_post_translations' ) ) {
-			if ( $this->current_feed['options']['polylang_language'] !== '' ) {
-				$this->polylang_translations[ $this->current_feed['options']['polylang_language'] ] = $post_id;
-				pll_set_post_language( $post_id, $this->current_feed['options']['polylang_language'] );
-				pll_save_post_translations( $this->polylang_translations );
-			}
-		}
-
-		if ( defined( 'ICL_SITEPRESS_VERSION' ) && isset( $GLOBALS['sitepress'] ) ) {
-
-			if ( $this->current_feed['options']['wpml_language'] !== '' ) {
-				$language_code                             = $this->current_feed['options']['wpml_language'];
-				$element_type                              = 'post_' . get_post_type( $post_id );
-				$this->wpml_translations[ $language_code ] = $post_id;
-
-				$trid = null;
-				foreach ( $this->wpml_translations as $existing_language_code => $existing_post_id ) {
-					if ( $existing_language_code != $language_code ) {
-						$trid = apply_filters( 'wpml_element_trid', null, $existing_post_id, $element_type );
-						break;
-					}
-				}
-
-				if ( empty( $trid ) ) {
-					$trid = $post_id;
-				}
-
-				do_action(
-					'wpml_set_element_language_details',
-					[
-						'element_id'           => $post_id,
-						'element_type'         => $element_type,
-						'trid'                 => $trid,
-						'language_code'        => $language_code,
-						'source_language_code' => null,
-					]
-				);
-
-				do_action( 'wpml_set_element_translations', $this->wpml_translations );
-			}
-		}
 
 		if ( $this->current_feed['options']['post_format'] !== 'default' ) {
 			set_post_format( $post_id, $this->current_feed['options']['post_format'] );
@@ -4146,81 +4085,6 @@ class class_rss_retrieval_syndicator {
 								echo '<option ' . ( ( $settings['ping_status'] === 'closed' ) ? 'selected ' : '' ) . 'value="closed">Don\'t accept pings</option>';
 								?>
                             </select>
-                        </td>
-                    </tr>
-
-					<?php
-					if ( function_exists( 'pll_languages_list' ) ) {
-						$languages = pll_the_languages(
-							[
-								'hide_if_empty' => 0,
-								'raw'           => 1,
-							]
-						);
-						if ( $settings['polylang_language'] === '' ) {
-							$settings['polylang_language'] = pll_default_language();
-						}
-					} else {
-						$languages = [];
-					}
-					?>
-                    <tr>
-                        <th scope="row"><?php $this->showChangeBox( $change_selected, 'polylang_language' ); ?><?php echo esc_html( _x( 'Polylang language', "RSS importer", "wp-rijkshuisstijl" ) ); ?></th>
-                        <td>
-                            <select name="polylang_language"
-								<?php
-								if ( ! count( $languages ) ) {
-									echo 'disabled';
-								}
-								?>>
-								<?php
-								if ( count( $languages ) ) {
-									foreach ( $languages as $l ) {
-										echo '<option ' . ( ( $settings['polylang_language'] === $l['slug'] ) ? 'selected ' : '' ) . 'value = "' . esc_attr( $l['slug'] ) . '">' . esc_attr( $l['name'] ) . '</option>';
-									}
-								} else {
-									echo '<option value = "' . esc_attr( $settings['polylang_language'] ) . '">The Polylang plugin is inactive</option>';
-								}
-								?>
-                            </select>
-                            <p class="description">Assign a Polylang language to every post or page generated from this
-                                content source [<a href="https://www.rssretriever.com/documentation/#polylang-language"
-                                                   target="_blank">?</a>]</p>
-                        </td>
-                    </tr>
-
-					<?php
-					if ( defined( 'ICL_SITEPRESS_VERSION' ) ) {
-						$languages = apply_filters( 'wpml_active_languages', null, 'orderby=id&order=desc' );
-						if ( $settings['wpml_language'] === '' ) {
-							$settings['wpml_language'] = apply_filters( 'wpml_default_language', null );
-						}
-					} else {
-						$languages = [];
-					}
-					?>
-                    <tr>
-                        <th scope="row"><?php $this->showChangeBox( $change_selected, 'wpml_language' ); ?><?php echo esc_html( _x( 'WPML language', "RSS importer", "wp-rijkshuisstijl" ) ); ?></th>
-                        <td>
-                            <select name="wpml_language"
-								<?php
-								if ( ! count( $languages ) ) {
-									echo 'disabled';
-								}
-								?>>
-								<?php
-								if ( count( $languages ) ) {
-									foreach ( $languages as $l ) {
-										echo '<option ' . ( ( $settings['wpml_language'] === $l['language_code'] ) ? 'selected ' : '' ) . 'value = "' . esc_attr( $l['language_code'] ) . '">' . esc_attr( $l['native_name'] ) . '</option>';
-									}
-								} else {
-									echo '<option value = "' . esc_attr( $settings['wpml_language'] ) . '">The WPML plugin is inactive</option>';
-								}
-								?>
-                            </select>
-                            <p class="description">Assign a WPML language to every post or page generated from this
-                                content source [<a href="https://www.rssretriever.com/documentation/#wpml-language"
-                                                   target="_blank">?</a>]</p>
                         </td>
                     </tr>
                 </table>
@@ -5024,8 +4888,8 @@ function rss_retrieval_main_menu() {
 
 	add_submenu_page(
 		'edit.php?post_type=' . DO_COMMUNITY_CPT,
-		esc_html__( 'Community feeds', "wp-rijkshuisstijl" ),
-		esc_html__( 'Community feeds', "wp-rijkshuisstijl" ),
+		esc_html__( 'Community feeds (OUD)', "wp-rijkshuisstijl" ),
+		esc_html__( 'Community feeds (OUD)', "wp-rijkshuisstijl" ),
 		'manage_options',
 		'community_rss_import',
 		'rss_retrieval_xml_syndicator_menu',
