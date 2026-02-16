@@ -49,3 +49,4 @@ wp-config.php
 
 .idea/*
 .DS_Store
+/vendor
