@@ -5,7 +5,7 @@
  * @package             ictuwp-plugin-community-posttype
  *
  * @wordpress-plugin
- * Plugin Name:         ICTU / WP / DO / Community CPT and pages
+ * Plugin Name:         ICTU / WP / DO - Community CPT and pages
  * Plugin URI:          https://github.com/ICTU/ictuwp-plugin-community-posttype
  * Description:         Plugin voor het aanmaken van posttype 'community' en bijbehorende taxonomieen.
  * Version:             1.4.1

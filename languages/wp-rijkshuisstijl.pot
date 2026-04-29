@@ -740,7 +740,7 @@ msgid "Filter"
 msgstr ""
 
 #. Plugin Name of the plugin/theme
-msgid "ICTU / WP / DO / Community CPT and pages"
+msgid "ICTU / WP / DO - Community CPT and pages"
 msgstr ""
 
 #. Plugin URI of the plugin/theme
