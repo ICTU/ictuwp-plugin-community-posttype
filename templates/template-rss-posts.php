@@ -61,10 +61,10 @@ function community_add_posts_grid( $args = array() ) {
 		$filter_form    = community_feed_add_filter_form( $args_selection );
 	}
 
-	if ( in_array( (int)get_query_var( DO_COMMUNITY_MAX_VAR ), DO_COMMUNITY_MAX_OPTIONS)) {
-		$maxnr	= get_query_var( DO_COMMUNITY_MAX_VAR );
+	if ( in_array( (int) get_query_var( DO_COMMUNITY_MAX_VAR ), DO_COMMUNITY_MAX_OPTIONS ) ) {
+		$maxnr = get_query_var( DO_COMMUNITY_MAX_VAR );
 	} else {
-		$maxnr	= DO_COMMUNITY_MAX_DEFAULT;
+		$maxnr = DO_COMMUNITY_MAX_DEFAULT;
 	}
 
 	$args_selection = array(
@@ -86,6 +86,7 @@ function community_add_posts_grid( $args = array() ) {
 			'type'       => 'posts',
 			'show_date'  => true,
 			'items'      => $rss_items,
+			'sectionid'  => 'berichten',
 			'cssclass'   => 'template-rss-posts'
 		);
 		$rss_content = community_feed_items_show( $args_in );
