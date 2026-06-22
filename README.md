@@ -4,7 +4,7 @@ Plugin voor het aanmaken van posttype 'community' en bijbehorende taxonomieen.
 
 
 ## Current version:
-* 1.4.1 - Upgrade to RSS Aggregator version 5.0.x
+* 1.4.2 - Add ID attribute to sections with RSS data.
 
 ## To do
 [ ] - translate all strings to English from Dutch

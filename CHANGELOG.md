@@ -1,6 +1,7 @@
 # Changelog
 
 ## Version history
+* 1.4.2 - Add ID attribute to sections with RSS data.
 * 1.4.1 - Upgrade to RSS Aggregator version 5.0.x
 * 1.3.1 - Append new widget space to templates.
 * 1.2.9 - Small PHP bugfix.
