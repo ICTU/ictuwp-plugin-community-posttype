@@ -1344,12 +1344,12 @@ function community_feed_add_filter_form( $args = array() ) {
 	$args = wp_parse_args( $args, $defaults );
 
 	wp_reset_postdata();
-	$args = array(
+	$args_query = array(
 		'event_type' => $args['event_type'],
 		'debug'      => false,
 	);
 
-	$valid_feeds = community_feed_get_valid_feeds( $args );
+	$valid_feeds = community_feed_get_valid_feeds( $args_query );
 
 	if ( $valid_feeds ) {
 
