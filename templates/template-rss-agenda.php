@@ -83,7 +83,8 @@ function community_add_agenda_grid( $args = array() ) {
 			'extra_info' => true,
 			'title'      => _x( 'Agenda', 'Header rss links', 'wp-rijkshuisstijl' ),
 			'items'      => $rss_items,
-			'cssclass'   => 'template-rss-agenda'
+			'cssclass'   => 'template-rss-agenda',
+			'sectionid'  => 'agenda'
 		);
 		$rss_content = community_feed_items_show( $args_in );
 		echo $filter_form;

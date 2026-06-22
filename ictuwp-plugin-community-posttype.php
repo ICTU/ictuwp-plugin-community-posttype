@@ -1344,12 +1344,12 @@ function community_feed_add_filter_form( $args = array() ) {
 	$args = wp_parse_args( $args, $defaults );
 
 	wp_reset_postdata();
-	$feed_args = array(
+	$args = array(
 		'event_type' => $args['event_type'],
 		'debug'      => false,
 	);
 
-	$valid_feeds = community_feed_get_valid_feeds( $feed_args );
+	$valid_feeds = community_feed_get_valid_feeds( $args );
 
 	if ( $valid_feeds ) {
 
@@ -1665,6 +1665,7 @@ function community_feed_items_show( $items = array() ) {
 		'after_title'  => '</h2>',
 		'extra_info'   => false,
 		'show_date'    => false,
+		'sectionid'    => 'sectionid',
 		'cssclass'     => '',
 		'echo'         => false
 	);
@@ -1698,6 +1699,8 @@ function community_feed_items_show( $items = array() ) {
 		return false;
 	}
 	$items = $args['items'];
+
+	$return .= '<section id="' . $args['sectionid'] . '">';
 
 	if ( $items->have_posts() ) {
 		$month_previous = '';
@@ -1853,6 +1856,7 @@ function community_feed_items_show( $items = array() ) {
 		$return .= '</ul>';
 
 	}
+	$return .= '</section>';
 
 	return $return;
 }
