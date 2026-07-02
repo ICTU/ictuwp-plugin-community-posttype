@@ -971,6 +971,17 @@ function ictuwp_communityfilter_list( $args_in = array() ) {
 			$args_terms['count'] = true;
 		}
 
+		if ( $args['taxonomy'] === RHSWP_CT_DOSSIER ) {
+
+			$post_ids                 = get_posts( [
+				'post_type'      => DO_COMMUNITY_CPT,
+				'posts_per_page' => - 1,
+				'fields'         => 'ids',
+			] );
+			$args_terms['object_ids'] = $post_ids;
+
+		}
+
 		$terms = get_terms( $args_terms );
 
 		if ( ! empty( $terms ) && ! is_wp_error( $terms ) ) {

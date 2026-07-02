@@ -601,9 +601,11 @@ function community_add_communities_grid( $doreturn = false ) {
                     'title'           => _x( 'Type community', 'Titel in filter', 'wp-rijkshuisstijl' ),
             );
             $community_types          = ictuwp_communityfilter_list( $args2 );
-            $args2['taxonomy']        = DO_COMMUNITYTOPICS_CT;
-            $args2['title']           = _x( 'Thema', 'Titel in filter', 'wp-rijkshuisstijl' );
+
+            $args2['taxonomy']        = RHSWP_CT_DOSSIER;
+            $args2['title']           = _x( 'Dossiers!', 'Titel in filter', 'wp-rijkshuisstijl' );
             $community_topics         = ictuwp_communityfilter_list( $args2 );
+
             $args2['taxonomy']        = DO_COMMUNITYAUDIENCE_CT;
             $args2['title']           = _x( 'Type professional', 'Titel in filter', 'wp-rijkshuisstijl' );
             $community_audiences      = ictuwp_communityfilter_list( $args2 );
