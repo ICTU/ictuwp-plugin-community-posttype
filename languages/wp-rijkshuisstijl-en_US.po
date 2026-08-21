@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: ICTU / Digitale Overheid / Community\n"
-"POT-Creation-Date: 2026-04-29 12:22+0200\n"
-"PO-Revision-Date: 2026-04-29 12:22+0200\n"
+"POT-Creation-Date: 2026-08-21 11:33+0200\n"
+"PO-Revision-Date: 2026-08-21 11:34+0200\n"
 "Last-Translator: Paul van Buuren <poedit@wbvb.nl>\n"
 "Language-Team: Paul van Buuren <poedit@wbvb.nl>\n"
 "Language: en_US\n"
@@ -80,25 +80,25 @@ msgid ""
 msgstr "This page will be used in breadcrumbs for community related content."
 
 #: ictuwp-plugin-community-posttype.php:611
-#: templates/template-overview-communities.php:603
+#: templates/template-overview-communities.php:605
 msgctxt "Titel in filter"
 msgid "Thema"
-msgstr ""
+msgstr "Thema"
 
 #: ictuwp-plugin-community-posttype.php:635
-#: templates/template-overview-communities.php:599
+#: templates/template-overview-communities.php:601
 msgctxt "Titel in filter"
 msgid "Type community"
 msgstr ""
 
 #: ictuwp-plugin-community-posttype.php:659
-#: templates/template-overview-communities.php:606
+#: templates/template-overview-communities.php:608
 msgctxt "Titel in filter"
 msgid "Type professional"
 msgstr ""
 
 #: ictuwp-plugin-community-posttype.php:683
-#: templates/template-overview-communities.php:609
+#: templates/template-overview-communities.php:611
 msgctxt "Titel in filter"
 msgid "Type organisatie"
 msgstr ""
@@ -314,238 +314,238 @@ msgctxt "post type"
 msgid "Filter community list"
 msgstr ""
 
-#: includes/register-community-posttype.php:80
+#: includes/register-community-posttype.php:81
 msgctxt "taxonomy"
 msgid "Type community"
 msgstr ""
 
-#: includes/register-community-posttype.php:81
+#: includes/register-community-posttype.php:82
 msgctxt "taxonomy singular name"
 msgid "Communitytype"
 msgstr ""
 
-#: includes/register-community-posttype.php:82
+#: includes/register-community-posttype.php:83
 msgctxt "taxonomy"
 msgid "Search communitytype"
 msgstr ""
 
-#: includes/register-community-posttype.php:83
+#: includes/register-community-posttype.php:84
 msgctxt "taxonomy"
 msgid "All communitytypes"
 msgstr ""
 
-#: includes/register-community-posttype.php:84
+#: includes/register-community-posttype.php:85
 msgctxt "taxonomy"
 msgid "Parent communitytype"
 msgstr ""
 
-#: includes/register-community-posttype.php:85
+#: includes/register-community-posttype.php:86
 msgctxt "taxonomy"
 msgid "Parent communitytype:"
 msgstr ""
 
-#: includes/register-community-posttype.php:86
+#: includes/register-community-posttype.php:87
 msgctxt "taxonomy"
 msgid "Edit communitytype"
 msgstr ""
 
-#: includes/register-community-posttype.php:87
+#: includes/register-community-posttype.php:88
 msgctxt "taxonomy"
 msgid "Bekijk communitytype"
 msgstr ""
 
-#: includes/register-community-posttype.php:88
+#: includes/register-community-posttype.php:89
 msgctxt "taxonomy"
 msgid "Update communitytype"
 msgstr ""
 
-#: includes/register-community-posttype.php:89
+#: includes/register-community-posttype.php:90
 msgctxt "taxonomy"
 msgid "Add new communitytype"
 msgstr ""
 
-#: includes/register-community-posttype.php:90
+#: includes/register-community-posttype.php:91
 msgctxt "taxonomy"
 msgid "New communitytype name"
 msgstr ""
 
-#: includes/register-community-posttype.php:91
+#: includes/register-community-posttype.php:92
 msgctxt "taxonomy"
 msgid "Types"
 msgstr ""
 
-#: includes/register-community-posttype.php:109
-#: includes/register-community-posttype.php:120
+#: includes/register-community-posttype.php:111
+#: includes/register-community-posttype.php:122
 msgctxt "taxonomy"
-msgid "Thema's"
-msgstr ""
+msgid "Thema`s"
+msgstr "Themes"
 
-#: includes/register-community-posttype.php:110
+#: includes/register-community-posttype.php:112
 msgctxt "taxonomy singular name"
 msgid "Thema"
-msgstr ""
+msgstr "Thema"
 
-#: includes/register-community-posttype.php:111
+#: includes/register-community-posttype.php:113
 msgctxt "taxonomy"
 msgid "Search thema's"
 msgstr ""
 
-#: includes/register-community-posttype.php:112
+#: includes/register-community-posttype.php:114
 msgctxt "taxonomy"
 msgid "Alle thema's"
 msgstr ""
 
-#: includes/register-community-posttype.php:113
+#: includes/register-community-posttype.php:115
 msgctxt "taxonomy"
 msgid "Parent thema"
 msgstr ""
 
-#: includes/register-community-posttype.php:114
+#: includes/register-community-posttype.php:116
 msgctxt "taxonomy"
 msgid "Parent thema:"
 msgstr ""
 
-#: includes/register-community-posttype.php:115
+#: includes/register-community-posttype.php:117
 msgctxt "taxonomy"
 msgid "Bekijk thema"
 msgstr ""
 
-#: includes/register-community-posttype.php:116
+#: includes/register-community-posttype.php:118
 msgctxt "taxonomy"
 msgid "Edit thema"
 msgstr ""
 
-#: includes/register-community-posttype.php:117
+#: includes/register-community-posttype.php:119
 msgctxt "taxonomy"
 msgid "Update thema"
 msgstr ""
 
-#: includes/register-community-posttype.php:118
+#: includes/register-community-posttype.php:120
 msgctxt "taxonomy"
 msgid "Add new thema"
 msgstr ""
 
-#: includes/register-community-posttype.php:119
+#: includes/register-community-posttype.php:121
 msgctxt "taxonomy"
 msgid "New thema name"
 msgstr ""
 
-#: includes/register-community-posttype.php:139
+#: includes/register-community-posttype.php:142
 msgctxt "taxonomy"
 msgid "Types organisatie"
 msgstr ""
 
-#: includes/register-community-posttype.php:140
+#: includes/register-community-posttype.php:143
 msgctxt "taxonomy singular name"
 msgid "Type organisatie"
-msgstr ""
-
-#: includes/register-community-posttype.php:141
-msgctxt "taxonomy"
-msgid "Search organisatie-types"
-msgstr ""
-
-#: includes/register-community-posttype.php:142
-msgctxt "taxonomy"
-msgid "Alle organisatie-types"
-msgstr ""
-
-#: includes/register-community-posttype.php:143
-msgctxt "taxonomy"
-msgid "Parent organisatie-type"
 msgstr ""
 
 #: includes/register-community-posttype.php:144
 msgctxt "taxonomy"
-msgid "Parent organisatie-type:"
+msgid "Search organisatie-types"
 msgstr ""
 
 #: includes/register-community-posttype.php:145
 msgctxt "taxonomy"
-msgid "Bekijk organisatie-type"
+msgid "Alle organisatie-types"
 msgstr ""
 
 #: includes/register-community-posttype.php:146
 msgctxt "taxonomy"
-msgid "Edit organisatie-type"
+msgid "Parent organisatie-type"
 msgstr ""
 
 #: includes/register-community-posttype.php:147
 msgctxt "taxonomy"
-msgid "Update organisatie-type"
+msgid "Parent organisatie-type:"
 msgstr ""
 
 #: includes/register-community-posttype.php:148
 msgctxt "taxonomy"
-msgid "Add new organisatie-type"
+msgid "Bekijk organisatie-type"
 msgstr ""
 
 #: includes/register-community-posttype.php:149
 msgctxt "taxonomy"
-msgid "New organisatie-type name"
+msgid "Edit organisatie-type"
 msgstr ""
 
 #: includes/register-community-posttype.php:150
 msgctxt "taxonomy"
+msgid "Update organisatie-type"
+msgstr ""
+
+#: includes/register-community-posttype.php:151
+msgctxt "taxonomy"
+msgid "Add new organisatie-type"
+msgstr ""
+
+#: includes/register-community-posttype.php:152
+msgctxt "taxonomy"
+msgid "New organisatie-type name"
+msgstr ""
+
+#: includes/register-community-posttype.php:153
+msgctxt "taxonomy"
 msgid "Type organisatie"
-msgstr ""
-
-#: includes/register-community-posttype.php:170
-msgctxt "taxonomy"
-msgid "Community-doelgroepen"
-msgstr ""
-
-#: includes/register-community-posttype.php:171
-msgctxt "taxonomy singular name"
-msgid "Doelgroep"
-msgstr ""
-
-#: includes/register-community-posttype.php:172
-msgctxt "taxonomy"
-msgid "Search doelgroepen"
-msgstr ""
-
-#: includes/register-community-posttype.php:173
-msgctxt "taxonomy"
-msgid "Alle doelgroepen"
 msgstr ""
 
 #: includes/register-community-posttype.php:174
 msgctxt "taxonomy"
-msgid "Parent doelgroep"
+msgid "Community-doelgroepen"
 msgstr ""
 
 #: includes/register-community-posttype.php:175
-msgctxt "taxonomy"
-msgid "Parent doelgroep:"
+msgctxt "taxonomy singular name"
+msgid "Doelgroep"
 msgstr ""
 
 #: includes/register-community-posttype.php:176
 msgctxt "taxonomy"
-msgid "Edit doelgroep"
+msgid "Search doelgroepen"
 msgstr ""
 
 #: includes/register-community-posttype.php:177
 msgctxt "taxonomy"
-msgid "Bekijk doelgroep"
+msgid "Alle doelgroepen"
 msgstr ""
 
 #: includes/register-community-posttype.php:178
 msgctxt "taxonomy"
-msgid "Update doelgroep"
+msgid "Parent doelgroep"
 msgstr ""
 
 #: includes/register-community-posttype.php:179
 msgctxt "taxonomy"
-msgid "Add new doelgroep"
+msgid "Parent doelgroep:"
 msgstr ""
 
 #: includes/register-community-posttype.php:180
 msgctxt "taxonomy"
-msgid "New doelgroep name"
+msgid "Edit doelgroep"
 msgstr ""
 
 #: includes/register-community-posttype.php:181
+msgctxt "taxonomy"
+msgid "Bekijk doelgroep"
+msgstr ""
+
+#: includes/register-community-posttype.php:182
+msgctxt "taxonomy"
+msgid "Update doelgroep"
+msgstr ""
+
+#: includes/register-community-posttype.php:183
+msgctxt "taxonomy"
+msgid "Add new doelgroep"
+msgstr ""
+
+#: includes/register-community-posttype.php:184
+msgctxt "taxonomy"
+msgid "New doelgroep name"
+msgstr ""
+
+#: includes/register-community-posttype.php:185
 msgctxt "taxonomy"
 msgid "Doelgroepen"
 msgstr ""
@@ -704,31 +704,31 @@ msgctxt "Header rss links"
 msgid "Agenda"
 msgstr ""
 
-#: templates/template-overview-communities.php:522
+#: templates/template-overview-communities.php:523
 #: templates/template-rss-posts.php:85
 msgctxt "Header rss links"
 msgid "Berichten"
 msgstr ""
 
-#: templates/template-overview-communities.php:560
+#: templates/template-overview-communities.php:562
 msgctxt "label keyword veld"
 msgid "Laatst toegevoegd"
 msgstr ""
 
-#: templates/template-overview-communities.php:660
+#: templates/template-overview-communities.php:662
 msgctxt "label keyword veld"
 msgid "Onderwerpen, types en doelgroepen"
 msgstr ""
 
-#: templates/template-overview-communities.php:797
+#: templates/template-overview-communities.php:799
 msgid "Types"
 msgstr ""
 
-#: templates/template-overview-communities.php:798
+#: templates/template-overview-communities.php:800
 msgid "Onderwerpen"
 msgstr ""
 
-#: templates/template-overview-communities.php:799
+#: templates/template-overview-communities.php:801
 msgid "Doelgroepen"
 msgstr ""
 

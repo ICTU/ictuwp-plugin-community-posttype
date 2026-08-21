@@ -8,8 +8,8 @@
  * Plugin Name:         ICTU / WP / DO - Community CPT and pages
  * Plugin URI:          https://github.com/ICTU/ictuwp-plugin-community-posttype
  * Description:         Plugin voor het aanmaken van posttype 'community' en bijbehorende taxonomieen.
- * Version:             1.4.2
- * Version description: Add ID attribute to sections with RSS data.
+ * Version:             1.4.3
+ * Version description: Added CPT and taxonomies to REST API.
  * Author:              Paul van Buuren
  * Author URI:          https://github.com/ICTU/ictuwp-plugin-community-posttype/
  * License:             GPL-2.0+
