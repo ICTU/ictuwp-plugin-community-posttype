@@ -352,10 +352,14 @@ function community_add_communities_grid( $doreturn = false ) {
         $inner_css_class .= ' search-results';
     }
 
+
     $container_start .= $container_title;
 
     $community_list_items_start .= "\n" . '<div class="' . $inner_css_class . '" id="' . CONTAINER_ID . '">';
+    $community_list_items_start .= "\n" . '<div class="block">';
 
+
+    $community_list_items_end .= '</div><!-- .block -->' . "\n";
     $community_list_items_end .= '</div><!-- .archive-custom-loop -->' . "\n";
 
     $container_footer .= '</section><!-- .community-container -->' . "\n";
@@ -448,10 +452,11 @@ function community_add_communities_grid( $doreturn = false ) {
                 $post            = get_post( $post_id );
                 $current_post_id = isset( $post->ID ) ? $post->ID : 0;
                 $args_grid_item  = array(
-                        'ID'          => $current_post_id,
-                        'itemclass'   => 'griditem griditem--community colspan-1',
-                        'type'        => 'posts_normal',
-                        'headerlevel' => $headerlevel,
+                        'ID'           => $current_post_id,
+                        'itemclass'    => 'griditem griditem--community colspan-1',
+                        'type'         => 'posts_normal',
+                        'tagcontainer' => 'article',
+                        'headerlevel'  => $headerlevel,
                 );
 
                 $this_item            = rhswp_get_grid_item( $args_grid_item );
@@ -533,7 +538,7 @@ function community_add_communities_grid( $doreturn = false ) {
                 $args_in     = array(
                         'type'       => 'posts',
                         'extra_info' => true,
-                        'sectionid' => 'berichten',
+                        'sectionid'  => 'berichten',
                         'items'      => $community_items
                 );
                 $rss_content = community_feed_items_show( $args_in );

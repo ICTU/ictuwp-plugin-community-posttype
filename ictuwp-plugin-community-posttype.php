@@ -8,8 +8,8 @@
  * Plugin Name:         ICTU / WP / DO - Community CPT and pages
  * Plugin URI:          https://github.com/ICTU/ictuwp-plugin-community-posttype
  * Description:         Plugin voor het aanmaken van posttype 'community' en bijbehorende taxonomieen.
- * Version:             1.4.3
- * Version description: Added CPT and taxonomies to REST API.
+ * Version:             1.4.4
+ * Version description: Better styling for search results for local search engine.
  * Author:              Paul van Buuren
  * Author URI:          https://github.com/ICTU/ictuwp-plugin-community-posttype/
  * License:             GPL-2.0+
@@ -45,6 +45,13 @@ define( 'DO_COMMUNITYTYPE_CT', $slugtype );
 define( 'DO_COMMUNITYTOPICS_CT', $slugtopics );
 define( 'DO_COMMUNITYAUDIENCE_CT', $slugaudiences );
 define( 'DO_COMMUNITYBESTUURSLAAG_CT', $slugoverheidslaag );
+if ( ! defined( 'CPT_PROJECT' ) ) {
+	define( 'CPT_PROJECT', 'innovatieproject' );
+}
+
+if ( ! defined( 'CPT_INNOVATIEPROJECT' ) ) {
+	define( 'CPT_INNOVATIEPROJECT', 'innovatieproject' );
+}
 
 defined( 'DO_COMMUNITY_OVERVIEW_TEMPLATE' ) or define( 'DO_COMMUNITY_OVERVIEW_TEMPLATE', 'template-overview-communities.php' );
 defined( 'DO_COMMUNITY_PAGE_RSS_AGENDA' ) or define( 'DO_COMMUNITY_PAGE_RSS_AGENDA', 'template-rss-agenda.php' );
@@ -551,7 +558,7 @@ function communitys_filter_breadcrumb( $crumb = '', $args = '' ) {
 		if ( $termid ) {
 			$term   = get_term( $termid );
 			$return .= $term->name;
-		} elseif ( is_singular( CPT_PROJECT ) || is_singular( DO_COMMUNITY_CPT ) ) {
+		} elseif ( is_singular( CPT_PROJECT ) || is_singular( CPT_INNOVATIEPROJECT ) || is_singular( DO_COMMUNITY_CPT ) ) {
 			$return .= get_the_title( $post->ID );
 		} else {
 			//

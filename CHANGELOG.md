@@ -1,6 +1,7 @@
 # Changelog
 
 ## Version history
+* 1.4.4 - Better styling for search results for local search engine.
 * 1.4.3 - Added CPT and taxonomies to REST API.
 * 1.4.2 - Add ID attribute to sections with RSS data.
 * 1.4.1 - Upgrade to RSS Aggregator version 5.0.x
